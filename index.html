@@ -6,6 +6,11 @@
     <title>Quant Radar System</title>
 
     <style>
+        html {
+            height: 100%;
+            background-color: #0d0f14; /* Kasih warna di sini juga buat jaga-jaga */
+        }
+
         body {
             background: #0d0f14;
             color: #e6e6e6;
@@ -13,6 +18,9 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            min-height: 100vh; /* Memaksa body minimal setinggi layar monitor/HP */
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
@@ -73,6 +81,7 @@
         .coming { color: #ff5555; }
 
         .about {
+            flex: 1;
             margin-top: 60px;
             padding: 40px 20px;
             border-top: 1px solid #2a2f3a;
