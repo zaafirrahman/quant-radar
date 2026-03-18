@@ -1,0 +1,6 @@
+Swing_Rank,Ticker,Company,WinRate_5d,WinRate_10d,WinRate_20d,AvgRet_5d,AvgRet_10d,AvgRet_20d,Sample_Signals,Swing_Score,Sharia
+1,LYB,LyondellBasell Industries N.V.,33.33,11.11,66.67,-0.81,-2.22,10.27,9,367.53,Halal
+2,PDBC,Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF,11.11,0.0,33.33,-3.69,-3.22,-0.52,9,-904.96,Not Covered
+3,DOW,Dow Inc.,28.57,7.14,50.0,-1.14,-3.85,-0.07,14,-1232.61,Halal
+4,USO,"United States Oil Fund, LP",10.0,10.0,0.0,-5.61,-5.88,-6.1,10,-1369.93,Not Covered
+5,DOCN,"DigitalOcean Holdings, Inc.",42.11,57.89,52.63,-2.32,-0.28,1.89,19,-1479.89,Halal
