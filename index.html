@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quant Radar System</title>
 
     <style>
@@ -24,6 +25,7 @@
         p.subtitle {
             color: #aaa;
             margin-top: 10px;
+            padding: 0 20px; /* Biar gak mentok pinggir di HP */
         }
 
         .container {
@@ -32,9 +34,11 @@
             gap: 40px;
             margin-top: 60px;
             flex-wrap: wrap;
+            padding: 0 20px;
         }
 
-        .card {
+        /* Gabungin style card biar konsisten */
+        .card, .card2 {
             width: 260px;
             background: #12161f;
             border: 1px solid #2a2f3a;
@@ -44,6 +48,7 @@
             color: white;
             transition: 0.3s;
             position: relative;
+            box-sizing: border-box; /* Penting biar padding gak ngerusak lebar */
         }
 
         .card:hover {
@@ -52,73 +57,23 @@
             box-shadow: 0 0 20px rgba(0,255,136,0.2);
         }
 
-        .card2 {
-            width: 260px;
-            background: #12161f;
-            border: 1px solid #2a2f3a;
-            border-radius: 12px;
-            padding: 25px;
-            text-decoration: none;
-            color: white;
-            transition: 0.3s;
-            position: relative;
-        }
-
         .card2:hover {
             border-color: #ff5555;
             transform: translateY(-5px);
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
         }
 
-        .card.disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .logo {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            margin-bottom: 15px;
-        }
-
-        .logo2 {
-            width: 70px;
-            height: 60px;
-            /* object-fit: contain; */
-            margin-bottom: 15px;
-        }
-
-        .title {
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .meta {
-            font-size: 12px;
-            color: #555;
-        }
-
-        .meta2 {
-            font-size: 14px;
-            color: #bbb;
-        }
-
-        .status {
-            margin-top: 15px;
-            font-size: 12px;
-        }
-
-        .active {
-            color: #00ff88;
-        }
-
-        .coming {
-            color: #ff5555;
-        }
+        .logo { width: 60px; height: 60px; object-fit: contain; margin-bottom: 15px; }
+        .logo2 { width: 70px; height: 60px; margin-bottom: 15px; }
+        .title { font-size: 20px; margin-bottom: 8px; font-weight: bold; }
+        .meta { font-size: 12px; color: #555; }
+        .meta2 { font-size: 14px; color: #bbb; }
+        .status { margin-top: 15px; font-size: 12px; }
+        .active { color: #00ff88; }
+        .coming { color: #ff5555; }
 
         .about {
-            margin-top: 60px; /* sebelumnya 100px */
+            margin-top: 60px;
             padding: 40px 20px;
             border-top: 1px solid #2a2f3a;
             color: #bbb;
@@ -134,22 +89,42 @@
         }
 
         .footer {
-            margin-top: 60px;   /* biar ada jarak dari about */
-            margin-bottom: 40px; /* biar ga mentok bawah */
+            margin-top: 60px;
+            margin-bottom: 40px;
             font-size: 12px;
             color: #555;
+            padding: 0 20px;
         }
 
+        /* --- RESPONSIVE SETTINGS --- */
         @media (max-width: 600px) {
-        .container {
-            flex-direction: column;
-            align-items: center;
-        }
-        .card {
-            width: 90%;
-        }
-        }
+            h1 {
+                font-size: 32px; /* Perkecil judul dikit di HP */
+                margin-top: 40px;
+            }
+            
+            .container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px; /* Jarak antar card dikit aja */
+            }
 
+            .card, .card2 {
+                width: 100%; /* Card jadi full lebar HP */
+                max-width: 320px;
+            }
+
+            .about {
+                padding: 40px 30px;
+                font-size: 15px; /* About digedein dikit biar enak dibaca */
+                text-align: justify; /* Biar lebih rapi di layar sempit */
+            }
+
+            .about h2 {
+                font-size: 24px;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 
@@ -159,8 +134,6 @@
     <p class="subtitle">Momentum Detection & Statistical Edge Validation System</p>
 
     <div class="container">
-
-        <!-- US MARKET -->
         <a href="./us_market/output/radar/us_radar.html" class="card">
             <img src="assets/ws.png" class="logo2">
             <div class="title">US Market</div>
@@ -169,7 +142,6 @@
             <div class="status active">● Recorded Daily at 18.00 EST</div>
         </a>
 
-        <!-- IDX MARKET -->
         <div class="card2">
             <img src="assets/idx.png" class="logo">
             <div class="title">ID Market</div>
@@ -177,7 +149,6 @@
             <div class="meta">Indonesia Stock Exchange (IDX)</div>
             <div class="status coming">● Recorded Daily at 18.00 WIB</div>
         </div>
-
     </div>
 
     <div class="about">
