@@ -42,20 +42,24 @@ def main():
     print(f"🌐 Radar dashboard saved: {html_path}")
 
     # ──────────────────────────────────────────
-    #  2. FILTER TOP 5 CANDIDATES
+    #  2. FILTER CANDIDATES (Distance > 0)
     # ──────────────────────────────────────────
-    top5 = report.head(5)
+    candidates = report[report["Distance_%"] > 0].copy()
     sniper_candidates_path = radar_dir / "sniper_candidates.csv"
-    top5.to_csv(sniper_candidates_path, index=False)
-    print(f"\n🎯 Top 5 candidates:")
-    print(top5[["Ticker", "Quant_Score"]].to_string(index=False))
+    candidates.to_csv(sniper_candidates_path, index=False)
+    print(f"\n🎯 Candidates passed (Distance > 0): {len(candidates)}")
+    print(candidates[["Ticker", "Quant_Score", "Distance_%"]].to_string(index=False))
     print(f"🧠 Candidates saved: {sniper_candidates_path}")
+
+    if candidates.empty:
+        print("⚠️  No candidates passed the filter today — skipping sniper.")
+        return
 
     # ──────────────────────────────────────────
     #  3. BULK SNIPER
     # ──────────────────────────────────────────
     print("\n🔫 Running bulk sniper...")
-    summary_df, results = run_bulk_sniper(top5, sniper_dir)
+    summary_df, results = run_bulk_sniper(candidates, sniper_dir)
 
     if summary_df.empty:
         print("❌ No sniper results — skipping HTML generation.")

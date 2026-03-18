@@ -12,25 +12,25 @@ from us_market.engine.screen_score import calculate_score
 # ─────────────────────────────────────────
 
 def get_sharia_status(ticker: str) -> str:
-    """Scrape Musaffa for halal compliance status."""
+    """Scrape Zoya Finance for halal compliance status."""
     try:
-        url = f"https://musaffa.com/stock/{ticker}"
+        url = f"https://zoya.finance/stocks/{ticker.lower()}"
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers, timeout=8)
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Musaffa typically shows compliance as text: Halal / Doubtful / Not Halal
-        # Adjust selector if Musaffa updates their markup
-        tag = soup.find(string=lambda t: t and any(
-            word in t for word in ["Halal", "Doubtful", "Not Halal", "Not Covered"]
-        ))
-        if tag:
-            text = tag.strip()
-            if "Not Halal" in text:
+        # Zoya renders compliance in an h2 tag like:
+        # "BKNG stock is Shariah-compliant"
+        # "BKNG stock is not Shariah-compliant"
+        # "BKNG stock is doubtful"
+        h2 = soup.find("h2")
+        if h2:
+            text = h2.get_text(strip=True).lower()
+            if "not shariah" in text or "not halal" in text:
                 return "Not Halal"
-            elif "Doubtful" in text:
+            elif "doubtful" in text:
                 return "Doubtful"
-            elif "Halal" in text:
+            elif "shariah-compliant" in text or "shariah compliant" in text:
                 return "Halal"
         return "Not Covered"
     except Exception:

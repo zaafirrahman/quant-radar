@@ -68,6 +68,25 @@ tr:hover td { background: #111111; }
 
 tr.top5 td { background: #0d0d0d; }
 tr.top5:hover td { background: #161616; }
+
+.nav-btn {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #000000;
+    background: #ff8c00;
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 999;
+    transition: background 0.15s ease;
+}
+.nav-btn:hover { background: #ffaa33; }
 """
 
 
@@ -148,6 +167,7 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
+        <a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
         <h2>Signal Surge Amplifier Grid</h2>
         <p class="subtitle">Generated {timestamp}</p>
         {table}
@@ -190,8 +210,12 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
+        <a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
         <h2>Runner Performance Protocol</h2>
         <p class="subtitle">Generated {timestamp}</p>
+        <p style="text-align:center;color:#555555;font-size:12px;letter-spacing:1px;margin-bottom:20px;">
+            ↓ Click ticker to see full sniper details
+        </p>
         {table}
     """
     return _wrap_html("Sniper — Runner Performance Protocol", body)
@@ -357,6 +381,7 @@ def build_single_dashboard(result: dict) -> str:
     power_table  = _build_signal_table(result["power_ranking"].reset_index())
 
     body = f"""
+        <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
         <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
             {company}
             <a href="{yahoo_url}" target="_blank"
