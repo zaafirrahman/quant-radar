@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quant Radar System</title>
+
+    <style>
+        body {
+            background: #0d0f14;
+            color: #e6e6e6;
+            font-family: Consolas, monospace;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 60px;
+            font-size: 40px;
+            color: #00ff88;
+            letter-spacing: 2px;
+        }
+
+        p.subtitle {
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 260px;
+            background: #12161f;
+            border: 1px solid #2a2f3a;
+            border-radius: 12px;
+            padding: 25px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: #00ff88;
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0,255,136,0.2);
+        }
+
+        .card.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .logo2 {
+            width: 70px;
+            height: 60px;
+            /* object-fit: contain; */
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .meta {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .meta2 {
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        .active {
+            color: #00ff88;
+        }
+
+        .coming {
+            color: #ff5555;
+        }
+
+        .about {
+            margin-top: 60px; /* sebelumnya 100px */
+            padding: 40px 20px;
+            border-top: 1px solid #2a2f3a;
+            color: #bbb;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .about h2 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            margin-top: 60px;   /* biar ada jarak dari about */
+            margin-bottom: 40px; /* biar ga mentok bawah */
+            font-size: 12px;
+            color: #555;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>QUANT RADAR</h1>
+    <p class="subtitle">Momentum Detection & Statistical Edge Validation System</p>
+
+    <div class="container">
+
+        <!-- US MARKET -->
+        <a href="./us_market/output/radar/us_radar.html" class="card">
+            <img src="assets/ws.png" class="logo2">
+            <div class="title">US Market</div>
+            <div class="meta2">738 Listed Stocks</div>
+            <div class="meta">NASDAQ, NYSE, NYSEArca, CBOE</div>
+            <div class="status active">● ACTIVE</div>
+        </a>
+
+        <!-- IDX MARKET -->
+        <div class="card">
+            <img src="assets/idx.png" class="logo">
+            <div class="title">ID Market</div>
+            <div class="meta2">950 Listed Stocks</div>
+            <div class="meta">Indonesia Stock Exchange (IDX)</div>
+            <div class="status coming">● COMING SOON</div>
+        </div>
+
+    </div>
+
+    <div class="about">
+        <h2>About This System</h2>
+        <p>
+            Quant Radar is a research-driven market intelligence system designed to identify high-momentum assets
+            and validate their statistical edge through event-based backtesting.
+        </p>
+        <p>
+            The system operates in two layers: a Radar Engine that detects abnormal momentum and flow activity,
+            and a Sniper Engine that evaluates the reliability of these signals using historical performance metrics.
+        </p>
+        <p>
+            Built for systematic analysis, this platform aims to bridge the gap between market scanning and
+            data-driven decision making.
+        </p>
+    </div>
+
+    <div class="footer">
+        © 2026 Quant Radar System — Built for Research & Exploration
+    </div>
+
+</body>
+</html>
