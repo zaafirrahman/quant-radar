@@ -52,6 +52,24 @@
             box-shadow: 0 0 20px rgba(0,255,136,0.2);
         }
 
+        .card2 {
+            width: 260px;
+            background: #12161f;
+            border: 1px solid #2a2f3a;
+            border-radius: 12px;
+            padding: 25px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .card2:hover {
+            border-color: #ff5555;
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
         .card.disabled {
             opacity: 0.4;
             pointer-events: none;
@@ -138,16 +156,16 @@
             <div class="title">US Market</div>
             <div class="meta2">738 Listed Stocks</div>
             <div class="meta">NASDAQ, NYSE, NYSEArca, CBOE</div>
-            <div class="status active">● ACTIVE</div>
+            <div class="status active">● Recorded Daily at 06.00 WIB</div>
         </a>
 
         <!-- IDX MARKET -->
-        <div class="card">
+        <div class="card2">
             <img src="assets/idx.png" class="logo">
             <div class="title">ID Market</div>
             <div class="meta2">950 Listed Stocks</div>
             <div class="meta">Indonesia Stock Exchange (IDX)</div>
-            <div class="status coming">● COMING SOON</div>
+            <div class="status coming">● Recorded Daily at 18.00 WIB</div>
         </div>
 
     </div>
