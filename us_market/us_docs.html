@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <title>System Documentation — Quant Radar</title>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            background: #000000;
+            color: #cccccc;
+            font-family: "IBM Plex Mono", "Courier New", monospace;
+            min-height: 100vh;
+            padding: 64px 20px 80px;
+        }
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            right: 28px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #000000;
+            background: #ff8c00;
+            padding: 10px 18px;
+            text-decoration: none;
+            transition: background 0.15s;
+            z-index: 999;
+        }
+        .back-btn:hover { background: #ffaa33; }
+
+        /* ── LAYOUT ── */
+        .doc-wrap {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* ── HEADER ── */
+        .doc-badge {
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: #444444;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .doc-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .doc-subtitle {
+            font-size: 12px;
+            color: #555555;
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 56px;
+        }
+
+        /* ── INTRO BLOCK ── */
+        .intro {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-left: 3px solid #ff8c00;
+            padding: 24px 28px;
+            margin-bottom: 52px;
+            line-height: 2;
+        }
+
+        .intro p {
+            font-size: 13px;
+            color: #777777;
+            margin-bottom: 10px;
+        }
+        .intro p:last-child { margin-bottom: 0; }
+
+        /* ── SECTION ── */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .step-num {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #ff8c00;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .section-body {
+            font-size: 13px;
+            color: #666666;
+            line-height: 2;
+            margin-bottom: 16px;
+        }
+
+        /* ── PILL TAGS ── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .tag {
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border: 1px solid #222222;
+            color: #888888;
+            text-transform: uppercase;
+        }
+
+        .tag.orange {
+            border-color: #ff8c00;
+            color: #ff8c00;
+        }
+
+        /* ── SUB BLOCKS (Signal Quality drivers) ── */
+        .sub-blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .sub-block {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            padding: 18px 22px;
+        }
+
+        .sub-block-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .sub-block p {
+            font-size: 12px;
+            color: #555555;
+            line-height: 1.9;
+        }
+
+        /* ── FORMULA BLOCK ── */
+        .formula {
+            background: #0a0a0a;
+            border: 1px solid #222222;
+            border-left: 3px solid #ff8c00;
+            padding: 20px 24px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #ff8c00;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .formula span {
+            color: #ffffff;
+        }
+
+        /* ── PRINCIPLES ── */
+        .principles {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .principle {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.8;
+        }
+
+        .principle-dot {
+            color: #ff8c00;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ── STATUS BANNER ── */
+        .status-banner {
+            background: #0a0a0a;
+            border: 1px solid #222222;
+            border-top: 3px solid #333333;
+            padding: 24px 28px;
+            margin-top: 52px;
+            text-align: center;
+        }
+
+        .status-banner .status-label {
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: #444444;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .status-banner .status-text {
+            font-size: 13px;
+            color: #555555;
+            line-height: 2;
+        }
+
+        .status-banner .status-text span {
+            color: #ff8c00;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            margin-top: 64px;
+            font-size: 11px;
+            color: #2a2a2a;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .doc-title { font-size: 20px; letter-spacing: 2px; }
+            .back-btn { font-size: 10px; padding: 8px 14px; top: 16px; right: 16px; }
+            .intro { padding: 18px 20px; }
+            .section-title { font-size: 13px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="./us_hub.html" class="back-btn">◀ Back to Hub</a>
+
+    <div class="doc-wrap">
+
+        <p class="doc-badge">US Market / System Documentation</p>
+        <h1 class="doc-title">How It Works</h1>
+        <p class="doc-subtitle">Quantitative Momentum Screening &amp; Signal Evaluation Pipeline</p>
+
+        <!-- INTRO -->
+        <div class="intro">
+            <p>
+                Quant Radar implements a signal-first, statistics-driven pipeline to identify
+                high-probability swing trading opportunities in the US stock market.
+            </p>
+            <p>
+                Instead of predicting markets, the system evaluates <span style="color:#ff8c00;">historical signal behavior</span>
+                to rank opportunities based on edge and signal quality — eliminating subjective bias.
+            </p>
+        </div>
+
+        <!-- STEP 1 -->
+        <div class="section">
+            <div class="section-header">
+                <span class="step-num">STEP 01</span>
+                <span class="section-title">Market Screener — Momentum Candidates</span>
+            </div>
+            <p class="section-body">
+                Scans the entire stock universe and scores each ticker based on three
+                compounding momentum conditions. Only structurally active, high-momentum
+                assets pass through.
+            </p>
+            <div class="tags">
+                <span class="tag orange">14-Day Price Momentum</span>
+                <span class="tag orange">Volume Expansion</span>
+                <span class="tag orange">325-Day Range Position</span>
+            </div>
+            <p class="section-body">
+                Stocks are ranked by <span style="color:#cccccc;">Distance %</span> — how far the current signal score sits
+                above its historical 95th percentile threshold. Only tickers with Distance &gt; 0
+                advance to the Sniper Engine.
+            </p>
+            <div class="tags">
+                <span class="tag">Output: Signal Surge Amplifier Grid</span>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="section">
+            <div class="section-header">
+                <span class="step-num">STEP 02</span>
+                <span class="section-title">Sniper Engine — Signal Day Detection</span>
+            </div>
+            <p class="section-body">
+                For each candidate, the engine scans 3 years of historical data to detect
+                every day the screener conditions were triggered above the threshold.
+                These are called <span style="color:#cccccc;">Signal Days</span> — moments where the system would have
+                generated a trade opportunity.
+            </p>
+            <div class="tags">
+                <span class="tag">Output: Signal Day Dataset per Ticker</span>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="section">
+            <div class="section-header">
+                <span class="step-num">STEP 03</span>
+                <span class="section-title">Backtest Layer — Edge Measurement</span>
+            </div>
+            <p class="section-body">
+                Each signal day is evaluated by measuring forward returns over three horizons.
+                From these results, edge metrics are calculated per ticker.
+            </p>
+            <div class="tags">
+                <span class="tag orange">5-Day Return</span>
+                <span class="tag orange">10-Day Return</span>
+                <span class="tag orange">20-Day Return</span>
+                <span class="tag">Win Rate</span>
+                <span class="tag">Avg Return</span>
+                <span class="tag">Swing Score</span>
+            </div>
+            <div class="tags">
+                <span class="tag">Output: Runner Performance Protocol</span>
+            </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="section">
+            <div class="section-header">
+                <span class="step-num">STEP 04</span>
+                <span class="section-title">Signal Quality Engine — Reliability Filtering</span>
+            </div>
+            <p class="section-body">
+                Not all profitable signals are reliable. This layer evaluates the statistical
+                quality of the signal dataset using three independent drivers.
+            </p>
+            <div class="sub-blocks">
+                <div class="sub-block">
+                    <div class="sub-block-title">Sample Reliability</div>
+                    <p>Measures whether the signal appears often enough to be statistically meaningful.
+                    Avoids signals based on too few observations and reduces random performance spikes.</p>
+                </div>
+                <div class="sub-block">
+                    <div class="sub-block-title">Return Stability</div>
+                    <p>Evaluates how consistent signal returns are across time. Detects whether
+                    profitability is stable or driven by rare outliers.</p>
+                </div>
+                <div class="sub-block">
+                    <div class="sub-block-title">Cluster Distribution</div>
+                    <p>Checks whether signals are spread across time or only appear during specific
+                    short market regimes. Prevents regime-dependent signals.</p>
+                </div>
+            </div>
+            <div class="tags" style="margin-top:16px;">
+                <span class="tag">Output: Signal Quality Score</span>
+            </div>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="section">
+            <div class="section-header">
+                <span class="step-num">STEP 05</span>
+                <span class="section-title">Final Ranking — Edge × Quality</span>
+            </div>
+            <p class="section-body">
+                The final ranking combines profitability and reliability into a single score,
+                ensuring candidates are ranked on both expected return and signal robustness —
+                not raw momentum alone.
+            </p>
+            <div class="formula">
+                Final Score = <span>Edge</span> × <span>Quality</span>
+            </div>
+            <div class="tags">
+                <span class="tag">Output: Ranked Candidate List</span>
+            </div>
+        </div>
+
+        <!-- CORE PRINCIPLES -->
+        <div class="section">
+            <div class="section-header">
+                <span class="step-num">CORE</span>
+                <span class="section-title">Design Principles</span>
+            </div>
+            <div class="principles">
+                <div class="principle">
+                    <span class="principle-dot">▶</span>
+                    <span>Signal-first approach — evaluate signals, not predictions</span>
+                </div>
+                <div class="principle">
+                    <span class="principle-dot">▶</span>
+                    <span>Edge + Reliability framework — profitability must be consistent</span>
+                </div>
+                <div class="principle">
+                    <span class="principle-dot">▶</span>
+                    <span>Event-based backtesting — grounded in observable historical events</span>
+                </div>
+                <div class="principle">
+                    <span class="principle-dot">▶</span>
+                    <span>Statistical filtering before ranking — no raw momentum shortcuts</span>
+                </div>
+                <div class="principle">
+                    <span class="principle-dot">▶</span>
+                    <span>Momentum-driven swing opportunities — short to mid-term horizon</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS -->
+        <div class="status-banner">
+            <p class="status-label">Project Status</p>
+            <p class="status-text">
+                This system is currently <span>under active research and development</span>.<br>
+                Signal quality modeling, threshold optimization, and robustness testing<br>
+                are ongoing. Results should be considered <span>experimental</span> until<br>
+                further validation is completed.
+            </p>
+        </div>
+
+        <footer>© 2026 Quant Radar System — Built for Research &amp; Exploration</footer>
+
+    </div>
+
+</body>
+</html>

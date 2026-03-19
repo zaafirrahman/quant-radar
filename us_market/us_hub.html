@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <title>US Market — Quant Radar</title>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            background: #000000;
+            color: #cccccc;
+            font-family: "IBM Plex Mono", "Courier New", monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            right: 28px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #000000;
+            background: #ff8c00;
+            padding: 10px 18px;
+            text-decoration: none;
+            transition: background 0.15s;
+            z-index: 999;
+        }
+        .back-btn:hover { background: #ffaa33; }
+
+        /* ── HEADER ── */
+        .badge {
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: #444444;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .meta {
+            font-size: 12px;
+            color: #444444;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .last-run {
+            font-size: 11px;
+            color: #333333;
+            letter-spacing: 1px;
+            margin-bottom: 52px;
+        }
+
+        .last-run span { color: #ff8c00; }
+
+        /* ── BUTTONS ── */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        /* filled buttons */
+        .btn-fill {
+            background: #ff8c00;
+            color: #000000;
+            border: 1px solid #ff8c00;
+        }
+        .btn-fill:hover {
+            background: #ffaa33;
+            border-color: #ffaa33;
+        }
+
+        /* outline button */
+        .btn-outline {
+            background: transparent;
+            color: #ff8c00;
+            border: 1px solid #ff8c00;
+        }
+        .btn-outline:hover {
+            background: rgba(255, 140, 0, 0.07);
+        }
+
+        .btn-label { font-weight: 600; }
+
+        .btn-sub {
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            opacity: 0.6;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .btn-left { text-align: left; }
+
+        .btn-arrow {
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            position: fixed;
+            bottom: 24px;
+            font-size: 11px;
+            color: #2a2a2a;
+            letter-spacing: 1px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            h1 { font-size: 24px; }
+            .back-btn { font-size: 10px; padding: 8px 14px; top: 16px; right: 16px; }
+            .btn { padding: 16px 20px; font-size: 11px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="../index.html" class="back-btn">◀ Back to Home</a>
+
+    <div class="badge">US Market / Quant Radar</div>
+
+    <h1>US Market</h1>
+    <p class="meta">738 Listed Stocks &nbsp;·&nbsp; NASDAQ, NYSE, NYSEArca, CBOE</p>
+    <p class="meta" style="color:#ff8c00;margin-bottom:16px;">● Recorded Daily @ 18.00 EST</p>
+    <p class="last-run" id="lastRun">Last Run: —</p>
+
+    <div class="btn-group">
+
+        <a href="./output/radar/us_radar.html" class="btn btn-fill">
+            <div class="btn-left">
+                <div class="btn-label">Radar Overview</div>
+                <div class="btn-sub">Signal Surge Amplifier Grid</div>
+            </div>
+            <span class="btn-arrow">▶</span>
+        </a>
+
+        <a href="./output/sniper/index.html" class="btn btn-fill">
+            <div class="btn-left">
+                <div class="btn-label">Sniper Overview</div>
+                <div class="btn-sub">Runner Performance Protocol</div>
+            </div>
+            <span class="btn-arrow">▶</span>
+        </a>
+
+        <a href="./us_docs.html" class="btn btn-outline">
+            <div class="btn-left">
+                <div class="btn-label">System Documentation</div>
+                <div class="btn-sub">How It Works</div>
+            </div>
+            <span class="btn-arrow">▶</span>
+        </a>
+
+    </div>
+
+    <footer>© 2026 Quant Radar System</footer>
+
+    <script>
+        fetch('./output/radar/us_radar.html')
+            .then(r => r.text())
+            .then(html => {
+                const match = html.match(/Generated\s+([\d\-]+ [\d:]+)/);
+                if (match) {
+                    document.getElementById('lastRun').innerHTML =
+                        'Last Run: <span>' + match[1] + ' EDT</span>';
+                }
+            })
+            .catch(() => {});
+    </script>
+
+</body>
+</html>

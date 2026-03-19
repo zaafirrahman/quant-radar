@@ -167,7 +167,7 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
-        <a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
+        <a href="../../us_hub.html" class="nav-btn" style="right:auto;left:28px;">◀ Hub</a><a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
         <h2>Signal Surge Amplifier Grid</h2>
         <p class="subtitle">Generated {timestamp}</p>
         {table}
@@ -210,7 +210,7 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
-        <a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
+        <a href="../../us_hub.html" class="nav-btn" style="right:auto;left:28px;">◀ Hub</a><a href="../radar/us_radar.html" class="nav-btn">Back to Radar ▶</a>
         <h2>Runner Performance Protocol</h2>
         <p class="subtitle">Generated {timestamp}</p>
         <p style="text-align:center;color:#555555;font-size:12px;letter-spacing:1px;margin-bottom:20px;">
