@@ -62,8 +62,8 @@ def run_bulk_sniper(candidates_df: pd.DataFrame, output_dir: Path) -> tuple[pd.D
     summary_df = pd.DataFrame(summary_rows)
 
     # Rank by Swing_Score descending
-    summary_df = summary_df.sort_values("Swing_Score", ascending=False).reset_index(drop=True)
-    summary_df.insert(0, "Swing_Rank", summary_df.index + 1)
+    summary_df = summary_df.sort_values("Sniper_Score", ascending=False).reset_index(drop=True)
+    summary_df.insert(0, "Rank", summary_df.index + 1)
 
     summary_path = output_dir / "sniper_summary.csv"
     summary_df.to_csv(summary_path, index=False)

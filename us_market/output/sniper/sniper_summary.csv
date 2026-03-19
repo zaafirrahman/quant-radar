@@ -1,23 +1,30 @@
-Swing_Rank,Ticker,Company,WinRate_5d,WinRate_10d,WinRate_20d,AvgRet_5d,AvgRet_10d,AvgRet_20d,Sample_Signals,Swing_Score,Sharia
-1,CNQ,Canadian Natural Resources Limited,100.0,100.0,100.0,3.84,8.5,18.29,8,18323.98,Halal
-2,PBR,Petróleo Brasileiro S.A. - Petrobras,63.64,63.64,90.91,2.64,2.31,10.59,11,6699.76,Not Halal
-3,DVN,Devon Energy Corporation,62.5,50.0,93.75,1.96,2.5,5.12,16,4975.36,Not Halal
-4,FIVE,"Five Below, Inc.",66.67,61.11,77.78,1.71,1.75,6.02,18,4892.77,Halal
-5,TTE,TotalEnergies SE,75.0,75.0,75.0,1.17,2.35,5.11,16,4463.53,Not Halal
-6,FSLY,"Fastly, Inc.",30.0,60.0,50.0,-3.05,6.5,16.05,10,3531.28,N/A
-7,MPC,Marathon Petroleum Corporation,33.33,58.33,100.0,-0.01,0.79,9.59,12,2092.28,Not Halal
-8,EC,Ecopetrol S.A.,61.11,38.89,44.44,1.79,0.97,0.12,18,1899.52,Not Halal
-9,CVX,Chevron Corporation,57.89,73.68,78.95,-0.27,-0.33,3.53,19,616.37,Halal
-10,E,Eni S.p.A.,57.14,42.86,85.71,-0.48,-0.81,2.55,7,-82.82,Not Halal
-11,LYB,LyondellBasell Industries N.V.,25.0,0.0,62.5,-1.9,-3.09,9.4,8,-208.68,Not Halal
-12,PSX,Phillips 66,38.46,46.15,76.92,-1.7,-1.66,5.51,13,-594.87,Not Halal
-13,USO,"United States Oil Fund, LP",0.0,12.5,0.0,-7.12,-6.34,-6.3,8,-732.51,Not Covered
-14,OXY,Occidental Petroleum Corporation,0.0,33.33,33.33,-4.07,-3.75,0.82,3,-767.17,Not Halal
-15,PDBC,Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF,12.5,0.0,37.5,-3.46,-3.18,-0.22,8,-887.81,Not Covered
-16,DOW,Dow Inc.,30.77,7.69,46.15,-1.07,-3.9,-0.6,13,-1247.55,Not Halal
-17,CF,"CF Industries Holdings, Inc.",11.11,22.22,22.22,-4.26,-3.16,-2.75,9,-1557.75,Not Halal
-18,EQNR,Equinor ASA,12.5,12.5,12.5,-6.07,-4.92,-1.12,8,-1657.32,Not Halal
-19,DOCN,"DigitalOcean Holdings, Inc.",44.44,55.56,50.0,-2.3,-0.73,1.73,18,-1691.44,Not Halal
-20,SHEL,Shell plc,37.5,37.5,37.5,-0.94,-5.91,-1.64,8,-1889.07,Not Halal
-21,AXTI,"AXT, Inc.",0.0,28.57,57.14,-12.24,-6.59,28.5,7,-2518.29,Not Halal
-22,SEDG,"SolarEdge Technologies, Inc.",28.57,35.71,57.14,-6.19,-5.63,-3.56,14,-7367.82,Not Covered
+Rank,Ticker,Company,WinRate_5d,WinRate_10d,WinRate_20d,AvgRet_5d,AvgRet_10d,AvgRet_20d,Sample,Sniper_Score,Sharia
+1,CNQ,Canadian Natural Resources Limited,100.0,100.0,100.0,3.84,8.5,18.25,8,18308.32,Halal
+2,CVE,Cenovus Energy Inc.,66.67,94.44,88.89,1.32,4.97,8.56,18,8569.57,Not Halal
+3,PBR,Petróleo Brasileiro S.A. - Petrobras,63.64,63.64,90.91,2.64,2.31,10.59,11,6699.76,Not Halal
+4,SU,Suncor Energy Inc.,73.68,73.68,84.21,1.26,2.46,5.12,19,5140.58,Halal
+5,DVN,Devon Energy Corporation,62.5,50.0,93.75,1.96,2.5,5.08,16,4962.92,Not Halal
+6,FIVE,"Five Below, Inc.",66.67,61.11,77.78,1.71,1.75,6.02,18,4892.77,Halal
+7,TTE,TotalEnergies SE,75.0,75.0,75.0,1.17,2.35,5.11,16,4463.53,Not Halal
+8,FSLY,"Fastly, Inc.",30.0,60.0,50.0,-3.05,6.5,16.3,10,3575.64,Halal
+9,VLO,Valero Energy Corporation,60.0,60.0,80.0,1.49,2.08,4.68,10,3095.12,Halal
+10,MPC,Marathon Petroleum Corporation,33.33,58.33,100.0,-0.01,0.79,9.59,12,2092.28,Not Halal
+11,EC,Ecopetrol S.A.,61.11,38.89,44.44,1.79,0.97,0.12,18,1899.52,Not Halal
+12,COP,ConocoPhillips,45.45,72.73,81.82,-0.65,0.12,5.65,11,847.65,Halal
+13,CVX,Chevron Corporation,55.56,72.22,77.78,-0.33,-0.61,3.2,18,282.03,Halal
+14,E,Eni S.p.A.,57.14,42.86,85.71,-0.48,-0.81,2.55,7,-82.82,Not Halal
+15,LYB,LyondellBasell Industries N.V.,25.0,0.0,62.5,-1.9,-3.09,9.4,8,-208.68,Not Halal
+16,DBA,Invesco DB Agriculture Fund,66.67,33.33,46.67,0.11,-0.46,-1.29,15,-387.71,Not Covered
+17,PSX,Phillips 66,38.46,46.15,76.92,-1.7,-1.66,5.51,13,-594.87,Not Halal
+18,USO,"United States Oil Fund, LP",0.0,12.5,0.0,-7.12,-6.34,-6.3,8,-732.51,Not Covered
+19,OXY,Occidental Petroleum Corporation,0.0,33.33,33.33,-4.07,-3.75,0.77,3,-769.2,Not Halal
+20,PDBC,Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF,12.5,0.0,37.5,-3.46,-3.18,-0.22,8,-887.81,Not Covered
+21,DOW,Dow Inc.,30.77,7.69,46.15,-1.07,-3.9,-0.6,13,-1247.55,Not Halal
+22,CF,"CF Industries Holdings, Inc.",11.11,22.22,22.22,-4.26,-3.16,-3.14,9,-1585.55,Not Halal
+23,EQNR,Equinor ASA,12.5,12.5,12.5,-6.07,-4.92,-1.46,8,-1676.64,Not Halal
+24,DOCN,"DigitalOcean Holdings, Inc.",44.44,55.56,50.0,-2.3,-0.73,1.73,18,-1691.44,Not Halal
+25,SHEL,Shell plc,37.5,37.5,37.5,-0.94,-5.91,-1.64,8,-1889.07,Not Halal
+26,FANG,"Diamondback Energy, Inc.",45.45,36.36,45.45,-2.21,-2.6,-1.55,11,-2314.89,Not Halal
+27,AXTI,"AXT, Inc.",0.0,28.57,57.14,-12.24,-6.59,28.5,7,-2518.29,Not Halal
+28,AKAM,"Akamai Technologies, Inc.",25.0,35.0,35.0,-3.82,-3.03,-1.94,20,-3608.17,Not Halal
+29,SEDG,"SolarEdge Technologies, Inc.",28.57,35.71,57.14,-6.19,-5.63,-3.56,14,-7367.82,Not Covered

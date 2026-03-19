@@ -140,7 +140,7 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
 
     col_names = [
         "Rank", "Ticker", "Last_Price", "Momentum_14d", "Vol_Surge",
-        "Range_Pos_325", "Quant_Score", "Threshold", "Distance_%", "Z_Score"
+        "Range_Pos_325", "Radar_Score", "Threshold", "Distance_%", "Z_Score"
     ]
 
     header = "".join(f"<th>{c}</th>" for c in col_names)
@@ -183,9 +183,9 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     """Build the bulk sniper HTML — Runner Performance Protocol."""
 
     col_names = [
-        "Swing_Rank", "Ticker", "WinRate_5d", "WinRate_10d", "WinRate_20d",
+        "Rank", "Ticker", "WinRate_5d", "WinRate_10d", "WinRate_20d",
         "AvgRet_5d", "AvgRet_10d", "AvgRet_20d",
-        "Sample_Signals", "Swing_Score", "Sharia"
+        "Sample", "Sniper_Score", "Sharia"
     ]
 
     header = "".join(f"<th>{c}</th>" for c in col_names)
@@ -193,7 +193,7 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
 
     for i, row in summary_df.iterrows():
         cells = [
-            _td(row["Swing_Rank"], "color:#aaaaaa;"),
+            _td(row["Rank"], "color:#aaaaaa;"),
             _td(f'<a href="html/{row["Ticker"]}.html" style="color:#ff8c00;text-decoration:none;font-weight:bold;">{row["Ticker"]}</a>'),
             _td(row["WinRate_5d"],  _color_winrate(float(row["WinRate_5d"]))),
             _td(row["WinRate_10d"], _color_winrate(float(row["WinRate_10d"]))),
@@ -201,8 +201,8 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
             _td(row["AvgRet_5d"],   _color_return(float(row["AvgRet_5d"]))),
             _td(row["AvgRet_10d"],  _color_return(float(row["AvgRet_10d"]))),
             _td(row["AvgRet_20d"],  _color_return(float(row["AvgRet_20d"]))),
-            _td(row["Sample_Signals"], "color:#ffffff;"),
-            _td(row["Swing_Score"],    "color:#ff8c00;font-weight:bold;"),
+            _td(row["Sample"], "color:#ffffff;"),
+            _td(row["Sniper_Score"],    "color:#ff8c00;font-weight:bold;"),
             _td(row["Sharia"],         _color_sharia(str(row["Sharia"]))),
         ]
         rows.append(f'<tr>{"".join(cells)}</tr>')
@@ -365,7 +365,7 @@ def build_single_dashboard(result: dict) -> str:
     price   = meta["current_price"]
     score   = meta["current_score"]
     thr     = meta["threshold"]
-    swing   = meta["swing_score"]
+    sniper  = meta["sniper_score"]
     verdict = meta["verdict"]
     sharia  = meta["sharia"]
 
@@ -399,8 +399,8 @@ def build_single_dashboard(result: dict) -> str:
                 <p>⚡ Status: <span class="{status_cls}">{status_label}</span></p>
             </div>
             <div class="verdict-box">
-                <span class="score-label">Historical Swing Score</span>
-                <div class="score-value">{swing}</div>
+                <span class="score-label">Historical Sniper Score</span>
+                <div class="score-value">{sniper}</div>
                 <div class="verdict-text">{verdict}</div>
             </div>
         </div>

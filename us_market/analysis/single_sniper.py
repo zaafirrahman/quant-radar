@@ -123,13 +123,13 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
     win_factor      = (wr5 * 0.5) + (wr10 * 0.3) + (wr20 * 0.2)
     volatility_boost = abs(ar5)
     signal_boost    = math.sqrt(n)
-    swing_score     = round(momentum * win_factor * signal_boost * (1 + volatility_boost / 10), 2)
+    sniper_score     = round(momentum * win_factor * signal_boost * (1 + volatility_boost / 10), 2)
 
-    if swing_score > 500:
+    if sniper_score > 500:
         verdict = "💎 S-TIER: EMITEN MONSTER (High Conviction)"
-    elif swing_score > 200:
+    elif sniper_score > 200:
         verdict = "🥇 A-TIER: SANGAT LAYAK SWING"
-    elif swing_score > 50:
+    elif sniper_score > 50:
         verdict = "🥈 B-TIER: LUMAYAN (Moderate)"
     else:
         verdict = "🥉 C-TIER: KURANG HISTORIS / BERISIKO"
@@ -155,12 +155,12 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
         "AvgRet_5d":       ar5,
         "AvgRet_10d":      ar10,
         "AvgRet_20d":      ar20,
-        "Sample_Signals":  n,
-        "Swing_Score":     swing_score,
+        "Sample":  n,
+        "Sniper_Score":     sniper_score,
         "Sharia":          sharia,
     }
 
-    print(f"  ✅ {ticker} done — Swing Score: {swing_score} | Sharia: {sharia}")
+    print(f"  ✅ {ticker} done — Swing Score: {sniper_score} | Sharia: {sharia}")
 
     return {
         "summary":       summary,
@@ -174,7 +174,7 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
             "current_price": current_price,
             "current_score": current_score,
             "threshold":     threshold,
-            "swing_score":   swing_score,
+            "sniper_score":   sniper_score,
             "verdict":       verdict,
             "sharia":        sharia,
         },

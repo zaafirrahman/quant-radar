@@ -63,7 +63,7 @@ def main():
     sniper_candidates_path = radar_dir / "sniper_candidates.csv"
     candidates.to_csv(sniper_candidates_path, index=False)
     print(f"\n🎯 Candidates passed (Distance > 0): {len(candidates)}")
-    print(candidates[["Ticker", "Quant_Score", "Distance_%"]].to_string(index=False))
+    print(candidates[["Ticker", "Radar_Score", "Distance_%"]].to_string(index=False))
     print(f"🧠 Candidates saved: {sniper_candidates_path}")
 
     if candidates.empty:

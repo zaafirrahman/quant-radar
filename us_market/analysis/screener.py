@@ -58,7 +58,7 @@ def run_screener(tickers):
                 "Vol_Surge": round(last["VOL_SURGE"], 2),
                 "Range_Pos_325": round(last["RANGE_POS"], 4),
 
-                "Quant_Score": round(current_score, 4),
+                "Radar_Score": round(current_score, 4),
                 "Threshold": round(threshold, 4),
                 "Distance_%": round(distance_pct * 100, 2),
                 "Z_Score": round(z_score, 2)
