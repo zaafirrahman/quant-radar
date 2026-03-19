@@ -1,0 +1,186 @@
+<html><head><title>Sniper — PBR</title><style>@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "IBM Plex Mono", "Cascadia Code", monospace;
+    background: #000000;
+    color: #cccccc;
+    padding: 36px;
+}
+
+h2 {
+    font-size: 28px;
+    letter-spacing: 5px;
+    color: #ffffff;
+    font-weight: 400;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.subtitle {
+    text-align: center;
+    color: #555555;
+    font-size: 13px;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0a0a0a;
+    border: 1px solid #222222;
+}
+
+th {
+    background: #111111;
+    color: #ffffff;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 14px;
+    border-bottom: 1px solid #333333;
+    border-right: 1px solid #1a1a1a;
+    font-weight: 400;
+}
+
+th:last-child { border-right: none; }
+
+td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #1a1a1a;
+    border-right: 1px solid #141414;
+    font-size: 15px;
+}
+
+td:last-child  { border-right: none; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #111111; }
+
+tr.top5 td { background: #0d0d0d; }
+tr.top5:hover td { background: #161616; }
+
+.nav-btn {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #000000;
+    background: #ff8c00;
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 999;
+    transition: background 0.15s ease;
+}
+.nav-btn:hover { background: #ffaa33; }
+
+.status-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 36px;
+}
+.status-box {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #222;
+    border-top: 3px solid #ff8c00;
+    padding: 24px;
+    line-height: 2;
+    font-size: 15px;
+}
+.verdict-box {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #ff8c00;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+}
+.score-value {
+    font-size: 52px;
+    font-weight: 600;
+    color: #ff8c00;
+    line-height: 1;
+}
+.verdict-text {
+    font-size: 15px;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+.score-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #555;
+    text-transform: uppercase;
+}
+.section-title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ff8c00;
+    border-left: 3px solid #ff8c00;
+    padding-left: 12px;
+    margin: 36px 0 14px;
+}
+.meledak {
+    color: #ff8c00;
+    font-weight: bold;
+    animation: blink 1.5s infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+}
+.footer {
+    color: #333;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 60px;
+    letter-spacing: 1px;
+}
+</style></head><body>
+        <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
+        <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
+            Petróleo Brasileiro S.A. - Petrobras
+            <a href="https://finance.yahoo.com/quote/PBR/" target="_blank"
+               style="color:#ff8c00;text-decoration:none;">(PBR)</a>
+        </h2>
+        <p class="subtitle" style="text-align:left;margin-bottom:28px;">
+            Sharia: <span style="color:#ff4d4d;font-weight:bold;">Not Halal</span>
+        </p>
+
+        <div class="status-container">
+            <div class="status-box">
+                <p>💵 Harga Terakhir: <b style="color:#ffffff;">19.77</b></p>
+                <p>🎯 Skor Saat Ini: <b style="font-size:22px;color:#ff8c00;">2.58</b></p>
+                <p>🛡️ Threshold (95%): <span style="color:#aaaaaa;">2.32</span></p>
+                <p>⚡ Status: <span class="meledak">🔥 MELEDAK — SIAP EKSEKUSI</span></p>
+            </div>
+            <div class="verdict-box">
+                <span class="score-label">Historical Swing Score</span>
+                <div class="score-value">4820.25</div>
+                <div class="verdict-text">💎 S-TIER: EMITEN MONSTER (High Conviction)</div>
+            </div>
+        </div>
+
+        <div class="section-title">📊 Rata-Rata Performa Strategi</div>
+        <table><thead><tr><th></th><th>Avg Return (%)</th><th>Win Rate (%)</th></tr></thead><tbody><tr><td style="color:#555555;">5-Day</td><td style="color:#00ff88;font-weight:bold;">2.00</td><td style="color:#7CFC00;">58.33</td></tr><tr><td style="color:#555555;">10-Day</td><td style="color:#00ff88;font-weight:bold;">1.71</td><td style="color:#7CFC00;">58.33</td></tr><tr><td style="color:#555555;">20-Day</td><td style="color:#00ff88;font-weight:bold;">8.89</td><td style="color:#00ff88;font-weight:bold;">83.33</td></tr></tbody></table>
+
+        <div class="section-title">📅 10 Recent Signals — Regime Check</div>
+        <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2026-01-21</td><td style="color:#ff8c00;font-weight:bold;">3.94</td><td style="color:#ffffff;">13.51</td><td style="color:#00ff88;font-weight:bold;">13.84</td><td style="color:#00ff88;font-weight:bold;">12.07</td><td style="color:#00ff88;font-weight:bold;">16.65</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-22</td><td style="color:#ff8c00;font-weight:bold;">3.74</td><td style="color:#ffffff;">13.77</td><td style="color:#00ff88;font-weight:bold;">12.71</td><td style="color:#00ff88;font-weight:bold;">8.21</td><td style="color:#00ff88;font-weight:bold;">14.67</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-23</td><td style="color:#ff8c00;font-weight:bold;">3.46</td><td style="color:#ffffff;">14.28</td><td style="color:#00ff88;font-weight:bold;">7.42</td><td style="color:#00ff88;font-weight:bold;">4.13</td><td style="color:#00ff88;font-weight:bold;">13.03</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-26</td><td style="color:#ff8c00;font-weight:bold;">2.85</td><td style="color:#ffffff;">14.34</td><td style="color:#00ff88;font-weight:bold;">4.81</td><td style="color:#00ff88;font-weight:bold;">6.49</td><td style="color:#00ff88;font-weight:bold;">15.34</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-27</td><td style="color:#ff8c00;font-weight:bold;">5.41</td><td style="color:#ffffff;">15.02</td><td style="color:#00ff88;font-weight:bold;">1.73</td><td style="color:#00ff88;font-weight:bold;">2.06</td><td style="color:#00ff88;font-weight:bold;">11.25</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-28</td><td style="color:#ff8c00;font-weight:bold;">5.85</td><td style="color:#ffffff;">15.38</td><td style="color:#ff4d4d;font-weight:bold;">-1.56</td><td style="color:#00ff88;font-weight:bold;">2.93</td><td style="color:#00ff88;font-weight:bold;">8.0</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-29</td><td style="color:#ff8c00;font-weight:bold;">5.32</td><td style="color:#ffffff;">15.52</td><td style="color:#ff4d4d;font-weight:bold;">-3.99</td><td style="color:#ff4d4d;font-weight:bold;">-1.74</td><td style="color:#00ff88;font-weight:bold;">7.15</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-30</td><td style="color:#ff8c00;font-weight:bold;">4.21</td><td style="color:#ffffff;">15.34</td><td style="color:#ff4d4d;font-weight:bold;">-3.06</td><td style="color:#ff4d4d;font-weight:bold;">-0.98</td><td style="color:#00ff88;font-weight:bold;">12.91</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-02</td><td style="color:#ff8c00;font-weight:bold;">3.57</td><td style="color:#ffffff;">15.03</td><td style="color:#00ff88;font-weight:bold;">1.6</td><td style="color:#ff4d4d;font-weight:bold;">-0.07</td><td style="color:#00ff88;font-weight:bold;">12.84</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-03</td><td style="color:#ff8c00;font-weight:bold;">3.03</td><td style="color:#ffffff;">15.28</td><td style="color:#00ff88;font-weight:bold;">0.33</td><td style="color:#00ff88;font-weight:bold;">0.07</td><td style="color:#00ff88;font-weight:bold;">9.75</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
+
+        <div class="section-title">🏆 The Complete Power Ranking</div>
+        <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2026-01-28</td><td style="color:#ff8c00;font-weight:bold;">5.85</td><td style="color:#ffffff;">15.38</td><td style="color:#ff4d4d;font-weight:bold;">-1.56</td><td style="color:#00ff88;font-weight:bold;">2.93</td><td style="color:#00ff88;font-weight:bold;">8.0</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-27</td><td style="color:#ff8c00;font-weight:bold;">5.41</td><td style="color:#ffffff;">15.02</td><td style="color:#00ff88;font-weight:bold;">1.73</td><td style="color:#00ff88;font-weight:bold;">2.06</td><td style="color:#00ff88;font-weight:bold;">11.25</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-29</td><td style="color:#ff8c00;font-weight:bold;">5.32</td><td style="color:#ffffff;">15.52</td><td style="color:#ff4d4d;font-weight:bold;">-3.99</td><td style="color:#ff4d4d;font-weight:bold;">-1.74</td><td style="color:#00ff88;font-weight:bold;">7.15</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2024-08-26</td><td style="color:#ff8c00;font-weight:bold;">4.92</td><td style="color:#ffffff;">13.53</td><td style="color:#ff4d4d;font-weight:bold;">-4.79</td><td style="color:#ff4d4d;font-weight:bold;">-7.8</td><td style="color:#ff4d4d;font-weight:bold;">-5.11</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-01-30</td><td style="color:#ff8c00;font-weight:bold;">4.21</td><td style="color:#ffffff;">15.34</td><td style="color:#ff4d4d;font-weight:bold;">-3.06</td><td style="color:#ff4d4d;font-weight:bold;">-0.98</td><td style="color:#00ff88;font-weight:bold;">12.91</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-21</td><td style="color:#ff8c00;font-weight:bold;">3.94</td><td style="color:#ffffff;">13.51</td><td style="color:#00ff88;font-weight:bold;">13.84</td><td style="color:#00ff88;font-weight:bold;">12.07</td><td style="color:#00ff88;font-weight:bold;">16.65</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-22</td><td style="color:#ff8c00;font-weight:bold;">3.74</td><td style="color:#ffffff;">13.77</td><td style="color:#00ff88;font-weight:bold;">12.71</td><td style="color:#00ff88;font-weight:bold;">8.21</td><td style="color:#00ff88;font-weight:bold;">14.67</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-02</td><td style="color:#ff8c00;font-weight:bold;">3.57</td><td style="color:#ffffff;">15.03</td><td style="color:#00ff88;font-weight:bold;">1.6</td><td style="color:#ff4d4d;font-weight:bold;">-0.07</td><td style="color:#00ff88;font-weight:bold;">12.84</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-23</td><td style="color:#ff8c00;font-weight:bold;">3.46</td><td style="color:#ffffff;">14.28</td><td style="color:#00ff88;font-weight:bold;">7.42</td><td style="color:#00ff88;font-weight:bold;">4.13</td><td style="color:#00ff88;font-weight:bold;">13.03</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-03</td><td style="color:#ff8c00;font-weight:bold;">3.03</td><td style="color:#ffffff;">15.28</td><td style="color:#00ff88;font-weight:bold;">0.33</td><td style="color:#00ff88;font-weight:bold;">0.07</td><td style="color:#00ff88;font-weight:bold;">9.75</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-26</td><td style="color:#ff8c00;font-weight:bold;">2.85</td><td style="color:#ffffff;">14.34</td><td style="color:#00ff88;font-weight:bold;">4.81</td><td style="color:#00ff88;font-weight:bold;">6.49</td><td style="color:#00ff88;font-weight:bold;">15.34</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2024-11-22</td><td style="color:#ff8c00;font-weight:bold;">2.34</td><td style="color:#ffffff;">12.88</td><td style="color:#ff4d4d;font-weight:bold;">-5.1</td><td style="color:#ff4d4d;font-weight:bold;">-4.83</td><td style="color:#ff4d4d;font-weight:bold;">-9.85</td><td style="color:#ff4d4d;">❌ LOS</td></tr></tbody></table>
+
+        <p class="footer">Generated 2026-03-19 12:59:51</p>
+    </body></html>
