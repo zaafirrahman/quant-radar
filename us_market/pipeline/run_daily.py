@@ -1,3 +1,4 @@
+import shutil
 from datetime import datetime
 from pathlib import Path
 
@@ -24,6 +25,20 @@ def main():
     radar_dir.mkdir(parents=True, exist_ok=True)
     sniper_dir.mkdir(parents=True, exist_ok=True)
     html_dir.mkdir(parents=True, exist_ok=True)
+
+    # Clear stale sniper outputs
+    for f in html_dir.glob("*.html"):
+        f.unlink()
+
+    signals_dir = sniper_dir / "signals"
+    if signals_dir.exists():
+        shutil.rmtree(signals_dir)
+        signals_dir.mkdir()
+
+    # Opsional: clear summary juga
+    summary_path = sniper_dir / "sniper_summary.csv"
+    if summary_path.exists():
+        summary_path.unlink()
 
     # ──────────────────────────────────────────
     #  1. SCREENER

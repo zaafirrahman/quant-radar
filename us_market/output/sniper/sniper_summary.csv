@@ -1,4 +1,18 @@
 Swing_Rank,Ticker,Company,WinRate_5d,WinRate_10d,WinRate_20d,AvgRet_5d,AvgRet_10d,AvgRet_20d,Sample_Signals,Swing_Score,Sharia
-1,MU,"Micron Technology, Inc.",61.9,61.9,76.19,1.94,7.12,11.77,21,11278.31,Halal
-2,EC,Ecopetrol S.A.,63.16,36.84,47.37,2.04,0.77,0.18,19,2143.91,Not Halal
-3,EQNR,Equinor ASA,12.5,12.5,12.5,-6.07,-4.92,-1.24,8,-1664.14,Not Halal
+1,CNQ,Canadian Natural Resources Limited,100.0,100.0,100.0,3.84,8.5,18.46,8,18390.52,N/A
+2,CVE,Cenovus Energy Inc.,66.67,94.44,88.89,1.32,4.97,8.66,18,8607.72,Not Halal
+3,DVN,Devon Energy Corporation,62.5,50.0,93.75,1.96,2.5,5.19,16,4997.13,Not Halal
+4,FIVE,"Five Below, Inc.",66.67,61.11,77.78,1.71,1.75,6.02,18,4892.77,Halal
+5,TTE,TotalEnergies SE,75.0,75.0,75.0,1.17,2.35,5.11,16,4463.53,Not Halal
+6,MPC,Marathon Petroleum Corporation,33.33,58.33,100.0,-0.01,0.79,9.59,12,2092.28,Not Halal
+7,EC,Ecopetrol S.A.,61.11,38.89,44.44,1.79,0.97,0.12,18,1899.52,Not Halal
+8,E,Eni S.p.A.,57.14,42.86,85.71,-0.48,-0.81,2.55,7,-82.82,Not Halal
+9,OXY,Occidental Petroleum Corporation,33.33,33.33,33.33,-0.98,-1.9,3.46,3,-207.91,Not Halal
+10,LYB,LyondellBasell Industries N.V.,25.0,0.0,62.5,-1.9,-3.09,9.4,8,-208.68,Not Halal
+11,USO,"United States Oil Fund, LP",0.0,12.5,0.0,-7.12,-6.34,-6.3,8,-732.51,Not Covered
+12,PDBC,Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF,12.5,0.0,37.5,-3.46,-3.18,-0.22,8,-887.81,Not Covered
+13,DOW,Dow Inc.,30.77,7.69,46.15,-1.07,-3.9,-0.6,13,-1247.55,Not Halal
+14,CF,"CF Industries Holdings, Inc.",11.11,22.22,22.22,-4.26,-3.16,-2.74,9,-1557.04,N/A
+15,EQNR,Equinor ASA,12.5,12.5,12.5,-6.07,-4.92,-1.09,8,-1655.62,N/A
+16,DOCN,"DigitalOcean Holdings, Inc.",44.44,55.56,50.0,-2.3,-0.73,1.73,18,-1691.44,Not Halal
+17,SHEL,Shell plc,37.5,37.5,37.5,-0.94,-5.91,-1.64,8,-1889.07,Not Halal

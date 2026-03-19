@@ -21,9 +21,7 @@
         }
 
         /* ── HEADER ── */
-        header {
-            padding: 64px 20px 0;
-        }
+        header { padding: 64px 20px 0; }
 
         .header-title {
             display: inline-flex;
@@ -53,12 +51,23 @@
             letter-spacing: 1.5px;
         }
 
+        .last-run {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #333333;
+            letter-spacing: 1px;
+        }
+
+        .last-run span {
+            color: #ff8c00;
+        }
+
         /* ── CARDS ── */
         .container {
             display: flex;
             justify-content: center;
             gap: 32px;
-            margin-top: 60px;
+            margin-top: 56px;
             flex-wrap: wrap;
             padding: 0 20px;
         }
@@ -67,7 +76,6 @@
             width: 260px;
             background: #0a0a0a;
             border: 1px solid #222222;
-            border-top: 3px solid #333333;
             padding: 28px 24px;
             text-decoration: none;
             color: #cccccc;
@@ -75,8 +83,6 @@
             position: relative;
         }
 
-        /* US card */
-        .card.us { border-top-color: #00ff88; }
         .card.us:hover {
             border-color: #00ff88;
             transform: translateY(-4px);
@@ -84,14 +90,12 @@
         }
         .card.us .card-status { color: #00ff88; }
 
-        /* ID card */
-        .card.id { border-top-color: #ff4444; }
         .card.id:hover {
             border-color: #ff4444;
             transform: translateY(-4px);
             box-shadow: 0 0 24px rgba(255, 68, 68, 0.2);
         }
-        .card.id .card-status { color: #ff4444; }
+        .card.id .card-status { color: #444444; }
 
         .logo  { width: 60px; height: 60px; object-fit: contain; margin-bottom: 16px; }
         .logo2 { width: 70px; height: 60px; object-fit: contain; margin-bottom: 16px; }
@@ -127,11 +131,10 @@
 
         /* ── ABOUT ── */
         .about {
-            max-width: 680px;
+            max-width: 620px;
             margin: 72px auto 0;
             padding: 40px 20px;
             border-top: 1px solid #1a1a1a;
-            text-align: left;
             line-height: 1.9;
         }
 
@@ -141,22 +144,39 @@
             letter-spacing: 4px;
             text-transform: uppercase;
             margin-bottom: 20px;
-            text-align: center;
         }
 
         .about p {
-            font-size: 13px;
-            color: #777777;
-            margin-bottom: 16px;
+            font-size: 12px;
+            color: #555555;
+            margin-bottom: 12px;
+            text-align: center;
         }
 
         /* ── FOOTER ── */
         footer {
-            margin: 60px auto 40px;
+            margin: 52px auto 40px;
             font-size: 11px;
             color: #333333;
             letter-spacing: 1px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 0 20px;
         }
+
+        footer a {
+            color: #444444;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        footer a:hover { color: #ff8c00; }
+
+        .footer-divider { color: #222222; }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
@@ -170,9 +190,7 @@
             }
 
             .card { width: 100%; max-width: 320px; }
-
             .about { padding: 40px 24px; }
-            .about p { font-size: 14px; }
         }
     </style>
 </head>
@@ -182,9 +200,10 @@
     <header>
         <div class="header-title">
             <img src="assets/logo.png" alt="Quant Radar Logo">
-            <h1>Quant<span style="color: #ff8c00;">●</span>Radar</h1>
+            <h1>Quant<span style="color:#ff8c00;">●</span>Radar</h1>
         </div>
         <p class="subtitle">Momentum Detection &amp; Statistical Edge Validation System</p>
+        <p class="last-run" id="lastRun">Last Run: —</p>
     </header>
 
     <div class="container">
@@ -204,7 +223,7 @@
             <div class="card-title">ID Market</div>
             <div class="card-count">950 Listed Stocks</div>
             <div class="card-exchange">Indonesia Stock Exchange</div>
-            <div class="card-status">● Recorded Daily @ 18.00 WIB</div>
+            <div class="card-status">◌ Coming Soon</div>
         </a>
 
     </div>
@@ -212,23 +231,38 @@
     <div class="about">
         <h2>About This System</h2>
         <p>
-            Quant Radar is a research-driven market intelligence system designed to identify
-            high-momentum assets and validate their statistical edge through event-based backtesting.
+            A research-driven market intelligence system that identifies high-momentum assets
+            and validates their statistical edge through event-based backtesting.
         </p>
         <p>
-            The system operates in two layers: a Radar Engine that detects abnormal momentum and
-            flow activity, and a Sniper Engine that evaluates the reliability of these signals
-            using historical performance metrics.
+            Radar Engine scans for abnormal momentum and flow activity.
+            Sniper Engine evaluates signal reliability using historical performance metrics.
         </p>
-        <p>
-            Built for systematic analysis, this platform aims to bridge the gap between market
-            scanning and data-driven decision making.
-        </p>
+        <p>Built for systematic, data-driven decision making.</p>
     </div>
 
     <footer>
-        © 2026 Quant Radar System — Built for Research &amp; Exploration
+        <span>© 2026 Quant Radar System</span>
+        <span class="footer-divider">|</span>
+        <a href="https://github.com/zaafirrahman/quant-radar" target="_blank">GitHub ↗</a>
+        <span class="footer-divider">|</span>
+        <span>Built for Research &amp; Exploration</span>
     </footer>
+
+    <script>
+        // Read last run timestamp from us_radar HTML meta or fallback to radar CSV date
+        // For now, fetch the radar HTML and parse the generated timestamp
+        fetch('./us_market/output/radar/us_radar.html')
+            .then(r => r.text())
+            .then(html => {
+                const match = html.match(/Generated\s+([\d\-]+ [\d:]+)/);
+                if (match) {
+                    document.getElementById('lastRun').innerHTML =
+                        'Last Run: <span>' + match[1] + ' EDT</span>';
+                }
+            })
+            .catch(() => {});
+    </script>
 
 </body>
 </html>
