@@ -205,7 +205,7 @@
                 const match = html.match(/Generated\s+([\d\-]+ [\d:]+)/);
                 if (match) {
                     document.getElementById('lastRun').innerHTML =
-                        'Last Run: <span>' + match[1] + ' WIB</span>';
+                        'Last Run: <span>' + match[1] + ' UTC</span>';
                 }
             })
             .catch(() => {});
