@@ -1,4 +1,4 @@
-Rank,Ticker,Company,WR5,WR10,WR20,AVG5,AVG10,AVG20,Sample,Sniper_Score,Sharia
+Rank,Ticker,Company,WR_5,WR_10,WR_20,AVG_5,AVG_10,AVG_20,Sample,Sniper_Score,Sharia
 1,CNQ,Canadian Natural Resources Limited,100.0,100.0,100.0,3.84,8.5,18.25,8,18308.32,Halal
 2,CVE,Cenovus Energy Inc.,66.67,94.44,88.89,1.32,4.97,8.56,18,8569.57,Not Halal
 3,PBR,Petróleo Brasileiro S.A. - Petrobras,63.64,63.64,90.91,2.64,2.31,10.59,11,6699.76,Not Halal

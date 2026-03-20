@@ -183,8 +183,8 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     """Build the bulk sniper HTML — Runner Performance Protocol."""
 
     col_names = [
-        "Rank", "Ticker", "WR5", "WR10", "WR20",
-        "AVG5", "AVG10", "AVG20",
+        "Rank", "Ticker", "WR_5", "WR_10", "WR_20",
+        "AVG_5", "AVG_10", "AVG_20",
         "Sample", "Sniper_Score", "Sharia"
     ]
 
@@ -195,12 +195,12 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         cells = [
             _td(row["Rank"], "color:#aaaaaa;"),
             _td(f'<a href="html/{row["Ticker"]}.html" style="color:#ff8c00;text-decoration:none;font-weight:bold;">{row["Ticker"]}</a>'),
-            _td(row["WR5"],  _color_winrate(float(row["WR5"]))),
-            _td(row["WR10"], _color_winrate(float(row["WR10"]))),
-            _td(row["WR20"], _color_winrate(float(row["WR20"]))),
-            _td(row["AVG5"],   _color_return(float(row["AVG5"]))),
-            _td(row["AVG10"],  _color_return(float(row["AVG10"]))),
-            _td(row["AVG20"],  _color_return(float(row["AVG20"]))),
+            _td(row["WR_5"],  _color_winrate(float(row["WR_5"]))),
+            _td(row["WR_10"], _color_winrate(float(row["WR_10"]))),
+            _td(row["WR_20"], _color_winrate(float(row["WR_20"]))),
+            _td(row["AVG_5"],   _color_return(float(row["AVG_5"]))),
+            _td(row["AVG_10"],  _color_return(float(row["AVG_10"]))),
+            _td(row["AVG_20"],  _color_return(float(row["AVG_20"]))),
             _td(row["Sample"], "color:#ffffff;"),
             _td(row["Sniper_Score"],    "color:#ff8c00;font-weight:bold;"),
             _td(row["Sharia"],         _color_sharia(str(row["Sharia"]))),
