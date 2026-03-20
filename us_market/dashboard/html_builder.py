@@ -170,7 +170,10 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
     body = f"""
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀  Back  to  Hub</a><a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
         <h2>Signal Surge Amplifier Grid</h2>
-        <p class="subtitle">Generated {timestamp}</p>
+        <p class="subtitle" style="margin-bottom:12px;">Generated {timestamp}</p>
+        <p class="subtitle" style="color:#ff8c00;">
+            Ranked based on radar - threshold percentage distance
+        </p>
         {table}
     """
     return _wrap_html("Radar — Signal Surge Amplifier Grid", body)
