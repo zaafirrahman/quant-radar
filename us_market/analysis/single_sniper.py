@@ -126,13 +126,13 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
     sniper_score     = round(momentum * win_factor * signal_boost * (1 + volatility_boost / 10), 2)
 
     if sniper_score > 500:
-        verdict = "💎 S-TIER: EMITEN MONSTER (High Conviction)"
+        verdict = "💎 S-TIER: MONSTER ISSUER (High Conviction)"
     elif sniper_score > 200:
-        verdict = "🥇 A-TIER: SANGAT LAYAK SWING"
+        verdict = "🥇 A-TIER: VERY WORTH TO SWING"
     elif sniper_score > 50:
-        verdict = "🥈 B-TIER: LUMAYAN (Moderate)"
+        verdict = "🥈 B-TIER: MODERATE"
     else:
-        verdict = "🥉 C-TIER: KURANG HISTORIS / BERISIKO"
+        verdict = "🥉 C-TIER: LESS HISTORICAL / RISKY"
 
     # ── 6. Sharia compliance ─────────────────────────────────────────────────
     sharia = get_sharia_status(ticker)

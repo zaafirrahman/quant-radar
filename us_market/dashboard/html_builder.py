@@ -278,8 +278,9 @@ _SINGLE_EXTRA_CSS = """
     padding-left: 12px;
     margin: 36px 0 14px;
 }
-.meledak {
+.blinking {
     color: #ff8c00;
+    font-size: 18px;
     font-weight: bold;
     animation: blink 1.5s infinite;
 }
@@ -369,8 +370,8 @@ def build_single_dashboard(result: dict) -> str:
     verdict = meta["verdict"]
     sharia  = meta["sharia"]
 
-    status_label = "🔥 MELEDAK — SIAP EKSEKUSI" if score > thr else "😴 Menunggu Momentum"
-    status_cls   = "meledak" if score > thr else ""
+    status_label = "🔥 READY TO EXECUTE" if score > thr else "😴 Wait for Momentum"
+    status_cls   = "blinking" if score > thr else ""
 
     yahoo_url = f"https://finance.yahoo.com/quote/{ticker}/"
 
@@ -393,8 +394,8 @@ def build_single_dashboard(result: dict) -> str:
 
         <div class="status-container">
             <div class="status-box">
-                <p>💵 Harga Terakhir: <b style="color:#ffffff;">{price:.2f}</b></p>
-                <p>🎯 Skor Saat Ini: <b style="font-size:22px;color:#ff8c00;">{score:.2f}</b></p>
+                <p>💵 Last Price: <b style="color:#ffffff;">{price:.2f}</b></p>
+                <p>🎯 Radar Score: <b style="font-size:22px;color:#ff8c00;">{score:.2f}</b></p>
                 <p>🛡️ Threshold (95%): <span style="color:#aaaaaa;">{thr:.2f}</span></p>
                 <p>⚡ Status: <span class="{status_cls}">{status_label}</span></p>
             </div>
@@ -405,7 +406,7 @@ def build_single_dashboard(result: dict) -> str:
             </div>
         </div>
 
-        <div class="section-title">📊 Rata-Rata Performa Strategi</div>
+        <div class="section-title">📊 Average Strategy Performance</div>
         {stats_table}
 
         <div class="section-title">📅 10 Recent Signals — Regime Check</div>
