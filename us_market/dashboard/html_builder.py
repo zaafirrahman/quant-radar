@@ -1,4 +1,5 @@
 import pandas as pd
+from pathlib import Path
 
 # ══════════════════════════════════════════════════════════════
 #  SHARED STYLE CONSTANTS
@@ -20,7 +21,7 @@ h2 {
     font-size: 28px;
     letter-spacing: 5px;
     color: #ffffff;
-    font-weight: 400;
+    font-weight: bold;
     margin-bottom: 6px;
     text-transform: uppercase;
     text-align: left;
@@ -90,11 +91,10 @@ tr.top5:hover td { background: #161616; }
 .nav-btn:hover { background: #ffaa33; }
 """
 
-
 def _wrap_html(title: str, body: str) -> str:
     style = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
-    return f"<html><head><title>{title}</title>{style}</head><body>{body}</body></html>"
-
+    favicon_link = f'<link rel="icon" type="image/png" href="../../../assets/logo.png">'
+    return f"""<html><head>{favicon_link}<title>{title}</title>{style}</head><body>{body}</body></html>"""
 
 # ══════════════════════════════════════════════════════════════
 #  COLOUR HELPERS
@@ -168,15 +168,15 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
-        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀  Back  to  Hub</a><a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
+        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a><a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
         <h2>Signal Surge Amplifier Grid</h2>
-        <p class="subtitle" style="margin-bottom:12px;">Generated {timestamp}</p>
+        <p class="subtitle" style="margin-bottom:10px;">Generated {timestamp}</p>
         <p class="subtitle" style="color:#ff8c00;">
-            Ranked based on radar - threshold percentage distance
+            Ranked based on radar - threshold distance percentage
         </p>
         {table}
     """
-    return _wrap_html("Radar — Signal Surge Amplifier Grid", body)
+    return _wrap_html("Radar - Signal Surge Amplifier Grid", body)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -214,15 +214,15 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
-        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀  Back  to  Hub</a><a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
+        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀|| Back to Hub</a><a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
         <h2>Runner Performance Protocol</h2>
-        <p class="subtitle" style="margin-bottom:12px;">Generated {timestamp}</p>
-        <p class="subtitle" style="color:#ff8c00;">
-            ↓ Click ticker to see full sniper details
+        <p class="subtitle" style="margin-bottom:10px;">Generated {timestamp}</p>
+        <p class="subtitle" style="color:#ff8c00;font-weight:bold">
+            Click ticker ↓ to see full sniper details
         </p>
         {table}
     """
-    return _wrap_html("Sniper — Runner Performance Protocol", body)
+    return _wrap_html("Sniper - Runner Performance Protocol", body)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -301,6 +301,33 @@ _SINGLE_EXTRA_CSS = """
 }
 """
 
+SECTOR_EMOJI = {
+    "Technology": "💻",
+    "Consumer Cyclical": "🛍️",
+    "Healthcare": "💊",
+    "Financial Services": "💰",
+    "Industrials": "⚙️",
+    "Communication Services": "📡",
+    "Consumer Defensive": "🛒",
+    "Basic Materials": "⛏️",
+    "Energy": "🛢️",
+    "Real Estate": "🏠",
+    "Utilities": "💡",
+    "Exchange Traded Fund": "📦",
+}
+
+def get_ticker_info(ticker: str):
+    base_path = Path(__file__).resolve().parent
+    csv_path = (base_path / "../config/ticker_universe.csv").resolve()
+    df = pd.read_csv(csv_path)
+    row = df[df["ticker"] == ticker]
+    if row.empty:
+        return "Unknown", "❓"
+    sektor = row.iloc[0]["sektor"]
+    industry = row.iloc[0]["industry"]
+    emoji = SECTOR_EMOJI.get(sektor, "❓")
+
+    return industry, emoji
 
 def _build_signal_table(df: pd.DataFrame) -> str:
     """Render a signals DataFrame (recent or power ranking) as an HTML table."""
@@ -385,6 +412,8 @@ def build_single_dashboard(result: dict) -> str:
     recent_table = _build_signal_table(result["recent"].copy())
     power_table  = _build_signal_table(result["power_ranking"].reset_index())
 
+    industry, emoji = get_ticker_info(ticker)
+
     body = f"""
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
         <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
@@ -394,7 +423,9 @@ def build_single_dashboard(result: dict) -> str:
                style="color:#ff8c00;text-decoration:none;">({ticker})</a>
         <strong>
         </h2>
-        
+        <p class="subtitle" style="text-align:left;margin-bottom:6px;font-size:15px;">
+            {emoji} <span style="color: #ff8c00;">{industry}</span>
+        </p>
         <p class="subtitle" style="text-align:left;margin-bottom:28px;font-size:15px;">
             Sharia: <span style="{_color_sharia(sharia)}">{sharia}</span>
         </p>
@@ -425,4 +456,5 @@ def build_single_dashboard(result: dict) -> str:
         <p class="footer">Generated {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
     """
 
-    return f"<html><head><title>Sniper — {ticker}</title>{style}</head><body>{body}</body></html>"
+    favicon_link = f'<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
+    return f"<html><head>{favicon_link}<title>Sniper - {ticker}</title>{style}</head><body>{body}</body></html>"

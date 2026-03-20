@@ -1,0 +1,39 @@
+name: Run Daily Pipeline
+
+on:
+  schedule:
+    - cron: '0 23 * * *'  # 06:00 WIB (UTC+7)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily pipeline
+        run: |
+          python -m us_market.pipeline.run_daily
+
+      - name: Commit & push results
+        run: |
+            git config --global user.name "github-actions"
+            git config --global user.email "actions@github.com"
+            git add .
+            git commit -m "auto update daily report" || echo "no changes to commit"
+            git push origin HEAD
