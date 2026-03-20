@@ -384,11 +384,14 @@ def build_single_dashboard(result: dict) -> str:
     body = f"""
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
         <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
+        <strong>
             {company}
             <a href="{yahoo_url}" target="_blank"
                style="color:#ff8c00;text-decoration:none;">({ticker})</a>
+        <strong>
         </h2>
-        <p class="subtitle" style="text-align:left;margin-bottom:28px;">
+        
+        <p class="subtitle" style="text-align:left;margin-bottom:28px;font-size:15px;">
             Sharia: <span style="{_color_sharia(sharia)}">{sharia}</span>
         </p>
 
