@@ -183,8 +183,8 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     """Build the bulk sniper HTML — Runner Performance Protocol."""
 
     col_names = [
-        "Rank", "Ticker", "WinRate_5d", "WinRate_10d", "WinRate_20d",
-        "AvgRet_5d", "AvgRet_10d", "AvgRet_20d",
+        "Rank", "Ticker", "WR5", "WR10", "WR20",
+        "AVG5", "AVG10", "AVG20",
         "Sample", "Sniper_Score", "Sharia"
     ]
 
@@ -195,12 +195,12 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         cells = [
             _td(row["Rank"], "color:#aaaaaa;"),
             _td(f'<a href="html/{row["Ticker"]}.html" style="color:#ff8c00;text-decoration:none;font-weight:bold;">{row["Ticker"]}</a>'),
-            _td(row["WinRate_5d"],  _color_winrate(float(row["WinRate_5d"]))),
-            _td(row["WinRate_10d"], _color_winrate(float(row["WinRate_10d"]))),
-            _td(row["WinRate_20d"], _color_winrate(float(row["WinRate_20d"]))),
-            _td(row["AvgRet_5d"],   _color_return(float(row["AvgRet_5d"]))),
-            _td(row["AvgRet_10d"],  _color_return(float(row["AvgRet_10d"]))),
-            _td(row["AvgRet_20d"],  _color_return(float(row["AvgRet_20d"]))),
+            _td(row["WR5"],  _color_winrate(float(row["WR5"]))),
+            _td(row["WR10"], _color_winrate(float(row["WR10"]))),
+            _td(row["WR20"], _color_winrate(float(row["WR20"]))),
+            _td(row["AVG5"],   _color_return(float(row["AVG5"]))),
+            _td(row["AVG10"],  _color_return(float(row["AVG10"]))),
+            _td(row["AVG20"],  _color_return(float(row["AVG20"]))),
             _td(row["Sample"], "color:#ffffff;"),
             _td(row["Sniper_Score"],    "color:#ff8c00;font-weight:bold;"),
             _td(row["Sharia"],         _color_sharia(str(row["Sharia"]))),
@@ -210,7 +210,7 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
-        <a href="../../us_hub.html" class="nav-btn" style="right:auto;left:28px;">◀ Hub</a><a href="../radar/us_radar.html" class="nav-btn">Back to Radar ▶</a>
+        <a href="../../us_hub.html" class="nav-btn" style="right:auto;left:28px;">◀ Hub</a><a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
         <h2>Runner Performance Protocol</h2>
         <p class="subtitle">Generated {timestamp}</p>
         <p style="text-align:center;color:#555555;font-size:12px;letter-spacing:1px;margin-bottom:20px;">
