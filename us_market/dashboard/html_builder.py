@@ -294,8 +294,8 @@ _SINGLE_EXTRA_CSS = """
     50%       { opacity: 0.3; }
 }
 .footer {
-    color: #333;
-    font-size: 11px;
+    color: #555555;
+    font-size: 13px;
     text-align: center;
     margin-top: 60px;
     letter-spacing: 1px;
@@ -454,7 +454,7 @@ def build_single_dashboard(result: dict) -> str:
         <div class="section-title">🏆 The Complete Power Ranking</div>
         {power_table}
 
-        <p class="footer">Generated {pd.Timestamp.now(pytz.timezone("US/Eastern")).strftime('%Y-%m-%d %H:%M:%S')}</p>
+        <p class="footer">Generated {pd.Timestamp.now(pytz.timezone("US/Eastern")).strftime('%Y-%m-%d %H:%M:%S')} EDT</p>
     """
 
     favicon_link = f'<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
