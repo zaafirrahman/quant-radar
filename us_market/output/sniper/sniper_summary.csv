@@ -1,5 +1,9 @@
 Rank,Ticker,Company,WR_5,WR_10,WR_20,AVG_5,AVG_10,AVG_20,Sample,Sniper_Score,Sharia
+<<<<<<< HEAD
 1,CNQ,Canadian Natural Resources Limited,100.0,100.0,100.0,3.67,8.39,18.12,7,16604.46,N/A
+=======
+1,CNQ,Canadian Natural Resources Limited,100.0,100.0,100.0,3.67,8.39,18.12,7,16604.46,Halal
+>>>>>>> 2ccb9c7adefbab83fff3f004d03aacff7895588b
 2,CVE,Cenovus Energy Inc.,70.59,94.12,88.24,1.48,5.12,8.58,17,8937.58,Not Halal
 3,DVN,Devon Energy Corporation,62.5,56.25,100.0,2.16,3.06,6.4,16,6295.84,Not Halal
 4,TTE,TotalEnergies SE,80.0,80.0,80.0,1.29,3.34,6.03,15,5799.81,Not Halal
@@ -10,7 +14,11 @@ Rank,Ticker,Company,WR_5,WR_10,WR_20,AVG_5,AVG_10,AVG_20,Sample,Sniper_Score,Sha
 9,EC,Ecopetrol S.A.,61.11,38.89,44.44,1.79,0.97,0.12,18,1899.52,Not Halal
 10,LYB,LyondellBasell Industries N.V.,33.33,11.11,66.67,-1.52,-0.54,11.79,9,708.45,Not Halal
 11,OXY,Occidental Petroleum Corporation,33.33,66.67,66.67,-1.06,-0.57,8.58,3,408.03,Not Halal
+<<<<<<< HEAD
 12,COP,ConocoPhillips,40.0,70.0,80.0,-1.05,-0.32,5.27,10,294.78,N/A
+=======
+12,COP,ConocoPhillips,40.0,70.0,80.0,-1.05,-0.32,5.27,10,294.78,Halal
+>>>>>>> 2ccb9c7adefbab83fff3f004d03aacff7895588b
 13,CVX,Chevron Corporation,58.82,70.59,76.47,-0.33,-0.81,2.86,17,70.15,Halal
 14,USO,"United States Oil Fund, LP",0.0,0.0,0.0,-7.52,-7.35,-7.0,7,-0.0,Not Covered
 15,E,Eni S.p.A.,50.0,33.33,83.33,-0.63,-1.59,2.64,6,-326.9,Not Halal
