@@ -1,3 +1,4 @@
+import pytz
 import shutil
 from datetime import datetime
 from pathlib import Path
@@ -15,7 +16,8 @@ from us_market.dashboard.html_builder import (
 def main():
 
     print("🚀 Running Quant Radar Pipeline...")
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    edt = pytz.timezone("US/Eastern")
+    timestamp = datetime.now(edt).strftime("%Y-%m-%d %H:%M:%S")
 
     BASE_DIR   = Path(__file__).resolve().parents[1]
     radar_dir  = BASE_DIR / "output" / "radar"

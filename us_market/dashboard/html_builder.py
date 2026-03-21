@@ -170,7 +170,7 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
     body = f"""
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a><a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
         <h2>Signal Surge Amplifier Grid</h2>
-        <p class="subtitle" style="margin-bottom:10px;">Generated {timestamp}</p>
+        <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;">
             Ranked based on radar - threshold distance percentage
         </p>
@@ -216,7 +216,7 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     body = f"""
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀|| Back to Hub</a><a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
         <h2>Runner Performance Protocol</h2>
-        <p class="subtitle" style="margin-bottom:10px;">Generated {timestamp}</p>
+        <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;font-weight:bold">
             Click ticker ↓ to see full sniper details
         </p>

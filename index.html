@@ -203,7 +203,7 @@
             <h1>Quant<span style="color:#ff8c00;">●</span>Radar</h1>
         </div>
         <p class="subtitle">Momentum Detection &amp; Statistical Edge Validation System</p>
-        <p class="last-run" id="lastRun">Last Run: —</p>
+        <p class="subtitle" style="font-size:11px;margin-top:8px">by <span style="color:#ff8c00;">Zaafirrahman</span></p>
     </header>
 
     <div class="container">
@@ -248,21 +248,6 @@
         <span class="footer-divider">|</span>
         <span>Built for Research &amp; Exploration</span>
     </footer>
-
-    <script>
-        // Read last run timestamp from us_radar HTML meta or fallback to radar CSV date
-        // For now, fetch the radar HTML and parse the generated timestamp
-        fetch('./us_market/output/radar/us_radar.html')
-            .then(r => r.text())
-            .then(html => {
-                const match = html.match(/Generated\s+([\d\-]+ [\d:]+)/);
-                if (match) {
-                    document.getElementById('lastRun').innerHTML =
-                        'Last Run: <span>' + match[1] + ' UTC</span>';
-                }
-            })
-            .catch(() => {});
-    </script>
 
 </body>
 </html>

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <title>US Market — Quant Radar</title>
+    <title>US Market - Quant Radar</title>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -165,7 +165,7 @@
 
     <h1>US Market</h1>
     <p class="meta">738 Listed Stocks | NASDAQ, NYSE, NYSEArca, CBOE, etc.</p>
-    <p class="meta" style="color:#ff8c00;margin-bottom:16px;">● Recorded Daily @ 18.00 EST</p>
+    <p class="meta" style="color:#ff8c00;margin-bottom:16px;">● Recorded Daily @ 18.00 EDT</p>
     <p class="last-run" id="lastRun">Last Run: —</p>
 
     <div class="btn-group">
@@ -205,7 +205,7 @@
                 const match = html.match(/Generated\s+([\d\-]+ [\d:]+)/);
                 if (match) {
                     document.getElementById('lastRun').innerHTML =
-                        'Last Run: <span>' + match[1] + ' UTC</span>';
+                        'Last Run: <span>' + match[1] + ' EDT</span>';
                 }
             })
             .catch(() => {});
