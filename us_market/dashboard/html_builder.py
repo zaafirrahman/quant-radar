@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import pytz
 
 # ══════════════════════════════════════════════════════════════
 #  SHARED STYLE CONSTANTS
@@ -453,7 +454,7 @@ def build_single_dashboard(result: dict) -> str:
         <div class="section-title">🏆 The Complete Power Ranking</div>
         {power_table}
 
-        <p class="footer">Generated {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+        <p class="footer">Generated {pd.Timestamp.now(pytz.timezone("US/Eastern")).strftime('%Y-%m-%d %H:%M:%S')}</p>
     """
 
     favicon_link = f'<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
