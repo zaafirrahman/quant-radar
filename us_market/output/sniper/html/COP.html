@@ -156,6 +156,70 @@ tr.top5:hover td { background: #161616; }
     margin-top: 60px;
     letter-spacing: 1px;
 }
+
+/* ── TWO-PANEL SECTION ── */
+.two-panel {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 0;
+}
+/* table takes 2/3, side-box takes 1/3 */
+.two-panel-table { flex: 2; min-width: 0; }
+.two-panel-table table {
+    width: 100%;
+    table-layout: fixed;
+}
+/* reliability table: 2 cols, each 50% */
+.two-panel-table.reliability th:nth-child(1),
+.two-panel-table.reliability td:nth-child(1) { width: 50%; }
+.two-panel-table.reliability th:nth-child(2),
+.two-panel-table.reliability td:nth-child(2) { width: 50%; }
+
+/* profitability table: 3 cols, each 33.3% */
+.two-panel-table.profitability th:nth-child(1),
+.two-panel-table.profitability td:nth-child(1) { width: 33.3%; }
+.two-panel-table.profitability th:nth-child(2),
+.two-panel-table.profitability td:nth-child(2) { width: 33.3%; }
+.two-panel-table.profitability th:nth-child(3),
+.two-panel-table.profitability td:nth-child(3) { width: 33.3%; }
+
+.two-panel-table th,
+.two-panel-table td {
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.side-box {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #ff8c00;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+}
+.side-box-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: #555555;
+    text-transform: uppercase;
+}
+.side-box-value {
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+.side-box-status {
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
 </style></head><body>
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
         <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
@@ -172,32 +236,49 @@ tr.top5:hover td { background: #161616; }
             Sharia: <span style="color:#00ff88;font-weight:bold;">Halal</span>
         </p>
 
+        <!-- ROW 1: Radar status + Sniper Score -->
         <div class="status-container">
             <div class="status-box">
                 <p>💵 Last Price: <b style="color:#ffffff;">126.92</b></p>
                 <p>🎯 Radar Score: <b style="font-size:22px;color:#ff8c00;">23.39</b></p>
                 <p>🛡️ Threshold (95%): <span style="color:#aaaaaa;">7.26</span></p>
-                <p>⚡ Status: <span class="blinking">🔥 READY TO EXECUTE</span></p>
+                <p>⚡ Status: <span class="blinking">✅ RADAR CONFIRMED</span></p>
             </div>
             <div class="verdict-box">
-                <span class="score-label">Historical Sniper Score</span>
+                <span class="score-label">Sniper Score</span>
                 <div class="score-value" style="color:#7CFC00;">60.02</div>
                 <div class="verdict-text">🥇 A-TIER: STRONG SIGNAL</div>
                 <div class="char-tag">COMPOUNDER</div>
-                <div style="margin-top:12px;font-size:11px;letter-spacing:2px;color:#444;">QUALITY BREAKDOWN</div>
-                <div style="font-size:12px;color:#666;line-height:2;">
-                    Sample&nbsp;&nbsp;&nbsp;0.4472 &nbsp;|&nbsp;
-                    Cluster&nbsp;&nbsp;0.6 &nbsp;|&nbsp;
-                    Stability&nbsp;0.4882
-                </div>
-                <div style="font-size:13px;letter-spacing:1px;margin-top:4px;">
-                    Quality: <span style="color:#7CFC00;">0.5118</span>
-                </div>
             </div>
         </div>
 
-        <div class="section-title">📊 Average Strategy Performance</div>
-        <table><thead><tr><th></th><th>Avg Return (%)</th><th>Win Rate (%)</th></tr></thead><tbody><tr><td style="color:#555555;">5-Day</td><td style="color:#ff4d4d;font-weight:bold;">-1.05</td><td style="color:#ffa500;">40.00</td></tr><tr><td style="color:#555555;">10-Day</td><td style="color:#ff4d4d;font-weight:bold;">-0.32</td><td style="color:#00ff88;font-weight:bold;">70.00</td></tr><tr><td style="color:#555555;">20-Day</td><td style="color:#00ff88;font-weight:bold;">5.27</td><td style="color:#00ff88;font-weight:bold;">80.00</td></tr></tbody></table>
+        <!-- ROW 2: Reliability table + Quality side box -->
+        <div class="section-title">🔬 Robustness and Consistency (Reliability)</div>
+        <div class="two-panel">
+            <div class="two-panel-table reliability"><table style="background:#0a0a0a;border:1px solid #222;">
+        <thead><tr>
+            <th style="background:#111;color:#fff;font-size:12px;letter-spacing:1.5px;padding:14px;border-bottom:1px solid #333;border-right:1px solid #1a1a1a;font-weight:400;">METRIC</th>
+            <th style="background:#111;color:#fff;font-size:12px;letter-spacing:1.5px;padding:14px;border-bottom:1px solid #333;font-weight:400;">VALUE</th>
+        </tr></thead>
+        <tbody><tr><td style="color:#555555;padding:12px 14px;">Sample Signals</td><td style="color:#ffffff;padding:12px 14px;font-size:15px;">10</td></tr><tr><td style="color:#555555;padding:12px 14px;">Sample Quality</td><td style="color:#ffa500;padding:12px 14px;font-size:15px;">0.4472</td></tr><tr><td style="color:#555555;padding:12px 14px;">Cluster Spread</td><td style="color:#7CFC00;padding:12px 14px;font-size:15px;">0.6</td></tr><tr><td style="color:#555555;padding:12px 14px;">Stability</td><td style="color:#ffa500;padding:12px 14px;font-size:15px;">0.4882</td></tr></tbody>
+    </table></div>
+            <div class="side-box" style="border-color:#7CFC00;">
+                <span class="side-box-label">Quality Score</span>
+                <div class="side-box-value" style="color:#7CFC00;">0.5118</div>
+                <div class="side-box-status" style="color:#7CFC00;">🟡 GOOD QUALITY</div>
+            </div>
+        </div>
+
+        <!-- ROW 3: Performance table + Edge side box -->
+        <div class="section-title">📊 Average Strategy Performance (Profitability)</div>
+        <div class="two-panel">
+            <div class="two-panel-table profitability"><table><thead><tr><th></th><th>Avg Return (%)</th><th>Win Rate (%)</th></tr></thead><tbody><tr><td style="color:#555555;">5-Day</td><td style="color:#ff4d4d;font-weight:bold;">-1.05</td><td style="color:#ffa500;">40.00</td></tr><tr><td style="color:#555555;">10-Day</td><td style="color:#ff4d4d;font-weight:bold;">-0.32</td><td style="color:#00ff88;font-weight:bold;">70.00</td></tr><tr><td style="color:#555555;">20-Day</td><td style="color:#00ff88;font-weight:bold;">5.27</td><td style="color:#00ff88;font-weight:bold;">80.00</td></tr></tbody></table></div>
+            <div class="side-box" style="border-color:#ffa500;">
+                <span class="side-box-label">Edge Score</span>
+                <div class="side-box-value" style="color:#ffa500;">1.1907</div>
+                <div class="side-box-status" style="color:#ffa500;">🟠 MED EDGE</div>
+            </div>
+        </div>
 
         <div class="section-title">📅 10 Recent Signals — Regime Check</div>
         <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2025-03-21</td><td style="color:#ff8c00;font-weight:bold;">14.17</td><td style="color:#ffffff;">98.54</td><td style="color:#00ff88;font-weight:bold;">0.44</td><td style="color:#ff4d4d;font-weight:bold;">-15.34</td><td style="color:#ff4d4d;font-weight:bold;">-14.1</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-06-13</td><td style="color:#ff8c00;font-weight:bold;">8.18</td><td style="color:#ffffff;">94.55</td><td style="color:#ff4d4d;font-weight:bold;">-5.41</td><td style="color:#ff4d4d;font-weight:bold;">-7.45</td><td style="color:#ff4d4d;font-weight:bold;">-4.55</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-12-10</td><td style="color:#ff8c00;font-weight:bold;">7.54</td><td style="color:#ffffff;">96.05</td><td style="color:#ff4d4d;font-weight:bold;">-1.9</td><td style="color:#ff4d4d;font-weight:bold;">-5.17</td><td style="color:#00ff88;font-weight:bold;">0.73</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-14</td><td style="color:#ff8c00;font-weight:bold;">8.44</td><td style="color:#ffffff;">99.57</td><td style="color:#ff4d4d;font-weight:bold;">-3.45</td><td style="color:#00ff88;font-weight:bold;">2.45</td><td style="color:#00ff88;font-weight:bold;">10.45</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-09</td><td style="color:#ff8c00;font-weight:bold;">8.44</td><td style="color:#ffffff;">107.86</td><td style="color:#00ff88;font-weight:bold;">0.07</td><td style="color:#00ff88;font-weight:bold;">2.53</td><td style="color:#00ff88;font-weight:bold;">5.83</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-11</td><td style="color:#ff8c00;font-weight:bold;">14.37</td><td style="color:#ffffff;">110.35</td><td style="color:#00ff88;font-weight:bold;">1.12</td><td style="color:#00ff88;font-weight:bold;">0.32</td><td style="color:#00ff88;font-weight:bold;">8.98</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-12</td><td style="color:#ff8c00;font-weight:bold;">17.11</td><td style="color:#ffffff;">109.97</td><td style="color:#00ff88;font-weight:bold;">0.51</td><td style="color:#00ff88;font-weight:bold;">3.17</td><td style="color:#00ff88;font-weight:bold;">10.84</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-13</td><td style="color:#ff8c00;font-weight:bold;">9.91</td><td style="color:#ffffff;">110.57</td><td style="color:#ff4d4d;font-weight:bold;">-0.62</td><td style="color:#00ff88;font-weight:bold;">6.94</td><td style="color:#00ff88;font-weight:bold;">9.72</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-18</td><td style="color:#ff8c00;font-weight:bold;">10.42</td><td style="color:#ffffff;">110.52</td><td style="color:#ff4d4d;font-weight:bold;">-0.46</td><td style="color:#00ff88;font-weight:bold;">4.64</td><td style="color:#00ff88;font-weight:bold;">11.88</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-19</td><td style="color:#ff8c00;font-weight:bold;">9.38</td><td style="color:#ffffff;">111.59</td><td style="color:#ff4d4d;font-weight:bold;">-0.8</td><td style="color:#00ff88;font-weight:bold;">4.69</td><td style="color:#00ff88;font-weight:bold;">12.93</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
@@ -205,5 +286,5 @@ tr.top5:hover td { background: #161616; }
         <div class="section-title">🏆 The Complete Power Ranking</div>
         <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2026-02-12</td><td style="color:#ff8c00;font-weight:bold;">17.11</td><td style="color:#ffffff;">109.97</td><td style="color:#00ff88;font-weight:bold;">0.51</td><td style="color:#00ff88;font-weight:bold;">3.17</td><td style="color:#00ff88;font-weight:bold;">10.84</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-11</td><td style="color:#ff8c00;font-weight:bold;">14.37</td><td style="color:#ffffff;">110.35</td><td style="color:#00ff88;font-weight:bold;">1.12</td><td style="color:#00ff88;font-weight:bold;">0.32</td><td style="color:#00ff88;font-weight:bold;">8.98</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-03-21</td><td style="color:#ff8c00;font-weight:bold;">14.17</td><td style="color:#ffffff;">98.54</td><td style="color:#00ff88;font-weight:bold;">0.44</td><td style="color:#ff4d4d;font-weight:bold;">-15.34</td><td style="color:#ff4d4d;font-weight:bold;">-14.1</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-02-18</td><td style="color:#ff8c00;font-weight:bold;">10.42</td><td style="color:#ffffff;">110.52</td><td style="color:#ff4d4d;font-weight:bold;">-0.46</td><td style="color:#00ff88;font-weight:bold;">4.64</td><td style="color:#00ff88;font-weight:bold;">11.88</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-13</td><td style="color:#ff8c00;font-weight:bold;">9.91</td><td style="color:#ffffff;">110.57</td><td style="color:#ff4d4d;font-weight:bold;">-0.62</td><td style="color:#00ff88;font-weight:bold;">6.94</td><td style="color:#00ff88;font-weight:bold;">9.72</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-19</td><td style="color:#ff8c00;font-weight:bold;">9.38</td><td style="color:#ffffff;">111.59</td><td style="color:#ff4d4d;font-weight:bold;">-0.8</td><td style="color:#00ff88;font-weight:bold;">4.69</td><td style="color:#00ff88;font-weight:bold;">12.93</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-09</td><td style="color:#ff8c00;font-weight:bold;">8.44</td><td style="color:#ffffff;">107.86</td><td style="color:#00ff88;font-weight:bold;">0.07</td><td style="color:#00ff88;font-weight:bold;">2.53</td><td style="color:#00ff88;font-weight:bold;">5.83</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-14</td><td style="color:#ff8c00;font-weight:bold;">8.44</td><td style="color:#ffffff;">99.57</td><td style="color:#ff4d4d;font-weight:bold;">-3.45</td><td style="color:#00ff88;font-weight:bold;">2.45</td><td style="color:#00ff88;font-weight:bold;">10.45</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-06-13</td><td style="color:#ff8c00;font-weight:bold;">8.18</td><td style="color:#ffffff;">94.55</td><td style="color:#ff4d4d;font-weight:bold;">-5.41</td><td style="color:#ff4d4d;font-weight:bold;">-7.45</td><td style="color:#ff4d4d;font-weight:bold;">-4.55</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-12-10</td><td style="color:#ff8c00;font-weight:bold;">7.54</td><td style="color:#ffffff;">96.05</td><td style="color:#ff4d4d;font-weight:bold;">-1.9</td><td style="color:#ff4d4d;font-weight:bold;">-5.17</td><td style="color:#00ff88;font-weight:bold;">0.73</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
 
-        <p class="footer">Generated 2026-03-22 00:19:54 EDT</p>
+        <p class="footer">Generated 2026-03-22 11:55:18 EDT</p>
     </body></html>

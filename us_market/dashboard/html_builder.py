@@ -137,10 +137,10 @@ def _color_edge(val: float) -> str:
     return "color:#ff4d4d;"
 
 def _color_characteristic(val: str) -> str:
-    if "COMPOUNDER" in val: return "color:#00ff88;font-weight:bold;"
-    if "BURST"      in val: return "color:#ffff00;font-weight:bold;"
-    if "STEADY"     in val: return "color:#ffa500;font-weight:bold;"
-    return "color:#ff4d4d;"  # ERRATIC
+    if "Sprinter"        in val: return "color:#00ff88;"
+    if "Slow Compounder" in val: return "color:#7CFC00;"
+    if "Consistent"      in val: return "color:#ffa500;"
+    return "color:#ff4d4d;"
 
 def _color_quality(val: float) -> str:
     if val >= 0.75: return "color:#00ff88;font-weight:bold;"
@@ -153,6 +153,18 @@ def _color_sniper(val: float) -> str:
     if val >= 60: return "color:#7CFC00;font-weight:bold;"
     if val >= 50: return "color:#ffa500;font-weight:bold;"
     return "color:#ff4d4d;"
+
+def _quality_status(q: float) -> str:
+    if q >= 0.75: return "💚 HIGH QUALITY"
+    if q >= 0.50: return "🟡 GOOD QUALITY"
+    if q >= 0.25: return "🟠 MED QUALITY"
+    return "🔴 LOW QUALITY"
+
+def _edge_status(e: float) -> str:
+    if e > 3:   return "💚 HIGH EDGE"
+    if e > 1.5: return "🟡 GOOD EDGE"
+    if e > 0:   return "🟠 MED EDGE"
+    return "🔴 NEGATIVE EDGE"
 
 def _td(content, style="color:#ffffff;"):
     return f'<td style="{style}">{content}</td>'
@@ -340,6 +352,70 @@ _SINGLE_EXTRA_CSS = """
     margin-top: 60px;
     letter-spacing: 1px;
 }
+
+/* ── TWO-PANEL SECTION ── */
+.two-panel {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 0;
+}
+/* table takes 2/3, side-box takes 1/3 */
+.two-panel-table { flex: 2; min-width: 0; }
+.two-panel-table table {
+    width: 100%;
+    table-layout: fixed;
+}
+/* reliability table: 2 cols, each 50% */
+.two-panel-table.reliability th:nth-child(1),
+.two-panel-table.reliability td:nth-child(1) { width: 50%; }
+.two-panel-table.reliability th:nth-child(2),
+.two-panel-table.reliability td:nth-child(2) { width: 50%; }
+
+/* profitability table: 3 cols, each 33.3% */
+.two-panel-table.profitability th:nth-child(1),
+.two-panel-table.profitability td:nth-child(1) { width: 33.3%; }
+.two-panel-table.profitability th:nth-child(2),
+.two-panel-table.profitability td:nth-child(2) { width: 33.3%; }
+.two-panel-table.profitability th:nth-child(3),
+.two-panel-table.profitability td:nth-child(3) { width: 33.3%; }
+
+.two-panel-table th,
+.two-panel-table td {
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.side-box {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #ff8c00;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+}
+.side-box-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: #555555;
+    text-transform: uppercase;
+}
+.side-box-value {
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+.side-box-status {
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
 """
 
 SECTOR_EMOJI = {
@@ -441,24 +517,42 @@ def build_single_dashboard(result: dict) -> str:
     verdict = meta["verdict"]
     sharia  = meta["sharia"]
 
-    status_label   = "🔥 READY TO EXECUTE" if score > thr else "😴 Wait for Momentum"
+    # ── vars ─────────────────────────────────────────────────────────────────
+    status_label   = "✅ RADAR CONFIRMED" if score > thr else "😴 Waiting for Momentum"
     status_cls     = "blinking" if score > thr else ""
+
     sniper_color   = _color_sniper(sniper).replace("font-weight:bold;", "")
-    quality_color  = _color_quality(meta["quality_score"])
-    sample_s       = meta["sample_score"]
-    cluster_s      = meta["cluster_score"]
-    stability_s    = meta["stability_score"]
-    quality_s      = meta["quality_score"]
+    q              = meta["quality_score"]
+    e              = meta["edge_score"]
+    quality_color  = _color_quality(q).replace("font-weight:bold;", "")
+    edge_color     = _color_edge(e).replace("font-weight:bold;", "")
+    n              = result["summary"]["Sample"]
 
     yahoo_url = f"https://finance.yahoo.com/quote/{ticker}/"
-
-    style = f"<style>{_FONT_IMPORT}{_BASE_CSS}{_SINGLE_EXTRA_CSS}</style>"
+    style     = f"<style>{_FONT_IMPORT}{_BASE_CSS}{_SINGLE_EXTRA_CSS}</style>"
 
     stats_table  = _build_stats_table(result["stats"])
     recent_table = _build_signal_table(result["recent"].copy())
     power_table  = _build_signal_table(result["power_ranking"].reset_index())
-
     industry, emoji = get_ticker_info(ticker)
+
+    # ── reliability table ─────────────────────────────────────────────────────
+    def _rtd(label, val, color):
+        return f'<tr><td style="color:#555555;padding:12px 14px;">{label}</td><td style="{color}padding:12px 14px;font-size:15px;">{val}</td></tr>'
+
+    reliability_rows = "".join([
+        _rtd("Sample Signals",  n,                             "color:#ffffff;"),
+        _rtd("Sample Quality",  meta["sample_score"],          _color_quality(meta["sample_score"])),
+        _rtd("Cluster Spread",  meta["cluster_score"],         _color_quality(meta["cluster_score"])),
+        _rtd("Stability",       meta["stability_score"],       _color_quality(meta["stability_score"])),
+    ])
+    reliability_table = f'''<table style="background:#0a0a0a;border:1px solid #222;">
+        <thead><tr>
+            <th style="background:#111;color:#fff;font-size:12px;letter-spacing:1.5px;padding:14px;border-bottom:1px solid #333;border-right:1px solid #1a1a1a;font-weight:400;">METRIC</th>
+            <th style="background:#111;color:#fff;font-size:12px;letter-spacing:1.5px;padding:14px;border-bottom:1px solid #333;font-weight:400;">VALUE</th>
+        </tr></thead>
+        <tbody>{reliability_rows}</tbody>
+    </table>'''
 
     body = f"""
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
@@ -476,6 +570,7 @@ def build_single_dashboard(result: dict) -> str:
             Sharia: <span style="{_color_sharia(sharia)}">{sharia}</span>
         </p>
 
+        <!-- ROW 1: Radar status + Sniper Score -->
         <div class="status-container">
             <div class="status-box">
                 <p>💵 Last Price: <b style="color:#ffffff;">{price:.2f}</b></p>
@@ -484,24 +579,34 @@ def build_single_dashboard(result: dict) -> str:
                 <p>⚡ Status: <span class="{status_cls}">{status_label}</span></p>
             </div>
             <div class="verdict-box">
-                <span class="score-label">Historical Sniper Score</span>
+                <span class="score-label">Sniper Score</span>
                 <div class="score-value" style="{sniper_color}">{sniper}</div>
                 <div class="verdict-text">{verdict}</div>
                 <div class="char-tag">{char}</div>
-                <div style="margin-top:12px;font-size:11px;letter-spacing:2px;color:#444;">QUALITY BREAKDOWN</div>
-                <div style="font-size:12px;color:#666;line-height:2;">
-                    Sample&nbsp;&nbsp;&nbsp;{sample_s} &nbsp;|&nbsp;
-                    Cluster&nbsp;&nbsp;{cluster_s} &nbsp;|&nbsp;
-                    Stability&nbsp;{stability_s}
-                </div>
-                <div style="font-size:13px;letter-spacing:1px;margin-top:4px;">
-                    Quality: <span style="{quality_color}">{quality_s}</span>
-                </div>
             </div>
         </div>
 
-        <div class="section-title">📊 Average Strategy Performance</div>
-        {stats_table}
+        <!-- ROW 2: Reliability table + Quality side box -->
+        <div class="section-title">🔬 Robustness and Consistency (Reliability)</div>
+        <div class="two-panel">
+            <div class="two-panel-table reliability">{reliability_table}</div>
+            <div class="side-box" style="border-color:{quality_color.split(':')[1].split(';')[0] if 'color:' in quality_color else '#ff8c00'};">
+                <span class="side-box-label">Quality Score</span>
+                <div class="side-box-value" style="{quality_color}">{q}</div>
+                <div class="side-box-status" style="{quality_color}">{_quality_status(q)}</div>
+            </div>
+        </div>
+
+        <!-- ROW 3: Performance table + Edge side box -->
+        <div class="section-title">📊 Average Strategy Performance (Profitability)</div>
+        <div class="two-panel">
+            <div class="two-panel-table profitability">{stats_table}</div>
+            <div class="side-box" style="border-color:{edge_color.split(':')[1].split(';')[0] if 'color:' in edge_color else '#ff8c00'};">
+                <span class="side-box-label">Edge Score</span>
+                <div class="side-box-value" style="{edge_color}">{e}</div>
+                <div class="side-box-status" style="{edge_color}">{_edge_status(e)}</div>
+            </div>
+        </div>
 
         <div class="section-title">📅 10 Recent Signals — Regime Check</div>
         {recent_table}
