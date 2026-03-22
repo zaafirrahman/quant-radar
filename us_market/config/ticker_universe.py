@@ -56,7 +56,7 @@ US_TICKERS = [
     'SBSW', 'SPG', 'SIRI', 'SKLZ', 'SWKS', 'SNN', 'SNAP', 'SNOW', 'SOFI', 'SEDG', 
     'SONY', 'SOUN', 'SCCO', 'LUV', 'SPOT', 'SWK', 'SBUX', 'SFIX', 'STM', 'MSTR', 
     'SU', 'RUN', 'SMCI', 'SYF', 'SNPS', 'SYY', 'TROW', 'TMUS', 'TSM', 'TTWO', 
-    'TPR', 'TGT', 'TASK', 'TDOC', 'TEF', 'TME', 'TER', 'WULF', 'TSLA', 'TXN', 
+    'TPR', 'TGT', 'TASK', 'TDOC', 'TEF.MC', 'TME', 'TER', 'WULF', 'TSLA', 'TXN', 
     'KO', 'TRI', 'TDUP', 'TLRY', 'TJX', 'TD', 'TTE', 'TM', 'TSCO', 'TTD', 
     'TMDX', 'RIG', 'TCOM', 'TRIP', 'DJT', 'TWLO', 'TWST', 'TSN', 'UBER', 'PATH', 
     'ULTA', 'UAA', 'UL', 'UNP', 'UAL', 'UMC', 'UPS', 'UNH', 'U', 'UPST', 

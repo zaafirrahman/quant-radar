@@ -18,11 +18,6 @@ def get_sharia_status(ticker: str) -> str:
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers, timeout=8)
         soup = BeautifulSoup(response.text, "html.parser")
-
-        # Zoya renders compliance in an h2 tag like:
-        # "BKNG stock is Shariah-compliant"
-        # "BKNG stock is not Shariah-compliant"
-        # "BKNG stock is doubtful"
         h2 = soup.find("h2")
         if h2:
             text = h2.get_text(strip=True).lower()
@@ -38,34 +33,150 @@ def get_sharia_status(ticker: str) -> str:
 
 
 # ─────────────────────────────────────────
+#  EDGE HELPERS
+# ─────────────────────────────────────────
+
+def _calc_edge(ar: float, wr: float) -> float:
+    """Risk-adjusted return. WR=0 → ar directly so negatives propagate."""
+    if wr == 0:
+        return ar
+    return ar * (wr / 100)
+
+
+def _normalize_edge(edge_raw: float) -> float:
+    """tanh compression → -1..+1, then shift to 0..1."""
+    return (math.tanh(edge_raw / 3) + 1) / 2
+
+
+def _signal_characteristic(e5: float, e10: float, e20: float) -> str:
+    if e5 > 0 and e10 > 0 and e20 > 0:
+        if e5 >= e10 >= e20:
+            return "BURST"
+        elif e20 >= e10 >= e5:
+            return "COMPOUNDER"
+        else:
+            return "STEADY"
+    elif e20 > 0 and e5 <= 0:
+        return "COMPOUNDER"
+    elif e5 > 0 and e20 <= 0:
+        return "BURST"
+    else:
+        return "ERRATIC"
+
+
+# ─────────────────────────────────────────
+#  QUALITY HELPERS
+# ─────────────────────────────────────────
+
+def _calc_sample_score(n: int, max_n: int = 50) -> float:
+    """Diminishing returns — sqrt scale. Max at max_n signals."""
+    return round(min(math.sqrt(n) / math.sqrt(max_n), 1.0), 4)
+
+
+def _calc_cluster_score(dates: list) -> float:
+    """
+    Signals spread across time vs clustered.
+    Gap < 5 trading days = same cluster.
+    Score = n_clusters / n_signals → 0..1
+    """
+    if len(dates) <= 1:
+        return round(1.0 / max(len(dates), 1), 4)
+
+    sorted_dates = sorted(pd.to_datetime(dates))
+    clusters = 1
+    for i in range(1, len(sorted_dates)):
+        gap = (sorted_dates[i] - sorted_dates[i - 1]).days
+        if gap >= 5:
+            clusters += 1
+
+    return round(clusters / len(dates), 4)
+
+
+def _calc_stability_score(returns: pd.Series, signals_df: pd.DataFrame) -> float:
+    """
+    Two sub-components:
+    1. CV stability  — consistent return magnitude
+    2. Temporal      — no decay between early and recent signals
+    """
+    # ── CV stability ──────────────────────────────────────────
+    mean_r = returns.mean()
+    std_r  = returns.std()
+
+    if abs(mean_r) < 1e-9:
+        cv_stability = 0.0
+    else:
+        cv = abs(std_r / mean_r)
+        cv_stability = 1 / (1 + cv)
+
+    # ── Temporal consistency ──────────────────────────────────
+    n = len(signals_df)
+    if n < 4:
+        # too few signals to split meaningfully → neutral
+        temporal = 0.5
+    else:
+        mid       = n // 2
+        first     = signals_df.iloc[:mid]
+        second    = signals_df.iloc[mid:]
+        wr_first  = (first["Return_20d (%)"] > 0).mean() * 100
+        wr_second = (second["Return_20d (%)"] > 0).mean() * 100
+        temporal  = 1 - abs(wr_first - wr_second) / 100
+
+    return round(0.5 * cv_stability + 0.5 * temporal, 4)
+
+
+# ─────────────────────────────────────────
+#  SNIPER SCORE
+# ─────────────────────────────────────────
+
+def _calc_sniper_score(edge_raw: float, quality_score: float) -> float:
+    """
+    Hard gate at edge = 0:
+    - Negative edge → quality cannot rescue → capped below 50
+    - Positive edge → combined score 50-100
+    """
+    edge_01 = _normalize_edge(edge_raw)
+
+    if edge_raw <= 0:
+        score = edge_01 * quality_score * 100
+    else:
+        score = ((edge_01 + quality_score) / 2) * 100
+
+    return round(score, 2)
+
+
+def _verdict(sniper_score: float) -> str:
+    if sniper_score >= 75:
+        return "💎 S-TIER: HIGH CONVICTION"
+    elif sniper_score >= 60:
+        return "🥇 A-TIER: STRONG SIGNAL"
+    elif sniper_score >= 50:
+        return "🥈 B-TIER: MODERATE SIGNAL"
+    else:
+        return "🥉 C-TIER: AVOID"
+
+
+# ─────────────────────────────────────────
 #  BACKTEST ENGINE
 # ─────────────────────────────────────────
 
 def run_single_sniper(ticker: str, company: str) -> dict | None:
     """
     Full sniper analysis for one ticker.
-
-    Returns a dict with:
-        summary   – one-row dict  (for sniper_summary.csv + bulk dashboard)
-        signals   – DataFrame     (for TICKER_signals.csv + single dashboard)
-        meta      – misc scalars  (current_price, threshold, score, etc.)
     Returns None if data is insufficient.
     """
     print(f"  🔍 Analysing {ticker}...")
 
     # ── 1. Download & score ──────────────────────────────────────────────────
     raw = yf.download(ticker, period="3y", interval="1d", progress=False)
-
     if raw.empty:
         print(f"  ❌ No data for {ticker}")
         return None
 
     if isinstance(raw.columns, pd.MultiIndex):
         raw.columns = raw.columns.droplevel(1)
-
     raw = raw.dropna()
 
-    scored = calculate_score(raw)          # uses the shared engine
+    scored = calculate_score(raw)
     if len(scored) < 20:
         print(f"  ⚠️  Not enough scored rows for {ticker}")
         return None
@@ -118,64 +229,80 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
         index=["5-Day", "10-Day", "20-Day"]
     )
 
-    # ── 5. Swing score & verdict ─────────────────────────────────────────────
-    momentum        = (ar5 * 3) + (ar10 * 2) + (ar20 * 1)
-    win_factor      = (wr5 * 0.5) + (wr10 * 0.3) + (wr20 * 0.2)
-    volatility_boost = abs(ar5)
-    signal_boost    = math.sqrt(n)
-    sniper_score     = round(momentum * win_factor * signal_boost * (1 + volatility_boost / 10), 2)
+    # ── 5. Edge Score ────────────────────────────────────────────────────────
+    e5  = _calc_edge(ar5,  wr5)
+    e10 = _calc_edge(ar10, wr10)
+    e20 = _calc_edge(ar20, wr20)
 
-    if sniper_score > 500:
-        verdict = "💎 S-TIER: MONSTER ISSUER (High Conviction)"
-    elif sniper_score > 200:
-        verdict = "🥇 A-TIER: VERY WORTH TO SWING"
-    elif sniper_score > 50:
-        verdict = "🥈 B-TIER: MODERATE"
-    else:
-        verdict = "🥉 C-TIER: LESS HISTORICAL / RISKY"
+    edge_score_raw = round((e5 + e10 + e20) / 3, 4)
+    characteristic = _signal_characteristic(e5, e10, e20)
 
-    # ── 6. Sharia compliance ─────────────────────────────────────────────────
+    # ── 6. Quality Score ─────────────────────────────────────────────────────
+    sample_score   = _calc_sample_score(n)
+    cluster_score  = _calc_cluster_score(signals_df["Date"].tolist())
+    stability_score = _calc_stability_score(
+        signals_df["Return_20d (%)"], signals_df
+    )
+    quality_score  = round((sample_score + cluster_score + stability_score) / 3, 4)
+
+    # ── 7. Sniper Score ───────────────────────────────────────────────────────
+    sniper_score = _calc_sniper_score(edge_score_raw, quality_score)
+    verdict      = _verdict(sniper_score)
+
+    # ── 8. Sharia compliance ─────────────────────────────────────────────────
     sharia = get_sharia_status(ticker)
 
-    # ── 7. Recent signals (regime check) ─────────────────────────────────────
+    # ── 9. Recent signals (regime check) ─────────────────────────────────────
     recent_df = signals_df.tail(10).reset_index(drop=True)
 
-    # ── 8. Power ranking ─────────────────────────────────────────────────────
+    # ── 10. Power ranking ────────────────────────────────────────────────────
     power_df = signals_df.sort_values("Signal_Score", ascending=False).reset_index(drop=True)
     power_df.index = power_df.index + 1
     power_df.index.name = "Rank"
 
-    # ── 9. Summary row (for bulk dashboard) ──────────────────────────────────
+    # ── 11. Summary row ───────────────────────────────────────────────────────
     summary = {
-        "Ticker":          ticker,
-        "Company":         company,
-        "WR_5":      wr5,
-        "WR_10":     wr10,
-        "WR_20":     wr20,
-        "AVG_5":       ar5,
-        "AVG_10":      ar10,
-        "AVG_20":      ar20,
-        "Sample":  n,
+        "Ticker":           ticker,
+        "Company":          company,
+        "WR_5":             wr5,
+        "WR_10":            wr10,
+        "WR_20":            wr20,
+        "AVG_5":            ar5,
+        "AVG_10":           ar10,
+        "AVG_20":           ar20,
+        "Sample":           n,
+        "Edge_Score":       edge_score_raw,
+        "Characteristic":   characteristic,
+        "Sample_Score":     sample_score,
+        "Cluster_Score":    cluster_score,
+        "Stability_Score":  stability_score,
+        "Quality_Score":    quality_score,
         "Sniper_Score":     sniper_score,
-        "Sharia":          sharia,
+        "Sharia":           sharia,
     }
 
-    print(f"  ✅ {ticker} done — Swing Score: {sniper_score} | Sharia: {sharia}")
+    print(f"  ✅ {ticker} — Edge: {edge_score_raw} | Quality: {quality_score} | Sniper: {sniper_score} | {characteristic} | {sharia}")
 
     return {
-        "summary":       summary,
-        "signals":       signals_df,
-        "stats":         stats_df,
-        "recent":        recent_df,
-        "power_ranking": power_df,
+        "summary":        summary,
+        "signals":        signals_df,
+        "stats":          stats_df,
+        "recent":         recent_df,
+        "power_ranking":  power_df,
         "meta": {
-            "ticker":        ticker,
-            "company":       company,
-            "current_price": current_price,
-            "current_score": current_score,
-            "threshold":     threshold,
-            "sniper_score":   sniper_score,
-            "verdict":       verdict,
-            "sharia":        sharia,
+            "ticker":           ticker,
+            "company":          company,
+            "current_price":    current_price,
+            "current_score":    current_score,
+            "threshold":        threshold,
+            "edge_score":       edge_score_raw,
+            "characteristic":   characteristic,
+            "sample_score":     sample_score,
+            "cluster_score":    cluster_score,
+            "stability_score":  stability_score,
+            "quality_score":    quality_score,
+            "sniper_score":     sniper_score,
+            "verdict":          verdict,
+            "sharia":           sharia,
         },
     }

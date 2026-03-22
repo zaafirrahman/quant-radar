@@ -92,10 +92,11 @@ tr.top5:hover td { background: #161616; }
 .nav-btn:hover { background: #ffaa33; }
 """
 
-def _wrap_html(title: str, body: str) -> str:
+def _wrap_html(title: str, body: str, favicon_depth: str = "../../../") -> str:
     style = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
-    favicon_link = f'<link rel="icon" type="image/png" href="../../../assets/logo.png">'
+    favicon_link = f'<link rel="icon" type="image/png" href="{favicon_depth}assets/logo.png">'
     return f"""<html><head>{favicon_link}<title>{title}</title>{style}</head><body>{body}</body></html>"""
+
 
 # ══════════════════════════════════════════════════════════════
 #  COLOUR HELPERS
@@ -129,6 +130,30 @@ def _color_sharia(val: str) -> str:
     if val == "Not Halal": return "color:#ff4d4d;font-weight:bold;"
     return "color:#888888;"
 
+def _color_edge(val: float) -> str:
+    if val > 3:    return "color:#00ff88;font-weight:bold;"
+    if val > 1.5:  return "color:#7CFC00;font-weight:bold;"
+    if val > 0:    return "color:#ffa500;"
+    return "color:#ff4d4d;"
+
+def _color_characteristic(val: str) -> str:
+    if "COMPOUNDER" in val: return "color:#00ff88;font-weight:bold;"
+    if "BURST"      in val: return "color:#ffff00;font-weight:bold;"
+    if "STEADY"     in val: return "color:#ffa500;font-weight:bold;"
+    return "color:#ff4d4d;"  # ERRATIC
+
+def _color_quality(val: float) -> str:
+    if val >= 0.75: return "color:#00ff88;font-weight:bold;"
+    if val >= 0.50: return "color:#7CFC00;"
+    if val >= 0.25: return "color:#ffa500;"
+    return "color:#ff4d4d;"
+
+def _color_sniper(val: float) -> str:
+    if val >= 75: return "color:#00ff88;font-weight:bold;"
+    if val >= 60: return "color:#7CFC00;font-weight:bold;"
+    if val >= 50: return "color:#ffa500;font-weight:bold;"
+    return "color:#ff4d4d;"
+
 def _td(content, style="color:#ffffff;"):
     return f'<td style="{style}">{content}</td>'
 
@@ -146,7 +171,6 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
     ]
 
     header = "".join(f"<th>{c}</th>" for c in col_names)
-    thead  = f"<thead><tr>{header}</tr></thead>"
 
     rows = []
     for i, row in df.iterrows():
@@ -169,7 +193,8 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
-        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a><a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
+        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a>
+        <a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
         <h2>Signal Surge Amplifier Grid</h2>
         <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;">
@@ -190,7 +215,9 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
     col_names = [
         "Rank", "Ticker", "WR_5", "WR_10", "WR_20",
         "AVG_5", "AVG_10", "AVG_20",
-        "Sample", "Sniper_Score", "Sharia"
+        "Sample", "Edge_Score", "Characteristic",
+        "Sample_Score", "Cluster_Score", "Stability_Score", "Quality_Score",
+        "Sniper_Score", "Sharia"
     ]
 
     header = "".join(f"<th>{c}</th>" for c in col_names)
@@ -198,24 +225,31 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
 
     for i, row in summary_df.iterrows():
         cells = [
-            _td(row["Rank"], "color:#aaaaaa;"),
+            _td(row["Rank"],   "color:#aaaaaa;"),
             _td(f'<a href="html/{row["Ticker"]}.html" style="color:#ff8c00;text-decoration:none;font-weight:bold;">{row["Ticker"]}</a>'),
-            _td(row["WR_5"],  _color_winrate(float(row["WR_5"]))),
-            _td(row["WR_10"], _color_winrate(float(row["WR_10"]))),
-            _td(row["WR_20"], _color_winrate(float(row["WR_20"]))),
-            _td(row["AVG_5"],   _color_return(float(row["AVG_5"]))),
-            _td(row["AVG_10"],  _color_return(float(row["AVG_10"]))),
-            _td(row["AVG_20"],  _color_return(float(row["AVG_20"]))),
+            _td(row["WR_5"],   _color_winrate(float(row["WR_5"]))),
+            _td(row["WR_10"],  _color_winrate(float(row["WR_10"]))),
+            _td(row["WR_20"],  _color_winrate(float(row["WR_20"]))),
+            _td(row["AVG_5"],  _color_return(float(row["AVG_5"]))),
+            _td(row["AVG_10"], _color_return(float(row["AVG_10"]))),
+            _td(row["AVG_20"], _color_return(float(row["AVG_20"]))),
             _td(row["Sample"], "color:#ffffff;"),
-            _td(row["Sniper_Score"],    "color:#ff8c00;font-weight:bold;"),
-            _td(row["Sharia"],         _color_sharia(str(row["Sharia"]))),
+            _td(row["Edge_Score"],      _color_edge(float(row["Edge_Score"]))),
+            _td(row["Characteristic"],  _color_characteristic(str(row["Characteristic"]))),
+            _td(row["Sample_Score"],    _color_quality(float(row["Sample_Score"]))),
+            _td(row["Cluster_Score"],   _color_quality(float(row["Cluster_Score"]))),
+            _td(row["Stability_Score"], _color_quality(float(row["Stability_Score"]))),
+            _td(row["Quality_Score"],   _color_quality(float(row["Quality_Score"]))),
+            _td(row["Sniper_Score"],    _color_sniper(float(row["Sniper_Score"]))),
+            _td(row["Sharia"],          _color_sharia(str(row["Sharia"]))),
         ]
         rows.append(f'<tr>{"".join(cells)}</tr>')
 
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
     body = f"""
-        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀|| Back to Hub</a><a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
+        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a>
+        <a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
         <h2>Runner Performance Protocol</h2>
         <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;font-weight:bold">
@@ -274,6 +308,12 @@ _SINGLE_EXTRA_CSS = """
     color: #555;
     text-transform: uppercase;
 }
+.char-tag {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    color: #888888;
+    margin-top: 4px;
+}
 .section-title {
     font-size: 13px;
     letter-spacing: 3px;
@@ -319,24 +359,23 @@ SECTOR_EMOJI = {
 
 def get_ticker_info(ticker: str):
     base_path = Path(__file__).resolve().parent
-    csv_path = (base_path / "../config/ticker_universe.csv").resolve()
-    df = pd.read_csv(csv_path)
-    row = df[df["ticker"] == ticker]
+    csv_path  = (base_path / "../config/ticker_universe.csv").resolve()
+    df        = pd.read_csv(csv_path)
+    row       = df[df["ticker"] == ticker]
     if row.empty:
         return "Unknown", "❓"
-    sektor = row.iloc[0]["sektor"]
+    sektor   = row.iloc[0]["sektor"]
     industry = row.iloc[0]["industry"]
-    emoji = SECTOR_EMOJI.get(sektor, "❓")
-
+    emoji    = SECTOR_EMOJI.get(sektor, "❓")
     return industry, emoji
+
 
 def _build_signal_table(df: pd.DataFrame) -> str:
     """Render a signals DataFrame (recent or power ranking) as an HTML table."""
     cols = ["Date", "Signal_Score", "Entry", "Return_5d (%)", "Return_10d (%)", "Return_20d (%)", "W/L"]
 
-    # If df has Rank as index, reset it
     if df.index.name == "Rank":
-        df = df.reset_index()
+        df   = df.reset_index()
         cols = ["Rank"] + cols
 
     header = "".join(f"<th>{c}</th>" for c in cols)
@@ -346,7 +385,7 @@ def _build_signal_table(df: pd.DataFrame) -> str:
         cells = []
         for col in cols:
             val = row[col]
-            if col == "Rank":
+            if   col == "Rank":
                 style = "color:#aaaaaa;"
             elif col == "Date":
                 style = "color:#888888;"
@@ -371,8 +410,8 @@ def _build_stats_table(stats_df: pd.DataFrame) -> str:
     header = "<th></th><th>Avg Return (%)</th><th>Win Rate (%)</th>"
     rows   = []
     for idx, row in stats_df.iterrows():
-        ar  = float(row["Avg Return (%)"])
-        wr  = float(row["Win Rate (%)"])
+        ar = float(row["Avg Return (%)"])
+        wr = float(row["Win Rate (%)"])
         cells = [
             f'<td style="color:#555555;">{idx}</td>',
             f'<td style="{_color_return(ar)}">{ar:.2f}</td>',
@@ -385,10 +424,8 @@ def _build_stats_table(stats_df: pd.DataFrame) -> str:
 def build_single_dashboard(result: dict) -> str:
     """
     Build per-ticker sniper HTML dashboard.
-
     Args:
         result : dict returned by run_single_sniper()
-
     Returns:
         HTML string
     """
@@ -398,12 +435,20 @@ def build_single_dashboard(result: dict) -> str:
     price   = meta["current_price"]
     score   = meta["current_score"]
     thr     = meta["threshold"]
+    edge    = meta["edge_score"]
+    char    = meta["characteristic"]
     sniper  = meta["sniper_score"]
     verdict = meta["verdict"]
     sharia  = meta["sharia"]
 
-    status_label = "🔥 READY TO EXECUTE" if score > thr else "😴 Wait for Momentum"
-    status_cls   = "blinking" if score > thr else ""
+    status_label   = "🔥 READY TO EXECUTE" if score > thr else "😴 Wait for Momentum"
+    status_cls     = "blinking" if score > thr else ""
+    sniper_color   = _color_sniper(sniper).replace("font-weight:bold;", "")
+    quality_color  = _color_quality(meta["quality_score"])
+    sample_s       = meta["sample_score"]
+    cluster_s      = meta["cluster_score"]
+    stability_s    = meta["stability_score"]
+    quality_s      = meta["quality_score"]
 
     yahoo_url = f"https://finance.yahoo.com/quote/{ticker}/"
 
@@ -418,14 +463,14 @@ def build_single_dashboard(result: dict) -> str:
     body = f"""
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
         <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
-        <strong>
-            {company}
-            <a href="{yahoo_url}" target="_blank"
-               style="color:#ff8c00;text-decoration:none;">({ticker})</a>
-        <strong>
+            <strong>
+                {company}
+                <a href="{yahoo_url}" target="_blank"
+                   style="color:#ff8c00;text-decoration:none;">({ticker})</a>
+            </strong>
         </h2>
         <p class="subtitle" style="text-align:left;margin-bottom:6px;font-size:15px;">
-            {emoji} <span style="color: #ff8c00;">{industry}</span>
+            {emoji} <span style="color:#ff8c00;">{industry}</span>
         </p>
         <p class="subtitle" style="text-align:left;margin-bottom:28px;font-size:15px;">
             Sharia: <span style="{_color_sharia(sharia)}">{sharia}</span>
@@ -440,8 +485,18 @@ def build_single_dashboard(result: dict) -> str:
             </div>
             <div class="verdict-box">
                 <span class="score-label">Historical Sniper Score</span>
-                <div class="score-value">{sniper}</div>
+                <div class="score-value" style="{sniper_color}">{sniper}</div>
                 <div class="verdict-text">{verdict}</div>
+                <div class="char-tag">{char}</div>
+                <div style="margin-top:12px;font-size:11px;letter-spacing:2px;color:#444;">QUALITY BREAKDOWN</div>
+                <div style="font-size:12px;color:#666;line-height:2;">
+                    Sample&nbsp;&nbsp;&nbsp;{sample_s} &nbsp;|&nbsp;
+                    Cluster&nbsp;&nbsp;{cluster_s} &nbsp;|&nbsp;
+                    Stability&nbsp;{stability_s}
+                </div>
+                <div style="font-size:13px;letter-spacing:1px;margin-top:4px;">
+                    Quality: <span style="{quality_color}">{quality_s}</span>
+                </div>
             </div>
         </div>
 
@@ -457,5 +512,5 @@ def build_single_dashboard(result: dict) -> str:
         <p class="footer">Generated {pd.Timestamp.now(pytz.timezone("US/Eastern")).strftime('%Y-%m-%d %H:%M:%S')} EDT</p>
     """
 
-    favicon_link = f'<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
+    favicon_link = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
     return f"<html><head>{favicon_link}<title>Sniper - {ticker}</title>{style}</head><body>{body}</body></html>"
