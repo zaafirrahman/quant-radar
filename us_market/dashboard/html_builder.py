@@ -137,10 +137,10 @@ def _color_edge(val: float) -> str:
     return "color:#ff4d4d;"
 
 def _color_characteristic(val: str) -> str:
-    if "Sprinter"        in val: return "color:#00ff88;"
-    if "Slow Compounder" in val: return "color:#7CFC00;"
-    if "Consistent"      in val: return "color:#ffa500;"
-    return "color:#ff4d4d;"
+    if "COMPOUNDER" in val: return "color:#00ff88;"
+    if "BURST"      in val: return "color:#ffff00;"
+    if "STEADY"     in val: return "color:#ffa500;"
+    return "color:#ff4d4d;"  # ERRATIC
 
 def _color_quality(val: float) -> str:
     if val >= 0.75: return "color:#00ff88;font-weight:bold;"
@@ -582,7 +582,7 @@ def build_single_dashboard(result: dict) -> str:
                 <span class="score-label">Sniper Score</span>
                 <div class="score-value" style="{sniper_color}">{sniper}</div>
                 <div class="verdict-text">{verdict}</div>
-                <div class="char-tag">{char}</div>
+                <div class="char-tag">Type: <span style="{_color_characteristic(char)}">{char}</span></div>
             </div>
         </div>
 
