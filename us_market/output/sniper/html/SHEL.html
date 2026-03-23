@@ -220,21 +220,72 @@ tr.top5:hover td { background: #161616; }
     letter-spacing: 1px;
     margin-top: 4px;
 }
+
+/* Tambahkan di variabel _SINGLE_EXTRA_CSS kamu */
+.header-container {
+    display: flex;
+    align-items: flex-start; /* Sejajar atas */
+    gap: 20px;               /* Jarak antara logo dan teks */
+    margin-bottom: 20px;
+}
+
+/* Update di bagian _SINGLE_EXTRA_CSS kamu */
+.company-logo {
+    width: 70px;            /* Sesuaikan sedikit ukurannya agar pas */
+    height: 70px;
+    
+    /* GANTI INI: Hapus kotak putih, bikin transparan */
+    background-color: transparent; 
+    border: none;           /* Hapus border */
+    
+    border-radius: 12px;    /* Pertahankan rounding dikit */
+    padding: 0;             /* Hapus padding agar logo fit sempurna */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;         
+}
+
+.company-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    
+    /* --- TAMBAHAN PENTING --- */
+    /* Trik jitu untuk bikin logo gelap otomatis jadi terang di dark mode */
+    /* filter: invert(1); */ /* Coba uncomment ini kalau logonya gelap-gelap */
+}
+
+.info-text {
+    display: flex;
+    flex-direction: column;
+}
 </style></head><body>
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
-        <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
-            <strong>
-                Shell plc
-                <a href="https://finance.yahoo.com/quote/SHEL/" target="_blank"
-                   style="color:#ff8c00;text-decoration:none;">(SHEL)</a>
-            </strong>
-        </h2>
-        <p class="subtitle" style="text-align:left;margin-bottom:6px;font-size:15px;">
-            🛢️ <span style="color:#ff8c00;">Oil & Gas Integrated</span>
-        </p>
-        <p class="subtitle" style="text-align:left;margin-bottom:28px;font-size:15px;">
-            Sharia: <span style="color:#ff4d4d;font-weight:bold;">Not Halal</span>
-        </p>
+        
+        <div class="header-container">
+            
+        <div class="company-logo">
+            <img src="../../../config/logos/SHEL.svg" alt="SHEL" onerror="this.src='https://via.placeholder.com/80?text=SHEL';">
+        </div>
+    
+            
+            <div class="info-text">
+                <h2 style="text-align:left;letter-spacing:2px;font-size:24px;margin:0;line-height:1.2;">
+                    <strong>
+                        Shell plc
+                        <a href="https://finance.yahoo.com/quote/SHEL/" target="_blank"
+                           style="color:#ff8c00;text-decoration:none;">(SHEL)</a>
+                    </strong>
+                </h2>
+                <p class="subtitle" style="text-align:left;margin:4px 0;font-size:15px;">
+                    🛢️ <span style="color:#ff8c00;">Oil & Gas Integrated</span>
+                </p>
+                <p class="subtitle" style="text-align:left;margin:0;font-size:15px;">
+                    Sharia: <span style="color:#ff4d4d;font-weight:bold;">Not Halal</span>
+                </p>
+            </div>
+        </div>
 
         <!-- ROW 1: Radar status + Sniper Score -->
         <div class="status-container">
@@ -286,5 +337,5 @@ tr.top5:hover td { background: #161616; }
         <div class="section-title">🏆 The Complete Power Ranking</div>
         <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2026-01-29</td><td style="color:#ff8c00;font-weight:bold;">12.55</td><td style="color:#ffffff;">76.75</td><td style="color:#ff4d4d;font-weight:bold;">-3.67</td><td style="color:#00ff88;font-weight:bold;">0.97</td><td style="color:#00ff88;font-weight:bold;">8.8</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-06-13</td><td style="color:#ff8c00;font-weight:bold;">9.96</td><td style="color:#ffffff;">70.49</td><td style="color:#ff4d4d;font-weight:bold;">-2.34</td><td style="color:#ff4d4d;font-weight:bold;">-2.94</td><td style="color:#ff4d4d;font-weight:bold;">-2.95</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-03-26</td><td style="color:#ff8c00;font-weight:bold;">9.5</td><td style="color:#ffffff;">70.21</td><td style="color:#ff4d4d;font-weight:bold;">-0.42</td><td style="color:#ff4d4d;font-weight:bold;">-12.52</td><td style="color:#ff4d4d;font-weight:bold;">-10.93</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-06-20</td><td style="color:#ff8c00;font-weight:bold;">9.37</td><td style="color:#ffffff;">70.35</td><td style="color:#ff4d4d;font-weight:bold;">-1.96</td><td style="color:#ff4d4d;font-weight:bold;">-3.56</td><td style="color:#ff4d4d;font-weight:bold;">-2.87</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-02-11</td><td style="color:#ff8c00;font-weight:bold;">8.21</td><td style="color:#ffffff;">79.49</td><td style="color:#00ff88;font-weight:bold;">0.19</td><td style="color:#00ff88;font-weight:bold;">2.13</td><td style="color:#00ff88;font-weight:bold;">11.16</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-03-27</td><td style="color:#ff8c00;font-weight:bold;">8.05</td><td style="color:#ffffff;">70.46</td><td style="color:#ff4d4d;font-weight:bold;">-4.8</td><td style="color:#ff4d4d;font-weight:bold;">-18.43</td><td style="color:#ff4d4d;font-weight:bold;">-10.14</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-03-25</td><td style="color:#ff8c00;font-weight:bold;">7.34</td><td style="color:#ffffff;">69.25</td><td style="color:#00ff88;font-weight:bold;">1.42</td><td style="color:#ff4d4d;font-weight:bold;">-17.05</td><td style="color:#ff4d4d;font-weight:bold;">-10.44</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-06-25</td><td style="color:#ff8c00;font-weight:bold;">7.18</td><td style="color:#ffffff;">67.48</td><td style="color:#00ff88;font-weight:bold;">4.09</td><td style="color:#00ff88;font-weight:bold;">4.12</td><td style="color:#00ff88;font-weight:bold;">4.23</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
 
-        <p class="footer">Generated 2026-03-22 19:23:22 EDT</p>
+        <p class="footer">Generated 2026-03-22 20:43:56 EDT</p>
     </body></html>

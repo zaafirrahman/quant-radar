@@ -220,21 +220,72 @@ tr.top5:hover td { background: #161616; }
     letter-spacing: 1px;
     margin-top: 4px;
 }
+
+/* Tambahkan di variabel _SINGLE_EXTRA_CSS kamu */
+.header-container {
+    display: flex;
+    align-items: flex-start; /* Sejajar atas */
+    gap: 20px;               /* Jarak antara logo dan teks */
+    margin-bottom: 20px;
+}
+
+/* Update di bagian _SINGLE_EXTRA_CSS kamu */
+.company-logo {
+    width: 70px;            /* Sesuaikan sedikit ukurannya agar pas */
+    height: 70px;
+    
+    /* GANTI INI: Hapus kotak putih, bikin transparan */
+    background-color: transparent; 
+    border: none;           /* Hapus border */
+    
+    border-radius: 12px;    /* Pertahankan rounding dikit */
+    padding: 0;             /* Hapus padding agar logo fit sempurna */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;         
+}
+
+.company-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    
+    /* --- TAMBAHAN PENTING --- */
+    /* Trik jitu untuk bikin logo gelap otomatis jadi terang di dark mode */
+    /* filter: invert(1); */ /* Coba uncomment ini kalau logonya gelap-gelap */
+}
+
+.info-text {
+    display: flex;
+    flex-direction: column;
+}
 </style></head><body>
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
-        <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
-            <strong>
-                DigitalOcean Holdings, Inc.
-                <a href="https://finance.yahoo.com/quote/DOCN/" target="_blank"
-                   style="color:#ff8c00;text-decoration:none;">(DOCN)</a>
-            </strong>
-        </h2>
-        <p class="subtitle" style="text-align:left;margin-bottom:6px;font-size:15px;">
-            💻 <span style="color:#ff8c00;">Software - Infrastructure</span>
-        </p>
-        <p class="subtitle" style="text-align:left;margin-bottom:28px;font-size:15px;">
-            Sharia: <span style="color:#ff4d4d;font-weight:bold;">Not Halal</span>
-        </p>
+        
+        <div class="header-container">
+            
+        <div class="company-logo">
+            <img src="../../../config/logos/DOCN.svg" alt="DOCN" onerror="this.src='https://via.placeholder.com/80?text=DOCN';">
+        </div>
+    
+            
+            <div class="info-text">
+                <h2 style="text-align:left;letter-spacing:2px;font-size:24px;margin:0;line-height:1.2;">
+                    <strong>
+                        DigitalOcean Holdings, Inc.
+                        <a href="https://finance.yahoo.com/quote/DOCN/" target="_blank"
+                           style="color:#ff8c00;text-decoration:none;">(DOCN)</a>
+                    </strong>
+                </h2>
+                <p class="subtitle" style="text-align:left;margin:4px 0;font-size:15px;">
+                    💻 <span style="color:#ff8c00;">Software - Infrastructure</span>
+                </p>
+                <p class="subtitle" style="text-align:left;margin:0;font-size:15px;">
+                    Sharia: <span style="color:#ff4d4d;font-weight:bold;">Not Halal</span>
+                </p>
+            </div>
+        </div>
 
         <!-- ROW 1: Radar status + Sniper Score -->
         <div class="status-container">
@@ -286,5 +337,5 @@ tr.top5:hover td { background: #161616; }
         <div class="section-title">🏆 The Complete Power Ranking</div>
         <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2026-01-26</td><td style="color:#ff8c00;font-weight:bold;">25.56</td><td style="color:#ffffff;">58.94</td><td style="color:#00ff88;font-weight:bold;">1.48</td><td style="color:#00ff88;font-weight:bold;">9.84</td><td style="color:#00ff88;font-weight:bold;">6.45</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-10</td><td style="color:#ff8c00;font-weight:bold;">16.89</td><td style="color:#ffffff;">64.08</td><td style="color:#00ff88;font-weight:bold;">7.46</td><td style="color:#ff4d4d;font-weight:bold;">-7.51</td><td style="color:#00ff88;font-weight:bold;">7.19</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-06</td><td style="color:#ff8c00;font-weight:bold;">15.04</td><td style="color:#ffffff;">54.01</td><td style="color:#00ff88;font-weight:bold;">0.7</td><td style="color:#ff4d4d;font-weight:bold;">-6.07</td><td style="color:#00ff88;font-weight:bold;">6.04</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-08</td><td style="color:#ff8c00;font-weight:bold;">14.76</td><td style="color:#ffffff;">52.47</td><td style="color:#00ff88;font-weight:bold;">0.78</td><td style="color:#00ff88;font-weight:bold;">2.17</td><td style="color:#00ff88;font-weight:bold;">19.92</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-09</td><td style="color:#ff8c00;font-weight:bold;">14.59</td><td style="color:#ffffff;">64.74</td><td style="color:#00ff88;font-weight:bold;">4.51</td><td style="color:#ff4d4d;font-weight:bold;">-3.09</td><td style="color:#ff4d4d;font-weight:bold;">-4.22</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-01-27</td><td style="color:#ff8c00;font-weight:bold;">13.78</td><td style="color:#ffffff;">60.25</td><td style="color:#ff4d4d;font-weight:bold;">-3.2</td><td style="color:#00ff88;font-weight:bold;">6.36</td><td style="color:#ff4d4d;font-weight:bold;">-1.63</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-08-05</td><td style="color:#ff8c00;font-weight:bold;">13.77</td><td style="color:#ffffff;">34.81</td><td style="color:#ff4d4d;font-weight:bold;">-13.67</td><td style="color:#ff4d4d;font-weight:bold;">-11.26</td><td style="color:#ff4d4d;font-weight:bold;">-7.96</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2024-09-20</td><td style="color:#ff8c00;font-weight:bold;">13.17</td><td style="color:#ffffff;">43.23</td><td style="color:#ff4d4d;font-weight:bold;">-5.14</td><td style="color:#ff4d4d;font-weight:bold;">-0.76</td><td style="color:#00ff88;font-weight:bold;">0.21</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-28</td><td style="color:#ff8c00;font-weight:bold;">13.14</td><td style="color:#ffffff;">60.24</td><td style="color:#ff4d4d;font-weight:bold;">-4.93</td><td style="color:#00ff88;font-weight:bold;">3.59</td><td style="color:#ff4d4d;font-weight:bold;">-9.93</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-10-15</td><td style="color:#ff8c00;font-weight:bold;">12.24</td><td style="color:#ffffff;">43.45</td><td style="color:#ff4d4d;font-weight:bold;">-10.29</td><td style="color:#ff4d4d;font-weight:bold;">-8.86</td><td style="color:#00ff88;font-weight:bold;">11.32</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-02-05</td><td style="color:#ff8c00;font-weight:bold;">11.91</td><td style="color:#ffffff;">42.95</td><td style="color:#00ff88;font-weight:bold;">5.49</td><td style="color:#00ff88;font-weight:bold;">0.21</td><td style="color:#ff4d4d;font-weight:bold;">-6.59</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-01-12</td><td style="color:#ff8c00;font-weight:bold;">11.88</td><td style="color:#ffffff;">55.33</td><td style="color:#ff4d4d;font-weight:bold;">-9.58</td><td style="color:#00ff88;font-weight:bold;">8.89</td><td style="color:#00ff88;font-weight:bold;">15.81</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-01-07</td><td style="color:#ff8c00;font-weight:bold;">11.87</td><td style="color:#ffffff;">53.56</td><td style="color:#ff4d4d;font-weight:bold;">-1.61</td><td style="color:#00ff88;font-weight:bold;">1.38</td><td style="color:#00ff88;font-weight:bold;">7.65</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-11-10</td><td style="color:#ff8c00;font-weight:bold;">11.53</td><td style="color:#ffffff;">51.67</td><td style="color:#ff4d4d;font-weight:bold;">-13.78</td><td style="color:#ff4d4d;font-weight:bold;">-12.62</td><td style="color:#ff4d4d;font-weight:bold;">-3.77</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-01-24</td><td style="color:#ff8c00;font-weight:bold;">11.22</td><td style="color:#ffffff;">40.18</td><td style="color:#00ff88;font-weight:bold;">3.24</td><td style="color:#00ff88;font-weight:bold;">11.45</td><td style="color:#ff4d4d;font-weight:bold;">-7.49</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-02-07</td><td style="color:#ff8c00;font-weight:bold;">11.18</td><td style="color:#ffffff;">44.78</td><td style="color:#ff4d4d;font-weight:bold;">-0.6</td><td style="color:#ff4d4d;font-weight:bold;">-16.99</td><td style="color:#ff4d4d;font-weight:bold;">-17.49</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-01-22</td><td style="color:#ff8c00;font-weight:bold;">10.65</td><td style="color:#ffffff;">54.3</td><td style="color:#00ff88;font-weight:bold;">3.37</td><td style="color:#00ff88;font-weight:bold;">6.19</td><td style="color:#00ff88;font-weight:bold;">17.18</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
 
-        <p class="footer">Generated 2026-03-22 19:23:22 EDT</p>
+        <p class="footer">Generated 2026-03-22 20:43:56 EDT</p>
     </body></html>

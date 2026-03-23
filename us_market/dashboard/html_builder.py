@@ -416,6 +416,46 @@ _SINGLE_EXTRA_CSS = """
     letter-spacing: 1px;
     margin-top: 4px;
 }
+
+/* Tambahkan di variabel _SINGLE_EXTRA_CSS kamu */
+.header-container {
+    display: flex;
+    align-items: flex-start; /* Sejajar atas */
+    gap: 20px;               /* Jarak antara logo dan teks */
+    margin-bottom: 20px;
+}
+
+/* Update di bagian _SINGLE_EXTRA_CSS kamu */
+.company-logo {
+    width: 70px;            /* Sesuaikan sedikit ukurannya agar pas */
+    height: 70px;
+    
+    /* GANTI INI: Hapus kotak putih, bikin transparan */
+    background-color: transparent; 
+    border: none;           /* Hapus border */
+    
+    border-radius: 12px;    /* Pertahankan rounding dikit */
+    padding: 0;             /* Hapus padding agar logo fit sempurna */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;         
+}
+
+.company-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    
+    /* --- TAMBAHAN PENTING --- */
+    /* Trik jitu untuk bikin logo gelap otomatis jadi terang di dark mode */
+    /* filter: invert(1); */ /* Coba uncomment ini kalau logonya gelap-gelap */
+}
+
+.info-text {
+    display: flex;
+    flex-direction: column;
+}
 """
 
 SECTOR_EMOJI = {
@@ -536,6 +576,15 @@ def build_single_dashboard(result: dict) -> str:
     power_table  = _build_signal_table(result["power_ranking"].reset_index())
     industry, emoji = get_ticker_info(ticker)
 
+    logo_path = f"../../../config/logos/{ticker}.svg" 
+    
+    # Template logo (kalau logo gak ada, bisa tampilkan inisial ticker)
+    logo_html = f'''
+        <div class="company-logo">
+            <img src="{logo_path}" alt="{ticker}" onerror="this.src='https://via.placeholder.com/80?text={ticker}';">
+        </div>
+    '''
+
     # ── reliability table ─────────────────────────────────────────────────────
     def _rtd(label, val, color):
         return f'<tr><td style="color:#555555;padding:12px 14px;">{label}</td><td style="{color}padding:12px 14px;font-size:15px;">{val}</td></tr>'
@@ -556,19 +605,26 @@ def build_single_dashboard(result: dict) -> str:
 
     body = f"""
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
-        <h2 style="text-align:left;letter-spacing:2px;font-size:22px;margin-bottom:4px;">
-            <strong>
-                {company}
-                <a href="{yahoo_url}" target="_blank"
-                   style="color:#ff8c00;text-decoration:none;">({ticker})</a>
-            </strong>
-        </h2>
-        <p class="subtitle" style="text-align:left;margin-bottom:6px;font-size:15px;">
-            {emoji} <span style="color:#ff8c00;">{industry}</span>
-        </p>
-        <p class="subtitle" style="text-align:left;margin-bottom:28px;font-size:15px;">
-            Sharia: <span style="{_color_sharia(sharia)}">{sharia}</span>
-        </p>
+        
+        <div class="header-container">
+            {logo_html}
+            
+            <div class="info-text">
+                <h2 style="text-align:left;letter-spacing:2px;font-size:24px;margin:0;line-height:1.2;">
+                    <strong>
+                        {company}
+                        <a href="{yahoo_url}" target="_blank"
+                           style="color:#ff8c00;text-decoration:none;">({ticker})</a>
+                    </strong>
+                </h2>
+                <p class="subtitle" style="text-align:left;margin:4px 0;font-size:15px;">
+                    {emoji} <span style="color:#ff8c00;">{industry}</span>
+                </p>
+                <p class="subtitle" style="text-align:left;margin:0;font-size:15px;">
+                    Sharia: <span style="{_color_sharia(sharia)}">{sharia}</span>
+                </p>
+            </div>
+        </div>
 
         <!-- ROW 1: Radar status + Sniper Score -->
         <div class="status-container">
