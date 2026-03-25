@@ -741,19 +741,20 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
         return f"{arrow} {abs(change):.2f}%"
 
     # ── Build table ───────────────────────────────────────────────────────────
-    th_tickers = '<th style="background:#0a0a0a;border:none;"></th>'
+    th_tickers = '<th style="background:#0a0a0a;border:none;position:sticky;left:0;z-index:3;"></th>'
     for t in tickers:
-        th_tickers += f'<th colspan="3" style="background:#111;color:#ff8c00;font-size:12px;letter-spacing:2px;text-align:center;padding:12px;border-bottom:1px solid #333;border-right:1px solid #333;">{t}</th>'
+        yf_url = f"https://finance.yahoo.com/quote/{t}/"
+        th_tickers += f'<th colspan="3" class="ticker-head" style="background:#111;color:#ff8c00;font-size:12px;letter-spacing:2px;text-align:center;padding:12px;border-bottom:1px solid #333;border-right:1px solid #333;position:sticky;top:0;z-index:2;"><a href="{yf_url}" target="_blank" style="color:#ff8c00;text-decoration:none;">{t}</a></th>'
 
-    th_sub = '<th style="background:#111;color:#555;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;">DATE</th>'
+    th_sub = '<th style="background:#111;color:#555;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;position:sticky;top:37px;left:0;z-index:3;">DATE</th>'
     for _ in tickers:
-        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;text-align:center;">RADAR</th>'
-        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;text-align:center;">PRICE</th>'
-        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;border-right:1px solid #222;text-align:center;">SNIPER</th>'
+        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;text-align:center;position:sticky;top:37px;z-index:2;">RADAR</th>'
+        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;text-align:center;position:sticky;top:37px;z-index:2;">PRICE</th>'
+        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;border-right:1px solid #222;text-align:center;position:sticky;top:37px;z-index:2;">SNIPER</th>'
 
     data_rows = ""
     for dt in dates:
-        row_html = f'<td style="color:#555555;font-size:12px;padding:10px 12px;white-space:nowrap;">{dt}</td>'
+        row_html = f'<td style="color:#555555;font-size:12px;padding:10px 12px;white-space:nowrap;position:sticky;left:0;background:#0a0a0a;z-index:1;">{dt}</td>'
         for t in tickers:
             try:
                 r      = idx.loc[(dt, t)]
@@ -767,7 +768,9 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
                 dist_display  = f"{dist:.1f}%" if dist is not None else "—"
 
                 row_html += f'<td style="background:{radar_bg};color:#ffffff;font-size:12px;padding:10px 8px;text-align:center;">{dist_display}</td>'
-                row_html += f'<td style="font-size:12px;padding:10px 8px;text-align:center;{_price_style(change)}">{_price_arrow(change)}</td>'
+                price_val     = float(r["Price"]) if r["Price"] is not None and str(r["Price"]) != "nan" else None
+                price_display = f"{price_val:.2f}" if price_val is not None else "—"
+                row_html += f'<td style="font-size:12px;padding:10px 8px;text-align:center;{_price_style(change)}">{price_display}</td>'
                 row_html += f'<td style="background:{sniper_bg};color:#ffffff;font-size:12px;padding:10px 8px;text-align:center;border-right:1px solid #1a1a1a;">{sniper_display}</td>'
             except KeyError:
                 row_html += '<td style="background:#0a0a0a;color:#222;font-size:11px;padding:10px 8px;text-align:center;">—</td>'
@@ -783,17 +786,58 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
         border-collapse: collapse;
         background: #0a0a0a;
         border: 1px solid #222;
-        overflow-x: auto;
     }
-    .tracking-wrap { overflow-x: auto; }
+    .tracking-wrap {
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: calc(100vh - 180px);
+        position: relative;
+    }
+    #tkSearch:focus { outline: none; border-color: #ffaa33; }
     </style>"""
+
+    search_js = """
+    <script>
+    function doSearch() {
+        var q = document.getElementById('tkSearch').value.trim().toUpperCase();
+        // Remove previous highlights
+        document.querySelectorAll('th.ticker-hl').forEach(el => {
+            el.style.outline = '';
+            el.classList.remove('ticker-hl');
+        });
+        if (!q) return;
+        var headers = document.querySelectorAll('th.ticker-head');
+        var found = null;
+        headers.forEach(function(th) {
+            if (th.textContent.trim().toUpperCase() === q) {
+                th.style.outline = '2px solid #ff8c00';
+                th.classList.add('ticker-hl');
+                if (!found) found = th;
+            }
+        });
+        if (found) found.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var inp = document.getElementById('tkSearch');
+        inp.addEventListener('input', doSearch);
+        inp.addEventListener('keydown', function(e) { if (e.key === 'Escape') { inp.value = ''; doSearch(); } });
+    });
+    </script>
+    """
 
     body = f"""
         {extra_css}
-        <a href="index.html" class="nav-btn" style="top:70px;right:auto;left:28px;">◀ Back</a>
-        <a href="../../../us_hub.html" class="nav-btn">◀ Hub</a>
-        <h2 style="margin-bottom:6px;">{month_label}</h2>
-        <p class="subtitle" style="text-align:center;margin-bottom:28px;">
+        {search_js}
+        <a href="index.html" class="nav-btn">◀ Back</a>
+        <div style="position:fixed;top:64px;right:28px;z-index:998;">
+            <input id="tkSearch" type="text" placeholder="Search ticker..."
+                style="font-family:'IBM Plex Mono',monospace;font-size:12px;
+                       letter-spacing:1px;background:#111;color:#ffffff;
+                       border:1px solid #ff8c00;padding:8px 14px;width:180px;
+                       outline:none;">
+        </div>
+        <h2 style="margin-bottom:4px;">{month_label}</h2>
+        <p class="subtitle" style="text-align:left;margin-bottom:20px;color:#555555;">
             Tracker Matrix — Post-Mortem Interval Array
         </p>
         <div class="tracking-wrap">
@@ -807,7 +851,7 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
         </div>
         <p class="footer" style="margin-top:40px;">
             Radar = Distance % above threshold &nbsp;|&nbsp;
-            Price = Daily change &nbsp;|&nbsp;
+            Price = Close (color = daily change) &nbsp;|&nbsp;
             Sniper = 0–100 combined score
         </p>
     """
