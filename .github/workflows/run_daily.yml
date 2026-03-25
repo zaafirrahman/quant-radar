@@ -2,7 +2,7 @@ name: Run Daily Pipeline
 
 on:
   schedule:
-    - cron: '0 23 * * *'  # 06:00 WIB (UTC+7)
+    - cron: '0 23 * * 1-5'  # Mon-Fri only, 06:00 WIB
   workflow_dispatch:
 
 permissions:

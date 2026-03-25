@@ -156,7 +156,6 @@ tr.top5:hover td { background: #161616; }
     margin-top: 60px;
     letter-spacing: 1px;
 }
-
 /* ── TWO-PANEL SECTION ── */
 .two-panel {
     display: flex;
@@ -164,26 +163,18 @@ tr.top5:hover td { background: #161616; }
     align-items: stretch;
     margin-bottom: 0;
 }
-/* table takes 2/3, side-box takes 1/3 */
 .two-panel-table { flex: 2; min-width: 0; }
-.two-panel-table table {
-    width: 100%;
-    table-layout: fixed;
-}
-/* reliability table: 2 cols, each 50% */
+.two-panel-table table { width: 100%; table-layout: fixed; }
 .two-panel-table.reliability th:nth-child(1),
 .two-panel-table.reliability td:nth-child(1) { width: 50%; }
 .two-panel-table.reliability th:nth-child(2),
 .two-panel-table.reliability td:nth-child(2) { width: 50%; }
-
-/* profitability table: 3 cols, each 33.3% */
 .two-panel-table.profitability th:nth-child(1),
 .two-panel-table.profitability td:nth-child(1) { width: 33.3%; }
 .two-panel-table.profitability th:nth-child(2),
 .two-panel-table.profitability td:nth-child(2) { width: 33.3%; }
 .two-panel-table.profitability th:nth-child(3),
 .two-panel-table.profitability td:nth-child(3) { width: 33.3%; }
-
 .two-panel-table th,
 .two-panel-table td {
     padding: 12px 14px !important;
@@ -220,56 +211,42 @@ tr.top5:hover td { background: #161616; }
     letter-spacing: 1px;
     margin-top: 4px;
 }
-
-/* Tambahkan di variabel _SINGLE_EXTRA_CSS kamu */
 .header-container {
     display: flex;
-    align-items: flex-start; /* Sejajar atas */
-    gap: 20px;               /* Jarak antara logo dan teks */
+    align-items: flex-start;
+    gap: 20px;
     margin-bottom: 20px;
 }
-
-/* Update di bagian _SINGLE_EXTRA_CSS kamu */
 .company-logo {
-    width: 70px;            /* Sesuaikan sedikit ukurannya agar pas */
+    width: 70px;
     height: 70px;
-    
-    /* GANTI INI: Hapus kotak putih, bikin transparan */
-    background-color: transparent; 
-    border: none;           /* Hapus border */
-    
-    border-radius: 12px;    /* Pertahankan rounding dikit */
-    padding: 0;             /* Hapus padding agar logo fit sempurna */
+    background-color: transparent;
+    border: none;
+    border-radius: 12px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;         
+    flex-shrink: 0;
 }
-
 .company-logo img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    
-    /* --- TAMBAHAN PENTING --- */
-    /* Trik jitu untuk bikin logo gelap otomatis jadi terang di dark mode */
-    /* filter: invert(1); */ /* Coba uncomment ini kalau logonya gelap-gelap */
 }
-
 .info-text {
     display: flex;
     flex-direction: column;
 }
 </style></head><body>
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
-        
+
         <div class="header-container">
             
         <div class="company-logo">
             <img src="../../../config/logos/DELL.svg" alt="DELL" onerror="this.src='https://via.placeholder.com/80?text=DELL';">
         </div>
     
-            
             <div class="info-text">
                 <h2 style="text-align:left;letter-spacing:2px;font-size:24px;margin:0;line-height:1.2;">
                     <strong>
@@ -287,12 +264,11 @@ tr.top5:hover td { background: #161616; }
             </div>
         </div>
 
-        <!-- ROW 1: Radar status + Sniper Score -->
         <div class="status-container">
             <div class="status-box">
-                <p>💵 Last Price: <b style="color:#ffffff;">164.59</b></p>
-                <p>🎯 Radar Score: <b style="font-size:22px;color:#ff8c00;">19.04</b></p>
-                <p>🛡️ Threshold (95%): <span style="color:#aaaaaa;">17.05</span></p>
+                <p>💵 Last Price: <b style="color:#ffffff;">176.91</b></p>
+                <p>🎯 Radar Score: <b style="font-size:22px;color:#ff8c00;">42.47</b></p>
+                <p>🛡️ Threshold (95%): <span style="color:#aaaaaa;">17.28</span></p>
                 <p>⚡ Status: <span class="blinking">✅ RADAR CONFIRMED</span></p>
             </div>
             <div class="verdict-box">
@@ -303,7 +279,6 @@ tr.top5:hover td { background: #161616; }
             </div>
         </div>
 
-        <!-- ROW 2: Reliability table + Quality side box -->
         <div class="section-title">🔬 Robustness and Consistency (Reliability)</div>
         <div class="two-panel">
             <div class="two-panel-table reliability"><table style="background:#0a0a0a;border:1px solid #222;">
@@ -320,7 +295,6 @@ tr.top5:hover td { background: #161616; }
             </div>
         </div>
 
-        <!-- ROW 3: Performance table + Edge side box -->
         <div class="section-title">📊 Average Strategy Performance (Profitability)</div>
         <div class="two-panel">
             <div class="two-panel-table profitability"><table><thead><tr><th></th><th>Avg Return (%)</th><th>Win Rate (%)</th></tr></thead><tbody><tr><td style="color:#555555;">5-Day</td><td style="color:#00ff88;font-weight:bold;">0.08</td><td style="color:#ffa500;">45.45</td></tr><tr><td style="color:#555555;">10-Day</td><td style="color:#00ff88;font-weight:bold;">0.30</td><td style="color:#ffa500;">45.45</td></tr><tr><td style="color:#555555;">20-Day</td><td style="color:#00ff88;font-weight:bold;">6.23</td><td style="color:#00ff88;font-weight:bold;">81.82</td></tr></tbody></table></div>
@@ -337,5 +311,5 @@ tr.top5:hover td { background: #161616; }
         <div class="section-title">🏆 The Complete Power Ranking</div>
         <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2025-10-08</td><td style="color:#ff8c00;font-weight:bold;">74.7</td><td style="color:#ffffff;">163.23</td><td style="color:#ff4d4d;font-weight:bold;">-6.58</td><td style="color:#ff4d4d;font-weight:bold;">-8.43</td><td style="color:#ff4d4d;font-weight:bold;">-7.04</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-10-07</td><td style="color:#ff8c00;font-weight:bold;">48.54</td><td style="color:#ffffff;">149.68</td><td style="color:#ff4d4d;font-weight:bold;">-1.39</td><td style="color:#ff4d4d;font-weight:bold;">-0.6</td><td style="color:#00ff88;font-weight:bold;">2.86</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-10-01</td><td style="color:#ff8c00;font-weight:bold;">43.81</td><td style="color:#ffffff;">148.5</td><td style="color:#00ff88;font-weight:bold;">9.92</td><td style="color:#00ff88;font-weight:bold;">2.69</td><td style="color:#00ff88;font-weight:bold;">9.69</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-10-09</td><td style="color:#ff8c00;font-weight:bold;">33.92</td><td style="color:#ffffff;">154.72</td><td style="color:#ff4d4d;font-weight:bold;">-2.98</td><td style="color:#ff4d4d;font-weight:bold;">-0.75</td><td style="color:#ff4d4d;font-weight:bold;">-4.0</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2024-08-30</td><td style="color:#ff8c00;font-weight:bold;">28.11</td><td style="color:#ffffff;">112.58</td><td style="color:#ff4d4d;font-weight:bold;">-8.35</td><td style="color:#ff4d4d;font-weight:bold;">-0.12</td><td style="color:#00ff88;font-weight:bold;">2.6</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-10-06</td><td style="color:#ff8c00;font-weight:bold;">22.88</td><td style="color:#ffffff;">144.61</td><td style="color:#00ff88;font-weight:bold;">5.24</td><td style="color:#00ff88;font-weight:bold;">1.45</td><td style="color:#00ff88;font-weight:bold;">10.24</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-09-30</td><td style="color:#ff8c00;font-weight:bold;">21.87</td><td style="color:#ffffff;">140.65</td><td style="color:#00ff88;font-weight:bold;">6.42</td><td style="color:#00ff88;font-weight:bold;">4.94</td><td style="color:#00ff88;font-weight:bold;">16.72</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-10-02</td><td style="color:#ff8c00;font-weight:bold;">21.47</td><td style="color:#ffffff;">146.21</td><td style="color:#00ff88;font-weight:bold;">5.82</td><td style="color:#00ff88;font-weight:bold;">2.67</td><td style="color:#00ff88;font-weight:bold;">9.64</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-05-30</td><td style="color:#ff8c00;font-weight:bold;">18.55</td><td style="color:#ffffff;">109.94</td><td style="color:#00ff88;font-weight:bold;">2.23</td><td style="color:#ff4d4d;font-weight:bold;">-1.54</td><td style="color:#00ff88;font-weight:bold;">10.18</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-05-29</td><td style="color:#ff8c00;font-weight:bold;">18.42</td><td style="color:#ffffff;">112.27</td><td style="color:#ff4d4d;font-weight:bold;">-1.59</td><td style="color:#ff4d4d;font-weight:bold;">-0.2</td><td style="color:#00ff88;font-weight:bold;">9.12</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2024-08-29</td><td style="color:#ff8c00;font-weight:bold;">18.38</td><td style="color:#ffffff;">107.9</td><td style="color:#ff4d4d;font-weight:bold;">-7.89</td><td style="color:#00ff88;font-weight:bold;">3.21</td><td style="color:#00ff88;font-weight:bold;">8.56</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
 
-        <p class="footer">Generated 2026-03-23 19:28:01 EDT</p>
+        <p class="footer">Generated 2026-03-24 23:46:59 EDT</p>
     </body></html>

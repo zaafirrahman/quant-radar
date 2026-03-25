@@ -175,15 +175,11 @@ def _td(content, style="color:#ffffff;"):
 # ══════════════════════════════════════════════════════════════
 
 def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
-    """Build the screener radar HTML table."""
-
     col_names = [
         "Rank", "Ticker", "Last_Price", "Momentum_14d", "Vol_Surge",
         "Range_Pos_325", "Radar_Score", "Threshold", "Distance_%", "Z_Score"
     ]
-
     header = "".join(f"<th>{c}</th>" for c in col_names)
-
     rows = []
     for i, row in df.iterrows():
         cells = []
@@ -198,12 +194,9 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
             elif j == 9: style = _color_z(float(val))
             else:        style = "color:#ffffff;"
             cells.append(f'<td style="{style}">{val}</td>')
-
         cls = "top5" if i < 5 else ""
         rows.append(f'<tr class="{cls}">{"".join(cells)}</tr>')
-
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
-
     body = f"""
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a>
         <a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
@@ -222,8 +215,6 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
 # ══════════════════════════════════════════════════════════════
 
 def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
-    """Build the bulk sniper HTML — Runner Performance Protocol."""
-
     col_names = [
         "Rank", "Ticker", "WR_5", "WR_10", "WR_20",
         "AVG_5", "AVG_10", "AVG_20",
@@ -231,10 +222,8 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         "Sample_Score", "Cluster_Score", "Stability_Score", "Quality_Score",
         "Sniper_Score", "Sharia"
     ]
-
     header = "".join(f"<th>{c}</th>" for c in col_names)
     rows   = []
-
     for i, row in summary_df.iterrows():
         cells = [
             _td(row["Rank"],   "color:#aaaaaa;"),
@@ -256,9 +245,7 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
             _td(row["Sharia"],          _color_sharia(str(row["Sharia"]))),
         ]
         rows.append(f'<tr>{"".join(cells)}</tr>')
-
     table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
-
     body = f"""
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a>
         <a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
@@ -352,7 +339,6 @@ _SINGLE_EXTRA_CSS = """
     margin-top: 60px;
     letter-spacing: 1px;
 }
-
 /* ── TWO-PANEL SECTION ── */
 .two-panel {
     display: flex;
@@ -360,26 +346,18 @@ _SINGLE_EXTRA_CSS = """
     align-items: stretch;
     margin-bottom: 0;
 }
-/* table takes 2/3, side-box takes 1/3 */
 .two-panel-table { flex: 2; min-width: 0; }
-.two-panel-table table {
-    width: 100%;
-    table-layout: fixed;
-}
-/* reliability table: 2 cols, each 50% */
+.two-panel-table table { width: 100%; table-layout: fixed; }
 .two-panel-table.reliability th:nth-child(1),
 .two-panel-table.reliability td:nth-child(1) { width: 50%; }
 .two-panel-table.reliability th:nth-child(2),
 .two-panel-table.reliability td:nth-child(2) { width: 50%; }
-
-/* profitability table: 3 cols, each 33.3% */
 .two-panel-table.profitability th:nth-child(1),
 .two-panel-table.profitability td:nth-child(1) { width: 33.3%; }
 .two-panel-table.profitability th:nth-child(2),
 .two-panel-table.profitability td:nth-child(2) { width: 33.3%; }
 .two-panel-table.profitability th:nth-child(3),
 .two-panel-table.profitability td:nth-child(3) { width: 33.3%; }
-
 .two-panel-table th,
 .two-panel-table td {
     padding: 12px 14px !important;
@@ -416,42 +394,29 @@ _SINGLE_EXTRA_CSS = """
     letter-spacing: 1px;
     margin-top: 4px;
 }
-
-/* Tambahkan di variabel _SINGLE_EXTRA_CSS kamu */
 .header-container {
     display: flex;
-    align-items: flex-start; /* Sejajar atas */
-    gap: 20px;               /* Jarak antara logo dan teks */
+    align-items: flex-start;
+    gap: 20px;
     margin-bottom: 20px;
 }
-
-/* Update di bagian _SINGLE_EXTRA_CSS kamu */
 .company-logo {
-    width: 70px;            /* Sesuaikan sedikit ukurannya agar pas */
+    width: 70px;
     height: 70px;
-    
-    /* GANTI INI: Hapus kotak putih, bikin transparan */
-    background-color: transparent; 
-    border: none;           /* Hapus border */
-    
-    border-radius: 12px;    /* Pertahankan rounding dikit */
-    padding: 0;             /* Hapus padding agar logo fit sempurna */
+    background-color: transparent;
+    border: none;
+    border-radius: 12px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;         
+    flex-shrink: 0;
 }
-
 .company-logo img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    
-    /* --- TAMBAHAN PENTING --- */
-    /* Trik jitu untuk bikin logo gelap otomatis jadi terang di dark mode */
-    /* filter: invert(1); */ /* Coba uncomment ini kalau logonya gelap-gelap */
 }
-
 .info-text {
     display: flex;
     flex-direction: column;
@@ -487,42 +452,31 @@ def get_ticker_info(ticker: str):
 
 
 def _build_signal_table(df: pd.DataFrame) -> str:
-    """Render a signals DataFrame (recent or power ranking) as an HTML table."""
     cols = ["Date", "Signal_Score", "Entry", "Return_5d (%)", "Return_10d (%)", "Return_20d (%)", "W/L"]
-
     if df.index.name == "Rank":
         df   = df.reset_index()
         cols = ["Rank"] + cols
-
     header = "".join(f"<th>{c}</th>" for c in cols)
     rows   = []
-
     for _, row in df.iterrows():
         cells = []
         for col in cols:
             val = row[col]
-            if   col == "Rank":
-                style = "color:#aaaaaa;"
-            elif col == "Date":
-                style = "color:#888888;"
-            elif col == "Signal_Score":
-                style = "color:#ff8c00;font-weight:bold;"
-            elif col == "Entry":
-                style = "color:#ffffff;"
+            if   col == "Rank":   style = "color:#aaaaaa;"
+            elif col == "Date":   style = "color:#888888;"
+            elif col == "Signal_Score": style = "color:#ff8c00;font-weight:bold;"
+            elif col == "Entry":  style = "color:#ffffff;"
             elif col in ["Return_5d (%)", "Return_10d (%)", "Return_20d (%)"]:
                 style = _color_return(float(val))
             elif col == "W/L":
                 style = "color:#00ff88;" if "WIN" in str(val) else "color:#ff4d4d;"
-            else:
-                style = "color:#ffffff;"
+            else: style = "color:#ffffff;"
             cells.append(f'<td style="{style}">{val}</td>')
         rows.append(f'<tr>{"".join(cells)}</tr>')
-
     return f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
 
 def _build_stats_table(stats_df: pd.DataFrame) -> str:
-    """Render strategy stats (5/10/20 day avg return & win rate)."""
     header = "<th></th><th>Avg Return (%)</th><th>Win Rate (%)</th>"
     rows   = []
     for idx, row in stats_df.iterrows():
@@ -538,13 +492,6 @@ def _build_stats_table(stats_df: pd.DataFrame) -> str:
 
 
 def build_single_dashboard(result: dict) -> str:
-    """
-    Build per-ticker sniper HTML dashboard.
-    Args:
-        result : dict returned by run_single_sniper()
-    Returns:
-        HTML string
-    """
     meta    = result["meta"]
     ticker  = meta["ticker"]
     company = meta["company"]
@@ -557,16 +504,14 @@ def build_single_dashboard(result: dict) -> str:
     verdict = meta["verdict"]
     sharia  = meta["sharia"]
 
-    # ── vars ─────────────────────────────────────────────────────────────────
-    status_label   = "✅ RADAR CONFIRMED" if score > thr else "😴 Waiting for Momentum"
-    status_cls     = "blinking" if score > thr else ""
-
-    sniper_color   = _color_sniper(sniper).replace("font-weight:bold;", "")
-    q              = meta["quality_score"]
-    e              = meta["edge_score"]
-    quality_color  = _color_quality(q).replace("font-weight:bold;", "")
-    edge_color     = _color_edge(e).replace("font-weight:bold;", "")
-    n              = result["summary"]["Sample"]
+    status_label  = "✅ RADAR CONFIRMED" if score > thr else "😴 Waiting for Momentum"
+    status_cls    = "blinking" if score > thr else ""
+    sniper_color  = _color_sniper(sniper).replace("font-weight:bold;", "")
+    q             = meta["quality_score"]
+    e             = meta["edge_score"]
+    quality_color = _color_quality(q).replace("font-weight:bold;", "")
+    edge_color    = _color_edge(e).replace("font-weight:bold;", "")
+    n             = result["summary"]["Sample"]
 
     yahoo_url = f"https://finance.yahoo.com/quote/{ticker}/"
     style     = f"<style>{_FONT_IMPORT}{_BASE_CSS}{_SINGLE_EXTRA_CSS}</style>"
@@ -576,16 +521,13 @@ def build_single_dashboard(result: dict) -> str:
     power_table  = _build_signal_table(result["power_ranking"].reset_index())
     industry, emoji = get_ticker_info(ticker)
 
-    logo_path = f"../../../config/logos/{ticker}.svg" 
-    
-    # Template logo (kalau logo gak ada, bisa tampilkan inisial ticker)
+    logo_path = f"../../../config/logos/{ticker}.svg"
     logo_html = f'''
         <div class="company-logo">
             <img src="{logo_path}" alt="{ticker}" onerror="this.src='https://via.placeholder.com/80?text={ticker}';">
         </div>
     '''
 
-    # ── reliability table ─────────────────────────────────────────────────────
     def _rtd(label, val, color):
         return f'<tr><td style="color:#555555;padding:12px 14px;">{label}</td><td style="{color}padding:12px 14px;font-size:15px;">{val}</td></tr>'
 
@@ -605,10 +547,9 @@ def build_single_dashboard(result: dict) -> str:
 
     body = f"""
         <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
-        
+
         <div class="header-container">
             {logo_html}
-            
             <div class="info-text">
                 <h2 style="text-align:left;letter-spacing:2px;font-size:24px;margin:0;line-height:1.2;">
                     <strong>
@@ -626,7 +567,6 @@ def build_single_dashboard(result: dict) -> str:
             </div>
         </div>
 
-        <!-- ROW 1: Radar status + Sniper Score -->
         <div class="status-container">
             <div class="status-box">
                 <p>💵 Last Price: <b style="color:#ffffff;">{price:.2f}</b></p>
@@ -642,7 +582,6 @@ def build_single_dashboard(result: dict) -> str:
             </div>
         </div>
 
-        <!-- ROW 2: Reliability table + Quality side box -->
         <div class="section-title">🔬 Robustness and Consistency (Reliability)</div>
         <div class="two-panel">
             <div class="two-panel-table reliability">{reliability_table}</div>
@@ -653,7 +592,6 @@ def build_single_dashboard(result: dict) -> str:
             </div>
         </div>
 
-        <!-- ROW 3: Performance table + Edge side box -->
         <div class="section-title">📊 Average Strategy Performance (Profitability)</div>
         <div class="two-panel">
             <div class="two-panel-table profitability">{stats_table}</div>
@@ -675,3 +613,205 @@ def build_single_dashboard(result: dict) -> str:
 
     favicon_link = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
     return f"<html><head>{favicon_link}<title>Sniper - {ticker}</title>{style}</head><body>{body}</body></html>"
+
+
+# ══════════════════════════════════════════════════════════════
+#  4. TRACKING INDEX  (month selector)
+# ══════════════════════════════════════════════════════════════
+
+def build_tracking_index(available_months: list[str]) -> str:
+    def _month_label(m: str) -> str:
+        dt = pd.to_datetime(m + "-01")
+        return dt.strftime("%B %Y").upper()
+
+    buttons = ""
+    for m in available_months:
+        label   = _month_label(m)
+        buttons += f'\n        <a href="{m}.html" class="month-btn">{label} ▶</a>'
+
+    extra_css = """
+    <style>
+    .month-btn {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto 12px;
+        padding: 18px 24px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: #000000;
+        background: #ff8c00;
+        text-align: left;
+        transition: background 0.15s;
+    }
+    .month-btn:hover { background: #ffaa33; }
+    .back-btn {
+        position: fixed;
+        top: 24px;
+        right: 28px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        font-weight: bold;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #000000;
+        background: #ff8c00;
+        padding: 10px 18px;
+        text-decoration: none;
+        z-index: 999;
+    }
+    .back-btn:hover { background: #ffaa33; }
+    </style>"""
+
+    body = f"""
+        {extra_css}
+        <a href="../../../us_hub.html" class="back-btn">◀ Back to Hub</a>
+        <div style="padding-top:80px;">
+            <p style="text-align:center;font-size:11px;letter-spacing:3px;color:#444;text-transform:uppercase;margin-bottom:12px;">
+                US Market / Tracker Matrix
+            </p>
+            <h2 style="text-align:center;letter-spacing:5px;margin-bottom:8px;">TRACKER MATRIX</h2>
+            <p class="subtitle" style="text-align:center;margin-bottom:40px;">
+                Post-Mortem Interval Array — Select a month to view
+            </p>
+            {buttons if buttons else '<p style="text-align:center;color:#444;">No data yet.</p>'}
+        </div>
+    """
+    favicon = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
+    style   = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
+    return f"<html><head>{favicon}<title>Tracker Matrix</title>{style}</head><body>{body}</body></html>"
+
+
+# ══════════════════════════════════════════════════════════════
+#  5. TRACKING MONTH DASHBOARD  (multihead heatmap table)
+# ══════════════════════════════════════════════════════════════
+
+def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
+    if df.empty:
+        body    = "<p style='color:#444;text-align:center;margin-top:100px;'>No data for this month.</p>"
+        favicon = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
+        style   = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
+        return f"<html><head>{favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}</body></html>"
+
+    month_label = pd.to_datetime(month_key + "-01").strftime("%B %Y").upper()
+
+    dates   = sorted(df["Date"].unique(), reverse=True)
+    tickers = sorted(df["Ticker"].unique())
+    idx     = df.set_index(["Date", "Ticker"])
+
+    # ── Heatmap helpers ───────────────────────────────────────────────────────
+    max_dist = df["Distance_%"].abs().max() if not df.empty else 1
+
+    def _radar_bg(dist: float) -> str:
+        if dist is None:
+            return "#0a0a0a"
+        if dist > 0:
+            # Green: intensity based on distance
+            ratio = min(dist / max(max_dist, 1), 1.0)
+            g = int(ratio * 255)
+            b = int(ratio * 136)
+            return f"rgb(0,{g},{b})"
+        elif dist < 0:
+            # Red: intensity based on how negative
+            ratio = min(abs(dist) / max(max_dist, 1), 1.0)
+            r = int(80 + ratio * 175)  # #500000 → #ff0000
+            return f"rgb({r},0,0)"
+        else:
+            return "#0a0a0a"
+
+    def _sniper_bg(score: float) -> str:
+        if score is None: return "#0a0a0a"
+        ratio = min(score / 100, 1.0)
+        if ratio >= 0.75:   return f"rgba(0,255,136,{0.15 + ratio*0.25:.2f})"
+        elif ratio >= 0.60: return f"rgba(124,252,0,{0.1 + ratio*0.2:.2f})"
+        elif ratio >= 0.50: return f"rgba(255,165,0,{0.1 + ratio*0.15:.2f})"
+        else:               return f"rgba(255,77,77,{0.05 + ratio*0.1:.2f})"
+
+    def _price_style(change) -> str:
+        if change is None: return "color:#555555;"
+        return "color:#00ff88;font-weight:bold;" if change >= 0 else "color:#ff4d4d;font-weight:bold;"
+
+    def _price_arrow(change) -> str:
+        if change is None: return "—"
+        arrow = "▲" if change >= 0 else "▼"
+        return f"{arrow} {abs(change):.2f}%"
+
+    # ── Build table ───────────────────────────────────────────────────────────
+    th_tickers = '<th style="background:#0a0a0a;border:none;"></th>'
+    for t in tickers:
+        th_tickers += f'<th colspan="3" style="background:#111;color:#ff8c00;font-size:12px;letter-spacing:2px;text-align:center;padding:12px;border-bottom:1px solid #333;border-right:1px solid #333;">{t}</th>'
+
+    th_sub = '<th style="background:#111;color:#555;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;">DATE</th>'
+    for _ in tickers:
+        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;text-align:center;">RADAR</th>'
+        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;text-align:center;">PRICE</th>'
+        th_sub += '<th style="background:#111;color:#666;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:1px solid #222;border-right:1px solid #222;text-align:center;">SNIPER</th>'
+
+    data_rows = ""
+    for dt in dates:
+        row_html = f'<td style="color:#555555;font-size:12px;padding:10px 12px;white-space:nowrap;">{dt}</td>'
+        for t in tickers:
+            try:
+                r      = idx.loc[(dt, t)]
+                dist   = float(r["Distance_%"]) if r["Distance_%"] is not None and str(r["Distance_%"]) != "nan" else None
+                change = float(r["Price_Change"]) if r["Price_Change"] is not None and str(r["Price_Change"]) != "nan" else None
+                sniper = float(r["Sniper_Score"]) if r["Sniper_Score"] is not None and str(r["Sniper_Score"]) != "nan" else None
+
+                radar_bg      = _radar_bg(dist)
+                sniper_bg     = _sniper_bg(sniper) if sniper is not None else "#0a0a0a"
+                sniper_display = f"{sniper:.1f}" if sniper is not None else "—"
+                dist_display  = f"{dist:.1f}%" if dist is not None else "—"
+
+                row_html += f'<td style="background:{radar_bg};color:#ffffff;font-size:12px;padding:10px 8px;text-align:center;">{dist_display}</td>'
+                row_html += f'<td style="font-size:12px;padding:10px 8px;text-align:center;{_price_style(change)}">{_price_arrow(change)}</td>'
+                row_html += f'<td style="background:{sniper_bg};color:#ffffff;font-size:12px;padding:10px 8px;text-align:center;border-right:1px solid #1a1a1a;">{sniper_display}</td>'
+            except KeyError:
+                row_html += '<td style="background:#0a0a0a;color:#222;font-size:11px;padding:10px 8px;text-align:center;">—</td>'
+                row_html += '<td style="background:#0a0a0a;color:#222;font-size:11px;padding:10px 8px;text-align:center;">—</td>'
+                row_html += '<td style="background:#0a0a0a;color:#222;font-size:11px;padding:10px 8px;text-align:center;border-right:1px solid #1a1a1a;">—</td>'
+
+        data_rows += f"<tr>{row_html}</tr>"
+
+    extra_css = """
+    <style>
+    .tracking-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #0a0a0a;
+        border: 1px solid #222;
+        overflow-x: auto;
+    }
+    .tracking-wrap { overflow-x: auto; }
+    </style>"""
+
+    body = f"""
+        {extra_css}
+        <a href="index.html" class="nav-btn" style="top:70px;right:auto;left:28px;">◀ Back</a>
+        <a href="../../../us_hub.html" class="nav-btn">◀ Hub</a>
+        <h2 style="margin-bottom:6px;">{month_label}</h2>
+        <p class="subtitle" style="text-align:center;margin-bottom:28px;">
+            Tracker Matrix — Post-Mortem Interval Array
+        </p>
+        <div class="tracking-wrap">
+            <table class="tracking-table">
+                <thead>
+                    <tr>{th_tickers}</tr>
+                    <tr>{th_sub}</tr>
+                </thead>
+                <tbody>{data_rows}</tbody>
+            </table>
+        </div>
+        <p class="footer" style="margin-top:40px;">
+            Radar = Distance % above threshold &nbsp;|&nbsp;
+            Price = Daily change &nbsp;|&nbsp;
+            Sniper = 0–100 combined score
+        </p>
+    """
+
+    favicon = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
+    style   = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
+    return f"<html><head>{favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}</body></html>"
