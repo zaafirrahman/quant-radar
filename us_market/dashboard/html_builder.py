@@ -835,8 +835,8 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
         {extra_css}
         {search_js}
         {calc_js}
-        <a href="index.html" class="nav-btn">◀ Back</a>
-        <div style="position:fixed;top:64px;right:28px;z-index:998;">
+        <a href="index.html" class="nav-btn" style="position:absolute; top:40px;">◀ Back</a>
+        <div style="position:absolute;top:84px;right:28px;z-index:998;">
             <input id="tkSearch" type="text" placeholder="Search ticker..."
                 style="font-family:'IBM Plex Mono',monospace;font-size:12px;
                        letter-spacing:1px;background:#111;color:#ffffff;
@@ -844,8 +844,11 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
                        outline:none;">
         </div>
         <h2 style="margin-bottom:4px;">{month_label}</h2>
+        <p class="subtitle" style="text-align:left;margin-bottom:6px;color:#ff8c00;">
+            Tracker Matrix
+        </p>
         <p class="subtitle" style="text-align:left;margin-bottom:20px;color:#555555;">
-            Tracker Matrix — Post-Mortem Interval Array
+            Post-Mortem Array
         </p>
         <div class="tracking-wrap">
             <table class="tracking-table">
