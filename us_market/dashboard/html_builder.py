@@ -796,6 +796,10 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
     #tkSearch:focus { outline: none; border-color: #ffaa33; }
     </style>"""
 
+    calc_js = """
+
+    """
+
     search_js = """
     <script>
     function doSearch() {
@@ -828,6 +832,7 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
     body = f"""
         {extra_css}
         {search_js}
+        {calc_js}
         <a href="index.html" class="nav-btn">◀ Back</a>
         <div style="position:fixed;top:64px;right:28px;z-index:998;">
             <input id="tkSearch" type="text" placeholder="Search ticker..."
@@ -849,13 +854,60 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
                 <tbody>{data_rows}</tbody>
             </table>
         </div>
-        <p class="footer" style="margin-top:40px;">
-            Radar = Distance % above threshold &nbsp;|&nbsp;
-            Price = Close (color = daily change) &nbsp;|&nbsp;
-            Sniper = 0–100 combined score
-        </p>
+        <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;">
+
+            <!-- Legend -->
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#444444;letter-spacing:1px;line-height:2;">
+                <div>Radar &nbsp; = Distance % above threshold</div>
+                <div>Price &nbsp; = Close price (color = daily change)</div>
+                <div>Sniper = 0–100 combined score</div>
+            </div>
+
+            <!-- Price Change Helper -->
+            <div style="font-family:'IBM Plex Mono',monospace;text-align:right;">
+                <div style="font-size:10px;letter-spacing:2px;color:#444444;text-transform:uppercase;margin-bottom:8px;">
+                    Price Change Helper
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <input id="pcFrom" type="number" placeholder="From"
+                        style="font-family:'IBM Plex Mono',monospace;font-size:13px;
+                               background:#0a0a0a;color:#ffffff;border:1px solid #333333;
+                               padding:8px 12px;width:100px;outline:none;">
+                    <span style="color:#555555;font-size:16px;">→</span>
+                    <input id="pcTo" type="number" placeholder="To"
+                        style="font-family:'IBM Plex Mono',monospace;font-size:13px;
+                               background:#0a0a0a;color:#ffffff;border:1px solid #333333;
+                               padding:8px 12px;width:100px;outline:none;">
+                    <span style="color:#555555;font-size:13px;">=</span>
+                    <span id="pcResult"
+                        style="font-size:15px;font-weight:600;letter-spacing:1px;
+                               color:#555555;min-width:80px;text-align:left;">—</span>
+                </div>
+            </div>
+
+        </div>
     """
+
+    calc_script = (
+        "<script>"
+        "function calcReturn(){"
+        "var fv=parseFloat(document.getElementById('pcFrom').value);"
+        "var tv=parseFloat(document.getElementById('pcTo').value);"
+        "var el=document.getElementById('pcResult');"
+        "if(isNaN(fv)||isNaN(tv)||fv===0){el.textContent='\u2014';el.style.color='#555555';return;}"
+        "var pct=((tv/fv)-1)*100;"
+        "el.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';"
+        "el.style.color=pct>=0?'#00ff88':'#ff4d4d';"
+        "}"
+        "document.getElementById('pcFrom').addEventListener('input',calcReturn);"
+        "document.getElementById('pcTo').addEventListener('input',calcReturn);"
+        "['pcFrom','pcTo'].forEach(function(id){"
+        "document.getElementById(id).addEventListener('focus',function(){this.style.borderColor='#ff8c00';});"
+        "document.getElementById(id).addEventListener('blur',function(){this.style.borderColor='#333333';});"
+        "});"
+        "</script>"
+    )
 
     favicon = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
     style   = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
-    return f"<html><head>{favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}</body></html>"
+    return f"<html><head>{favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}{calc_script}</body></html>"
