@@ -95,7 +95,8 @@ tr.top5:hover td { background: #161616; }
 def _wrap_html(title: str, body: str, favicon_depth: str = "../../../") -> str:
     style = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
     favicon_link = f'<link rel="icon" type="image/png" href="{favicon_depth}assets/logo.png">'
-    return f"""<html><head>{favicon_link}<title>{title}</title>{style}</head><body>{body}</body></html>"""
+    return f"""<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            {favicon_link}<title>{title}</title>{style}</head><body>{body}</body></html>"""
 
 
 # ══════════════════════════════════════════════════════════════
@@ -683,7 +684,8 @@ def build_tracking_index(available_months: list[str]) -> str:
     """
     favicon = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
     style   = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
-    return f"<html><head>{favicon}<title>Tracker Matrix</title>{style}</head><body>{body}</body></html>"
+    return f'''<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+                {favicon}<title>Tracker Matrix</title>{style}</head><body>{body}</body></html>'''
 
 
 # ══════════════════════════════════════════════════════════════
@@ -910,4 +912,5 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
 
     favicon = '<link rel="icon" type="image/png" href="../../../../assets/logo.png">'
     style   = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
-    return f"<html><head>{favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}{calc_script}</body></html>"
+    return f'''<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            {favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}{calc_script}</body></html>'''
