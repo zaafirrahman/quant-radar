@@ -699,7 +699,7 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
         style   = f"<style>{_FONT_IMPORT}{_BASE_CSS}</style>"
         return f"<html><head>{favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}</body></html>"
 
-    month_label = pd.to_datetime(month_key + "-01").strftime("%B %Y").upper()
+    month_label = pd.to_datetime(month_key + "-01").strftime("%b %Y").upper()
 
     dates   = sorted(df["Date"].unique(), reverse=True)
     tickers = sorted(df["Ticker"].unique())
@@ -840,7 +840,7 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
             <input id="tkSearch" type="text" placeholder="Search ticker..."
                 style="font-family:'IBM Plex Mono',monospace;font-size:12px;
                        letter-spacing:1px;background:#111;color:#ffffff;
-                       border:1px solid #ff8c00;padding:8px 14px;width:180px;
+                       border:1px solid #ff8c00;padding:8px 14px;width:175px;
                        outline:none;">
         </div>
         <h2 style="margin-bottom:4px;">{month_label}</h2>
@@ -848,7 +848,7 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
             Tracker Matrix
         </p>
         <p class="subtitle" style="text-align:left;margin-bottom:20px;color:#555555;">
-            Post-Mortem Array
+            Post-Mortem Details
         </p>
         <div class="tracking-wrap">
             <table class="tracking-table">
@@ -862,15 +862,16 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
         <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;">
 
             <!-- Legend -->
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#444444;letter-spacing:1px;line-height:2;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#555555;letter-spacing:1px;line-height:2;">
                 <div>Radar &nbsp; = Distance % above threshold</div>
-                <div>Price &nbsp; = Close price (color = daily change)</div>
-                <div>Sniper = 0–100 combined score</div>
+                <div>Price &nbsp; = Close price (16.00 EDT)</div>
+                <div>Sniper  = Edge x Quality (0–100)</div>
+                <div style="color:#ff4d4d">Todays price valid after 19.30 EDT</div>
             </div>
 
             <!-- Price Change Helper -->
             <div style="font-family:'IBM Plex Mono',monospace;text-align:right;">
-                <div style="font-size:10px;letter-spacing:2px;color:#444444;text-transform:uppercase;margin-bottom:8px;">
+                <div style="text-align:left;font-size:10px;letter-spacing:2px;color:#ff8c00;text-transform:uppercase;margin-bottom:8px;">
                     Price Change Helper
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;">
