@@ -90,6 +90,49 @@ tr.top5:hover td { background: #161616; }
     transition: background 0.15s ease;
 }
 .nav-btn:hover { background: #ffaa33; }
+
+/* ── STICKY TABLE WRAPPER ── */
+.table-wrap {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 220px);
+    position: relative;
+}
+
+/* Freeze col 1 (Rank) */
+.sticky-table th:nth-child(1),
+.sticky-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #111111;
+    min-width: 50px;
+}
+.sticky-table td:nth-child(1) { background: #0a0a0a; }
+tr.top5 .sticky-table td:nth-child(1),
+.sticky-table tr.top5 td:nth-child(1) { background: #0d0d0d; }
+
+/* Freeze col 2 (Ticker) */
+.sticky-table th:nth-child(2),
+.sticky-table td:nth-child(2) {
+    position: sticky;
+    left: 50px;
+    z-index: 2;
+    background: #111111;
+    min-width: 80px;
+    border-right: 1px solid #333333;
+}
+.sticky-table td:nth-child(2) { background: #0a0a0a; }
+.sticky-table tr.top5 td:nth-child(2) { background: #0d0d0d; }
+
+/* Freeze header row */
+.sticky-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+.sticky-table thead th:nth-child(1) { z-index: 4; }
+.sticky-table thead th:nth-child(2) { z-index: 4; }
 """
 
 def _wrap_html(title: str, body: str, favicon_depth: str = "../../../") -> str:
@@ -141,7 +184,7 @@ def _color_characteristic(val: str) -> str:
     if "COMPOUNDER" in val: return "color:#00ff88;"
     if "BURST"      in val: return "color:#ffff00;"
     if "STEADY"     in val: return "color:#ffa500;"
-    return "color:#ff4d4d;"  # ERRATIC
+    return "color:#ff4d4d;"
 
 def _color_quality(val: float) -> str:
     if val >= 0.75: return "color:#00ff88;font-weight:bold;"
@@ -172,7 +215,7 @@ def _td(content, style="color:#ffffff;"):
 
 
 # ══════════════════════════════════════════════════════════════
-#  1. RADAR DASHBOARD  (Signal Surge Amplifier Grid)
+#  1. RADAR DASHBOARD
 # ══════════════════════════════════════════════════════════════
 
 def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
@@ -197,22 +240,24 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
             cells.append(f'<td style="{style}">{val}</td>')
         cls = "top5" if i < 5 else ""
         rows.append(f'<tr class="{cls}">{"".join(cells)}</tr>')
-    table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
+
+    table = f'<table class="sticky-table"><thead><tr>{header}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
     body = f"""
-        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a>
-        <a href="../sniper/index.html" class="nav-btn">Go to Sniper ▶</a>
-        <h2>Signal Surge Amplifier Grid</h2>
+        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀ Hub</a>
+        <a href="../sniper/index.html" class="nav-btn">Sniper ▶</a>
+        <h2>Radar</h2>
+        <h2>Overview</h2>
         <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;">
-            Ranked based on radar - threshold distance percentage
+            Ranked based on radar-threshold distance percentage
         </p>
-        {table}
+        <div class="table-wrap">{table}</div>
     """
     return _wrap_html("Radar - Signal Surge Amplifier Grid", body)
 
 
 # ══════════════════════════════════════════════════════════════
-#  2. BULK SNIPER DASHBOARD  (Runner Performance Protocol)
+#  2. BULK SNIPER DASHBOARD
 # ══════════════════════════════════════════════════════════════
 
 def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
@@ -246,22 +291,24 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
             _td(row["Sharia"],          _color_sharia(str(row["Sharia"]))),
         ]
         rows.append(f'<tr>{"".join(cells)}</tr>')
-    table = f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
+
+    table = f'<table class="sticky-table"><thead><tr>{header}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
     body = f"""
-        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Back to Hub</a>
-        <a href="../radar/us_radar.html" class="nav-btn">◀ Back to Radar</a>
-        <h2>Runner Performance Protocol</h2>
+        <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Hub</a>
+        <a href="../radar/us_radar.html" class="nav-btn">◀ Radar</a>
+        <h2>Sniper</h2>
+        <h2>Overview</h2>
         <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;font-weight:bold">
             Click ticker ↓ to see full sniper details
         </p>
-        {table}
+        <div class="table-wrap">{table}</div>
     """
     return _wrap_html("Sniper - Runner Performance Protocol", body)
 
 
 # ══════════════════════════════════════════════════════════════
-#  3. SINGLE SNIPER DASHBOARD  (per ticker)
+#  3. SINGLE SNIPER DASHBOARD
 # ══════════════════════════════════════════════════════════════
 
 _SINGLE_EXTRA_CSS = """
@@ -297,23 +344,9 @@ _SINGLE_EXTRA_CSS = """
     color: #ff8c00;
     line-height: 1;
 }
-.verdict-text {
-    font-size: 15px;
-    color: #ffffff;
-    letter-spacing: 1px;
-}
-.score-label {
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: #555;
-    text-transform: uppercase;
-}
-.char-tag {
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    color: #888888;
-    margin-top: 4px;
-}
+.verdict-text { font-size: 15px; color: #ffffff; letter-spacing: 1px; }
+.score-label { font-size: 11px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+.char-tag { font-size: 12px; letter-spacing: 1.5px; color: #888888; margin-top: 4px; }
 .section-title {
     font-size: 13px;
     letter-spacing: 3px;
@@ -323,30 +356,10 @@ _SINGLE_EXTRA_CSS = """
     padding-left: 12px;
     margin: 36px 0 14px;
 }
-.blinking {
-    color: #ff8c00;
-    font-size: 18px;
-    font-weight: bold;
-    animation: blink 1.5s infinite;
-}
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
-}
-.footer {
-    color: #555555;
-    font-size: 13px;
-    text-align: center;
-    margin-top: 60px;
-    letter-spacing: 1px;
-}
-/* ── TWO-PANEL SECTION ── */
-.two-panel {
-    display: flex;
-    gap: 16px;
-    align-items: stretch;
-    margin-bottom: 0;
-}
+.blinking { color: #ff8c00; font-size: 18px; font-weight: bold; animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.footer { color: #555555; font-size: 13px; text-align: center; margin-top: 60px; letter-spacing: 1px; }
+.two-panel { display: flex; gap: 16px; align-items: stretch; margin-bottom: 0; }
 .two-panel-table { flex: 2; min-width: 0; }
 .two-panel-table table { width: 100%; table-layout: fixed; }
 .two-panel-table.reliability th:nth-child(1),
@@ -360,83 +373,22 @@ _SINGLE_EXTRA_CSS = """
 .two-panel-table.profitability th:nth-child(3),
 .two-panel-table.profitability td:nth-child(3) { width: 33.3%; }
 .two-panel-table th,
-.two-panel-table td {
-    padding: 12px 14px !important;
-    font-size: 14px !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.side-box {
-    flex: 1;
-    background: #0d0d0d;
-    border: 1px solid #ff8c00;
-    padding: 20px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 6px;
-}
-.side-box-label {
-    font-size: 10px;
-    letter-spacing: 2.5px;
-    color: #555555;
-    text-transform: uppercase;
-}
-.side-box-value {
-    font-size: 38px;
-    font-weight: 600;
-    line-height: 1.1;
-}
-.side-box-status {
-    font-size: 11px;
-    letter-spacing: 1px;
-    margin-top: 4px;
-}
-.header-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-.company-logo {
-    width: 70px;
-    height: 70px;
-    background-color: transparent;
-    border: none;
-    border-radius: 12px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-.company-logo img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-.info-text {
-    display: flex;
-    flex-direction: column;
-}
+.two-panel-table td { padding: 12px 14px !important; font-size: 14px !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-box { flex: 1; background: #0d0d0d; border: 1px solid #ff8c00; padding: 20px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
+.side-box-label { font-size: 10px; letter-spacing: 2.5px; color: #555555; text-transform: uppercase; }
+.side-box-value { font-size: 38px; font-weight: 600; line-height: 1.1; }
+.side-box-status { font-size: 11px; letter-spacing: 1px; margin-top: 4px; }
+.header-container { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; }
+.company-logo { width: 70px; height: 70px; background-color: transparent; border: none; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.company-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.info-text { display: flex; flex-direction: column; }
 """
 
 SECTOR_EMOJI = {
-    "Technology": "💻",
-    "Consumer Cyclical": "🛍️",
-    "Healthcare": "💊",
-    "Financial Services": "💰",
-    "Industrials": "⚙️",
-    "Communication Services": "📡",
-    "Consumer Defensive": "🛒",
-    "Basic Materials": "⛏️",
-    "Energy": "🛢️",
-    "Real Estate": "🏠",
-    "Utilities": "💡",
-    "Exchange Traded Fund": "📦",
+    "Technology": "💻", "Consumer Cyclical": "🛍️", "Healthcare": "💊",
+    "Financial Services": "💰", "Industrials": "⚙️", "Communication Services": "📡",
+    "Consumer Defensive": "🛒", "Basic Materials": "⛏️", "Energy": "🛢️",
+    "Real Estate": "🏠", "Utilities": "💡", "Exchange Traded Fund": "📦",
 }
 
 def get_ticker_info(ticker: str):
@@ -463,10 +415,10 @@ def _build_signal_table(df: pd.DataFrame) -> str:
         cells = []
         for col in cols:
             val = row[col]
-            if   col == "Rank":   style = "color:#aaaaaa;"
-            elif col == "Date":   style = "color:#888888;"
+            if   col == "Rank":         style = "color:#aaaaaa;"
+            elif col == "Date":         style = "color:#888888;"
             elif col == "Signal_Score": style = "color:#ff8c00;font-weight:bold;"
-            elif col == "Entry":  style = "color:#ffffff;"
+            elif col == "Entry":        style = "color:#ffffff;"
             elif col in ["Return_5d (%)", "Return_10d (%)", "Return_20d (%)"]:
                 style = _color_return(float(val))
             elif col == "W/L":
@@ -499,7 +451,6 @@ def build_single_dashboard(result: dict) -> str:
     price   = meta["current_price"]
     score   = meta["current_score"]
     thr     = meta["threshold"]
-    edge    = meta["edge_score"]
     char    = meta["characteristic"]
     sniper  = meta["sniper_score"]
     verdict = meta["verdict"]
@@ -523,20 +474,16 @@ def build_single_dashboard(result: dict) -> str:
     industry, emoji = get_ticker_info(ticker)
 
     logo_path = f"../../../config/logos/{ticker}.svg"
-    logo_html = f'''
-        <div class="company-logo">
-            <img src="{logo_path}" alt="{ticker}" onerror="this.src='https://via.placeholder.com/80?text={ticker}';">
-        </div>
-    '''
+    logo_html = f'<div class="company-logo"><img src="{logo_path}" alt="{ticker}" onerror="this.src=\'https://via.placeholder.com/80?text={ticker}\';"></div>'
 
     def _rtd(label, val, color):
         return f'<tr><td style="color:#555555;padding:12px 14px;">{label}</td><td style="{color}padding:12px 14px;font-size:15px;">{val}</td></tr>'
 
     reliability_rows = "".join([
-        _rtd("Sample Signals",  n,                             "color:#ffffff;"),
-        _rtd("Sample Quality",  meta["sample_score"],          _color_quality(meta["sample_score"])),
-        _rtd("Cluster Spread",  meta["cluster_score"],         _color_quality(meta["cluster_score"])),
-        _rtd("Stability",       meta["stability_score"],       _color_quality(meta["stability_score"])),
+        _rtd("Sample Signals",  n,                        "color:#ffffff;"),
+        _rtd("Sample Quality",  meta["sample_score"],     _color_quality(meta["sample_score"])),
+        _rtd("Cluster Spread",  meta["cluster_score"],    _color_quality(meta["cluster_score"])),
+        _rtd("Stability",       meta["stability_score"],  _color_quality(meta["stability_score"])),
     ])
     reliability_table = f'''<table style="background:#0a0a0a;border:1px solid #222;">
         <thead><tr>
@@ -547,17 +494,12 @@ def build_single_dashboard(result: dict) -> str:
     </table>'''
 
     body = f"""
-        <a href="../index.html" class="nav-btn">◀ Back to Sniper</a>
-
+        <a href="../index.html" class="nav-btn">◀ Sniper</a>
         <div class="header-container">
             {logo_html}
             <div class="info-text">
                 <h2 style="text-align:left;letter-spacing:2px;font-size:24px;margin:0;line-height:1.2;">
-                    <strong>
-                        {company}
-                        <a href="{yahoo_url}" target="_blank"
-                           style="color:#ff8c00;text-decoration:none;">({ticker})</a>
-                    </strong>
+                    <strong>{company} <a href="{yahoo_url}" target="_blank" style="color:#ff8c00;text-decoration:none;">({ticker})</a></strong>
                 </h2>
                 <p class="subtitle" style="text-align:left;margin:4px 0;font-size:15px;">
                     {emoji} <span style="color:#ff8c00;">{industry}</span>
@@ -567,7 +509,6 @@ def build_single_dashboard(result: dict) -> str:
                 </p>
             </div>
         </div>
-
         <div class="status-container">
             <div class="status-box">
                 <p>💵 Last Price: <b style="color:#ffffff;">{price:.2f}</b></p>
@@ -582,7 +523,6 @@ def build_single_dashboard(result: dict) -> str:
                 <div class="char-tag">Type: <span style="{_color_characteristic(char)}">{char}</span></div>
             </div>
         </div>
-
         <div class="section-title">🔬 Robustness and Consistency (Reliability)</div>
         <div class="two-panel">
             <div class="two-panel-table reliability">{reliability_table}</div>
@@ -592,7 +532,6 @@ def build_single_dashboard(result: dict) -> str:
                 <div class="side-box-status" style="{quality_color}">{_quality_status(q)}</div>
             </div>
         </div>
-
         <div class="section-title">📊 Average Strategy Performance (Profitability)</div>
         <div class="two-panel">
             <div class="two-panel-table profitability">{stats_table}</div>
@@ -602,13 +541,10 @@ def build_single_dashboard(result: dict) -> str:
                 <div class="side-box-status" style="{edge_color}">{_edge_status(e)}</div>
             </div>
         </div>
-
         <div class="section-title">📅 10 Recent Signals — Regime Check</div>
         {recent_table}
-
         <div class="section-title">🏆 The Complete Power Ranking</div>
         {power_table}
-
         <p class="footer">Generated {pd.Timestamp.now(pytz.timezone("US/Eastern")).strftime('%Y-%m-%d %H:%M:%S')} EDT</p>
     """
 
@@ -617,66 +553,47 @@ def build_single_dashboard(result: dict) -> str:
 
 
 # ══════════════════════════════════════════════════════════════
-#  4. TRACKING INDEX  (month selector)
+#  4. TRACKING INDEX
 # ══════════════════════════════════════════════════════════════
 
 def build_tracking_index(available_months: list[str]) -> str:
     def _month_label(m: str) -> str:
-        dt = pd.to_datetime(m + "-01")
-        return dt.strftime("%B %Y").upper()
+        return pd.to_datetime(m + "-01").strftime("%B %Y").upper()
 
     buttons = ""
     for m in available_months:
-        label   = _month_label(m)
-        buttons += f'\n        <a href="{m}.html" class="month-btn">{label} ▶</a>'
+        buttons += f'\n        <a href="{m}.html" class="month-btn">{_month_label(m)} ▶</a>'
 
     extra_css = """
     <style>
     .month-btn {
-        display: block;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto 12px;
-        padding: 18px 24px;
-        font-family: "IBM Plex Mono", monospace;
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        text-decoration: none;
-        color: #000000;
-        background: #ff8c00;
-        text-align: left;
-        transition: background 0.15s;
+        display: block; width: 100%; max-width: 400px;
+        margin: 0 auto 12px; padding: 18px 24px;
+        font-family: "IBM Plex Mono", monospace; font-size: 13px;
+        font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+        text-decoration: none; color: #000000; background: #ff8c00;
+        text-align: left; transition: background 0.15s;
     }
     .month-btn:hover { background: #ffaa33; }
     .back-btn {
-        position: fixed;
-        top: 24px;
-        right: 28px;
-        font-family: "IBM Plex Mono", monospace;
-        font-size: 12px;
-        font-weight: bold;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: #000000;
-        background: #ff8c00;
-        padding: 10px 18px;
-        text-decoration: none;
-        z-index: 999;
+        position: fixed; top: 24px; right: 28px;
+        font-family: "IBM Plex Mono", monospace; font-size: 12px;
+        font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase;
+        color: #000000; background: #ff8c00; padding: 10px 18px;
+        text-decoration: none; z-index: 999;
     }
     .back-btn:hover { background: #ffaa33; }
     </style>"""
 
     body = f"""
         {extra_css}
-        <a href="../../../us_hub.html" class="back-btn">◀ Back to Hub</a>
+        <a href="../../../us_hub.html" class="back-btn">◀ Hub</a>
         <div style="padding-top:80px;">
-            <p style="text-align:center;font-size:11px;letter-spacing:3px;color:#444;text-transform:uppercase;margin-bottom:12px;">
+            <p style="text-align:center;font-size:11px;letter-spacing:3px;color:#555555;text-transform:uppercase;margin-bottom:8px;">
                 US Market / Tracker Matrix
             </p>
-            <h2 style="text-align:center;letter-spacing:5px;margin-bottom:8px;">TRACKER MATRIX</h2>
-            <p class="subtitle" style="text-align:center;margin-bottom:40px;">
+            <h2 style="text-align:center;letter-spacing:5px;margin-bottom:6px;color:#ffffff;">TRACKER MATRIX</h2>
+            <p class="subtitle" style="text-align:center;margin-bottom:40px;color:#555555;">
                 Post-Mortem Interval Array — Select a month to view
             </p>
             {buttons if buttons else '<p style="text-align:center;color:#444;">No data yet.</p>'}
@@ -689,7 +606,7 @@ def build_tracking_index(available_months: list[str]) -> str:
 
 
 # ══════════════════════════════════════════════════════════════
-#  5. TRACKING MONTH DASHBOARD  (multihead heatmap table)
+#  5. TRACKING MONTH DASHBOARD
 # ══════════════════════════════════════════════════════════════
 
 def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
@@ -700,49 +617,34 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
         return f"<html><head>{favicon}<title>Tracker {month_key}</title>{style}</head><body>{body}</body></html>"
 
     month_label = pd.to_datetime(month_key + "-01").strftime("%b %Y").upper()
-
     dates   = sorted(df["Date"].unique(), reverse=True)
     tickers = sorted(df["Ticker"].unique())
     idx     = df.set_index(["Date", "Ticker"])
 
-    # ── Heatmap helpers ───────────────────────────────────────────────────────
     max_dist = df["Distance_%"].abs().max() if not df.empty else 1
 
-    def _radar_bg(dist: float) -> str:
-        if dist is None:
-            return "#0a0a0a"
+    def _radar_bg(dist):
+        if dist is None: return "#0a0a0a"
         if dist > 0:
-            # Green: intensity based on distance
             ratio = min(dist / max(max_dist, 1), 1.0)
-            g = int(ratio * 255)
-            b = int(ratio * 136)
-            return f"rgb(0,{g},{b})"
+            return f"rgb(0,{int(ratio*255)},{int(ratio*136)})"
         elif dist < 0:
-            # Red: intensity based on how negative
             ratio = min(abs(dist) / max(max_dist, 1), 1.0)
-            r = int(80 + ratio * 175)  # #500000 → #ff0000
-            return f"rgb({r},0,0)"
-        else:
-            return "#0a0a0a"
+            return f"rgb({int(80+ratio*175)},0,0)"
+        return "#0a0a0a"
 
-    def _sniper_bg(score: float) -> str:
+    def _sniper_bg(score):
         if score is None: return "#0a0a0a"
         ratio = min(score / 100, 1.0)
-        if ratio >= 0.75:   return f"rgba(0,255,136,{0.15 + ratio*0.25:.2f})"
-        elif ratio >= 0.60: return f"rgba(124,252,0,{0.1 + ratio*0.2:.2f})"
-        elif ratio >= 0.50: return f"rgba(255,165,0,{0.1 + ratio*0.15:.2f})"
-        else:               return f"rgba(255,77,77,{0.05 + ratio*0.1:.2f})"
+        if ratio >= 0.75:   return f"rgba(0,255,136,{0.15+ratio*0.25:.2f})"
+        elif ratio >= 0.60: return f"rgba(124,252,0,{0.1+ratio*0.2:.2f})"
+        elif ratio >= 0.50: return f"rgba(255,165,0,{0.1+ratio*0.15:.2f})"
+        else:               return f"rgba(255,77,77,{0.05+ratio*0.1:.2f})"
 
-    def _price_style(change) -> str:
+    def _price_style(change):
         if change is None: return "color:#555555;"
         return "color:#00ff88;font-weight:bold;" if change >= 0 else "color:#ff4d4d;font-weight:bold;"
 
-    def _price_arrow(change) -> str:
-        if change is None: return "—"
-        arrow = "▲" if change >= 0 else "▼"
-        return f"{arrow} {abs(change):.2f}%"
-
-    # ── Build table ───────────────────────────────────────────────────────────
     th_tickers = '<th style="background:#0a0a0a;border:none;position:sticky;left:0;z-index:3;"></th>'
     for t in tickers:
         yf_url = f"https://finance.yahoo.com/quote/{t}/"
@@ -763,70 +665,50 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
                 dist   = float(r["Distance_%"]) if r["Distance_%"] is not None and str(r["Distance_%"]) != "nan" else None
                 change = float(r["Price_Change"]) if r["Price_Change"] is not None and str(r["Price_Change"]) != "nan" else None
                 sniper = float(r["Sniper_Score"]) if r["Sniper_Score"] is not None and str(r["Sniper_Score"]) != "nan" else None
+                price_val = float(r["Price"]) if r["Price"] is not None and str(r["Price"]) != "nan" else None
 
-                radar_bg      = _radar_bg(dist)
-                sniper_bg     = _sniper_bg(sniper) if sniper is not None else "#0a0a0a"
+                radar_bg       = _radar_bg(dist)
+                sniper_bg      = _sniper_bg(sniper) if sniper is not None else "#0a0a0a"
                 sniper_display = f"{sniper:.1f}" if sniper is not None else "—"
-                dist_display  = f"{dist:.1f}%" if dist is not None else "—"
+                dist_display   = f"{dist:.1f}%" if dist is not None else "—"
+                price_display  = f"{price_val:.2f}" if price_val is not None else "—"
 
                 row_html += f'<td style="background:{radar_bg};color:#ffffff;font-size:12px;padding:10px 8px;text-align:center;">{dist_display}</td>'
-                price_val     = float(r["Price"]) if r["Price"] is not None and str(r["Price"]) != "nan" else None
-                price_display = f"{price_val:.2f}" if price_val is not None else "—"
                 row_html += f'<td style="font-size:12px;padding:10px 8px;text-align:center;{_price_style(change)}">{price_display}</td>'
                 row_html += f'<td style="background:{sniper_bg};color:#ffffff;font-size:12px;padding:10px 8px;text-align:center;border-right:1px solid #1a1a1a;">{sniper_display}</td>'
             except KeyError:
                 row_html += '<td style="background:#0a0a0a;color:#222;font-size:11px;padding:10px 8px;text-align:center;">—</td>'
                 row_html += '<td style="background:#0a0a0a;color:#222;font-size:11px;padding:10px 8px;text-align:center;">—</td>'
                 row_html += '<td style="background:#0a0a0a;color:#222;font-size:11px;padding:10px 8px;text-align:center;border-right:1px solid #1a1a1a;">—</td>'
-
         data_rows += f"<tr>{row_html}</tr>"
 
     extra_css = """
     <style>
-    .tracking-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #0a0a0a;
-        border: 1px solid #222;
-    }
-    .tracking-wrap {
-        overflow-x: auto;
-        overflow-y: auto;
-        max-height: calc(100vh - 180px);
-        position: relative;
-    }
-    #tkSearch:focus { outline: none; border-color: #ffaa33; }
+    .tracking-table { width:100%; border-collapse:collapse; background:#0a0a0a; border:1px solid #222; }
+    .tracking-wrap { overflow-x:auto; overflow-y:auto; max-height:calc(100vh - 220px); position:relative; }
+    #tkSearch:focus { outline:none; border-color:#ffaa33; }
     </style>"""
-
-    calc_js = """
-
-    """
 
     search_js = """
     <script>
     function doSearch() {
         var q = document.getElementById('tkSearch').value.trim().toUpperCase();
-        // Remove previous highlights
-        document.querySelectorAll('th.ticker-hl').forEach(el => {
-            el.style.outline = '';
-            el.classList.remove('ticker-hl');
-        });
+        document.querySelectorAll('th.ticker-hl').forEach(el => { el.style.outline=''; el.classList.remove('ticker-hl'); });
         if (!q) return;
-        var headers = document.querySelectorAll('th.ticker-head');
         var found = null;
-        headers.forEach(function(th) {
+        document.querySelectorAll('th.ticker-head').forEach(function(th) {
             if (th.textContent.trim().toUpperCase() === q) {
                 th.style.outline = '2px solid #ff8c00';
                 th.classList.add('ticker-hl');
                 if (!found) found = th;
             }
         });
-        if (found) found.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        if (found) found.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
     }
     document.addEventListener('DOMContentLoaded', function() {
         var inp = document.getElementById('tkSearch');
         inp.addEventListener('input', doSearch);
-        inp.addEventListener('keydown', function(e) { if (e.key === 'Escape') { inp.value = ''; doSearch(); } });
+        inp.addEventListener('keydown', function(e) { if (e.key==='Escape') { inp.value=''; doSearch(); } });
     });
     </script>
     """
@@ -834,22 +716,16 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
     body = f"""
         {extra_css}
         {search_js}
-        {calc_js}
-        <a href="index.html" class="nav-btn" style="position:absolute; top:40px;">◀ Back</a>
+        <a href="index.html" class="nav-btn" style="position:absolute;top:40px;">◀ Back</a>
         <div style="position:absolute;top:84px;right:28px;z-index:998;">
             <input id="tkSearch" type="text" placeholder="Search ticker..."
-                style="font-family:'IBM Plex Mono',monospace;font-size:12px;
-                       letter-spacing:1px;background:#111;color:#ffffff;
-                       border:1px solid #ff8c00;padding:8px 14px;width:175px;
-                       outline:none;">
+                style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1px;
+                       background:#111;color:#ffffff;border:1px solid #ff8c00;
+                       padding:8px 14px;width:170px;outline:none;">
         </div>
         <h2 style="margin-bottom:4px;">{month_label}</h2>
-        <p class="subtitle" style="text-align:left;margin-bottom:6px;color:#ff8c00;">
-            Tracker Matrix
-        </p>
-        <p class="subtitle" style="text-align:left;margin-bottom:20px;color:#555555;">
-            Post-Mortem Details
-        </p>
+        <p class="subtitle" style="text-align:left;margin-bottom:6px;color:#ff8c00;">Tracker Matrix</p>
+        <p class="subtitle" style="text-align:left;margin-bottom:20px;color:#555555;">Post-Mortem Details</p>
         <div class="tracking-wrap">
             <table class="tracking-table">
                 <thead>
@@ -860,16 +736,12 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
             </table>
         </div>
         <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;">
-
-            <!-- Legend -->
             <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#555555;letter-spacing:1px;line-height:2;">
                 <div>Radar &nbsp; = Distance % above threshold</div>
                 <div>Price &nbsp; = Close price (16.00 EDT)</div>
-                <div>Sniper  = Edge x Quality (0–100)</div>
-                <div style="color:#ff4d4d">Todays price valid after 19.30 EDT</div>
+                <div>Sniper  = Edge x Quality (0-100)</div>
+                <div style="color:#ff4d4d;">Todays price valid after 19.30 EDT</div>
             </div>
-
-            <!-- Price Change Helper -->
             <div style="font-family:'IBM Plex Mono',monospace;text-align:right;">
                 <div style="text-align:left;font-size:10px;letter-spacing:2px;color:#ff8c00;text-transform:uppercase;margin-bottom:8px;">
                     Price Change Helper
@@ -890,7 +762,6 @@ def build_tracking_month(df: pd.DataFrame, month_key: str) -> str:
                                color:#555555;min-width:80px;text-align:left;">—</span>
                 </div>
             </div>
-
         </div>
     """
 

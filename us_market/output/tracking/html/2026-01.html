@@ -81,69 +81,89 @@ tr.top5:hover td { background: #161616; }
     transition: background 0.15s ease;
 }
 .nav-btn:hover { background: #ffaa33; }
+
+/* ── STICKY TABLE WRAPPER ── */
+.table-wrap {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 220px);
+    position: relative;
+}
+
+/* Freeze col 1 (Rank) */
+.sticky-table th:nth-child(1),
+.sticky-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #111111;
+    min-width: 50px;
+}
+.sticky-table td:nth-child(1) { background: #0a0a0a; }
+tr.top5 .sticky-table td:nth-child(1),
+.sticky-table tr.top5 td:nth-child(1) { background: #0d0d0d; }
+
+/* Freeze col 2 (Ticker) */
+.sticky-table th:nth-child(2),
+.sticky-table td:nth-child(2) {
+    position: sticky;
+    left: 50px;
+    z-index: 2;
+    background: #111111;
+    min-width: 80px;
+    border-right: 1px solid #333333;
+}
+.sticky-table td:nth-child(2) { background: #0a0a0a; }
+.sticky-table tr.top5 td:nth-child(2) { background: #0d0d0d; }
+
+/* Freeze header row */
+.sticky-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+.sticky-table thead th:nth-child(1) { z-index: 4; }
+.sticky-table thead th:nth-child(2) { z-index: 4; }
 </style></head><body>
         
     <style>
-    .tracking-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #0a0a0a;
-        border: 1px solid #222;
-    }
-    .tracking-wrap {
-        overflow-x: auto;
-        overflow-y: auto;
-        max-height: calc(100vh - 180px);
-        position: relative;
-    }
-    #tkSearch:focus { outline: none; border-color: #ffaa33; }
+    .tracking-table { width:100%; border-collapse:collapse; background:#0a0a0a; border:1px solid #222; }
+    .tracking-wrap { overflow-x:auto; overflow-y:auto; max-height:calc(100vh - 220px); position:relative; }
+    #tkSearch:focus { outline:none; border-color:#ffaa33; }
     </style>
         
     <script>
     function doSearch() {
         var q = document.getElementById('tkSearch').value.trim().toUpperCase();
-        // Remove previous highlights
-        document.querySelectorAll('th.ticker-hl').forEach(el => {
-            el.style.outline = '';
-            el.classList.remove('ticker-hl');
-        });
+        document.querySelectorAll('th.ticker-hl').forEach(el => { el.style.outline=''; el.classList.remove('ticker-hl'); });
         if (!q) return;
-        var headers = document.querySelectorAll('th.ticker-head');
         var found = null;
-        headers.forEach(function(th) {
+        document.querySelectorAll('th.ticker-head').forEach(function(th) {
             if (th.textContent.trim().toUpperCase() === q) {
                 th.style.outline = '2px solid #ff8c00';
                 th.classList.add('ticker-hl');
                 if (!found) found = th;
             }
         });
-        if (found) found.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        if (found) found.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
     }
     document.addEventListener('DOMContentLoaded', function() {
         var inp = document.getElementById('tkSearch');
         inp.addEventListener('input', doSearch);
-        inp.addEventListener('keydown', function(e) { if (e.key === 'Escape') { inp.value = ''; doSearch(); } });
+        inp.addEventListener('keydown', function(e) { if (e.key==='Escape') { inp.value=''; doSearch(); } });
     });
     </script>
     
-        
-
-    
-        <a href="index.html" class="nav-btn" style="position:absolute; top:40px;">◀ Back</a>
+        <a href="index.html" class="nav-btn" style="position:absolute;top:40px;">◀ Back</a>
         <div style="position:absolute;top:84px;right:28px;z-index:998;">
             <input id="tkSearch" type="text" placeholder="Search ticker..."
-                style="font-family:'IBM Plex Mono',monospace;font-size:12px;
-                       letter-spacing:1px;background:#111;color:#ffffff;
-                       border:1px solid #ff8c00;padding:8px 14px;width:175px;
-                       outline:none;">
+                style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1px;
+                       background:#111;color:#ffffff;border:1px solid #ff8c00;
+                       padding:8px 14px;width:170px;outline:none;">
         </div>
         <h2 style="margin-bottom:4px;">JAN 2026</h2>
-        <p class="subtitle" style="text-align:left;margin-bottom:6px;color:#ff8c00;">
-            Tracker Matrix
-        </p>
-        <p class="subtitle" style="text-align:left;margin-bottom:20px;color:#555555;">
-            Post-Mortem Details
-        </p>
+        <p class="subtitle" style="text-align:left;margin-bottom:6px;color:#ff8c00;">Tracker Matrix</p>
+        <p class="subtitle" style="text-align:left;margin-bottom:20px;color:#555555;">Post-Mortem Details</p>
         <div class="tracking-wrap">
             <table class="tracking-table">
                 <thead>
@@ -154,16 +174,12 @@ tr.top5:hover td { background: #161616; }
             </table>
         </div>
         <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;">
-
-            <!-- Legend -->
             <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#555555;letter-spacing:1px;line-height:2;">
                 <div>Radar &nbsp; = Distance % above threshold</div>
                 <div>Price &nbsp; = Close price (16.00 EDT)</div>
-                <div>Sniper  = Edge x Quality (0–100)</div>
-                <div style="color:#ff4d4d">Todays price valid after 19.30 EDT</div>
+                <div>Sniper  = Edge x Quality (0-100)</div>
+                <div style="color:#ff4d4d;">Todays price valid after 19.30 EDT</div>
             </div>
-
-            <!-- Price Change Helper -->
             <div style="font-family:'IBM Plex Mono',monospace;text-align:right;">
                 <div style="text-align:left;font-size:10px;letter-spacing:2px;color:#ff8c00;text-transform:uppercase;margin-bottom:8px;">
                     Price Change Helper
@@ -184,6 +200,5 @@ tr.top5:hover td { background: #161616; }
                                color:#555555;min-width:80px;text-align:left;">—</span>
                 </div>
             </div>
-
         </div>
     <script>function calcReturn(){var fv=parseFloat(document.getElementById('pcFrom').value);var tv=parseFloat(document.getElementById('pcTo').value);var el=document.getElementById('pcResult');if(isNaN(fv)||isNaN(tv)||fv===0){el.textContent='—';el.style.color='#555555';return;}var pct=((tv/fv)-1)*100;el.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';el.style.color=pct>=0?'#00ff88':'#ff4d4d';}document.getElementById('pcFrom').addEventListener('input',calcReturn);document.getElementById('pcTo').addEventListener('input',calcReturn);['pcFrom','pcTo'].forEach(function(id){document.getElementById(id).addEventListener('focus',function(){this.style.borderColor='#ff8c00';});document.getElementById(id).addEventListener('blur',function(){this.style.borderColor='#333333';});});</script></body></html>

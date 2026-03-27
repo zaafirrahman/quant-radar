@@ -81,51 +81,77 @@ tr.top5:hover td { background: #161616; }
     transition: background 0.15s ease;
 }
 .nav-btn:hover { background: #ffaa33; }
+
+/* ── STICKY TABLE WRAPPER ── */
+.table-wrap {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 220px);
+    position: relative;
+}
+
+/* Freeze col 1 (Rank) */
+.sticky-table th:nth-child(1),
+.sticky-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #111111;
+    min-width: 50px;
+}
+.sticky-table td:nth-child(1) { background: #0a0a0a; }
+tr.top5 .sticky-table td:nth-child(1),
+.sticky-table tr.top5 td:nth-child(1) { background: #0d0d0d; }
+
+/* Freeze col 2 (Ticker) */
+.sticky-table th:nth-child(2),
+.sticky-table td:nth-child(2) {
+    position: sticky;
+    left: 50px;
+    z-index: 2;
+    background: #111111;
+    min-width: 80px;
+    border-right: 1px solid #333333;
+}
+.sticky-table td:nth-child(2) { background: #0a0a0a; }
+.sticky-table tr.top5 td:nth-child(2) { background: #0d0d0d; }
+
+/* Freeze header row */
+.sticky-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+.sticky-table thead th:nth-child(1) { z-index: 4; }
+.sticky-table thead th:nth-child(2) { z-index: 4; }
 </style></head><body>
         
     <style>
     .month-btn {
-        display: block;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto 12px;
-        padding: 18px 24px;
-        font-family: "IBM Plex Mono", monospace;
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        text-decoration: none;
-        color: #000000;
-        background: #ff8c00;
-        text-align: left;
-        transition: background 0.15s;
+        display: block; width: 100%; max-width: 400px;
+        margin: 0 auto 12px; padding: 18px 24px;
+        font-family: "IBM Plex Mono", monospace; font-size: 13px;
+        font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+        text-decoration: none; color: #000000; background: #ff8c00;
+        text-align: left; transition: background 0.15s;
     }
     .month-btn:hover { background: #ffaa33; }
     .back-btn {
-        position: fixed;
-        top: 24px;
-        right: 28px;
-        font-family: "IBM Plex Mono", monospace;
-        font-size: 12px;
-        font-weight: bold;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: #000000;
-        background: #ff8c00;
-        padding: 10px 18px;
-        text-decoration: none;
-        z-index: 999;
+        position: fixed; top: 24px; right: 28px;
+        font-family: "IBM Plex Mono", monospace; font-size: 12px;
+        font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase;
+        color: #000000; background: #ff8c00; padding: 10px 18px;
+        text-decoration: none; z-index: 999;
     }
     .back-btn:hover { background: #ffaa33; }
     </style>
-        <a href="../../../us_hub.html" class="back-btn">◀ Back to Hub</a>
+        <a href="../../../us_hub.html" class="back-btn">◀ Hub</a>
         <div style="padding-top:80px;">
-            <p style="text-align:center;font-size:11px;letter-spacing:3px;color:#444;text-transform:uppercase;margin-bottom:12px;">
+            <p style="text-align:center;font-size:11px;letter-spacing:3px;color:#555555;text-transform:uppercase;margin-bottom:8px;">
                 US Market / Tracker Matrix
             </p>
-            <h2 style="text-align:center;letter-spacing:5px;margin-bottom:8px;">TRACKER MATRIX</h2>
-            <p class="subtitle" style="text-align:center;margin-bottom:40px;">
+            <h2 style="text-align:center;letter-spacing:5px;margin-bottom:6px;color:#ffffff;">TRACKER MATRIX</h2>
+            <p class="subtitle" style="text-align:center;margin-bottom:40px;color:#555555;">
                 Post-Mortem Interval Array — Select a month to view
             </p>
             
