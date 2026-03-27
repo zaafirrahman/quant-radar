@@ -300,7 +300,7 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         <h2>Overview</h2>
         <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;font-weight:bold">
-            Click ticker ↓ to see full sniper details
+            Click ticker ↓ to see sniper details
         </p>
         <div class="table-wrap">{table}</div>
     """
