@@ -367,11 +367,15 @@ _SINGLE_EXTRA_CSS = """
 .two-panel-table.reliability th:nth-child(2),
 .two-panel-table.reliability td:nth-child(2) { width: 50%; }
 .two-panel-table.profitability th:nth-child(1),
-.two-panel-table.profitability td:nth-child(1) { width: 33.3%; }
+.two-panel-table.profitability td:nth-child(1) { width: 20%; }
 .two-panel-table.profitability th:nth-child(2),
-.two-panel-table.profitability td:nth-child(2) { width: 33.3%; }
+.two-panel-table.profitability td:nth-child(2) { width: 20%; }
 .two-panel-table.profitability th:nth-child(3),
-.two-panel-table.profitability td:nth-child(3) { width: 33.3%; }
+.two-panel-table.profitability td:nth-child(3) { width: 20%; }
+.two-panel-table.profitability th:nth-child(4),
+.two-panel-table.profitability td:nth-child(4) { width: 20%; }
+.two-panel-table.profitability th:nth-child(5),
+.two-panel-table.profitability td:nth-child(5) { width: 20%; }
 .two-panel-table th,
 .two-panel-table td { padding: 12px 14px !important; font-size: 14px !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .side-box { flex: 1; background: #0d0d0d; border: 1px solid #ff8c00; padding: 20px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
@@ -430,15 +434,19 @@ def _build_signal_table(df: pd.DataFrame) -> str:
 
 
 def _build_stats_table(stats_df: pd.DataFrame) -> str:
-    header = "<th></th><th>Avg Return (%)</th><th>Win Rate (%)</th>"
+    header = "<th></th><th>Avg Return (%)</th><th>Win Rate (%)</th><th>Avg Win (%)</th><th>Avg Loss (%)</th>"
     rows   = []
     for idx, row in stats_df.iterrows():
         ar = float(row["Avg Return (%)"])
         wr = float(row["Win Rate (%)"])
+        aw = float(row["Avg Win (%)"])
+        al = float(row["Avg Loss (%)"])
         cells = [
             f'<td style="color:#555555;">{idx}</td>',
             f'<td style="{_color_return(ar)}">{ar:.2f}</td>',
             f'<td style="{_color_winrate(wr)}">{wr:.2f}</td>',
+            f'<td style="{_color_return(aw)}">{aw:.2f}</td>',
+            f'<td style="{_color_return(al)}">{al:.2f}</td>',
         ]
         rows.append(f'<tr>{"".join(cells)}</tr>')
     return f"<table><thead><tr>{header}</tr></thead><tbody>{''.join(rows)}</tbody></table>"

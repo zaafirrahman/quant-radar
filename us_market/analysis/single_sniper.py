@@ -81,14 +81,11 @@ def _calc_cluster_score(dates: list) -> float:
     """
     if len(dates) <= 1:
         return round(1.0 / max(len(dates), 1), 4)
-
     sorted_dates = sorted(pd.to_datetime(dates))
     clusters = 1
     for i in range(1, len(sorted_dates)):
-        gap = (sorted_dates[i] - sorted_dates[i - 1]).days
-        if gap >= 5:
+        if (sorted_dates[i] - sorted_dates[i - 1]).days >= 5:
             clusters += 1
-
     return round(clusters / len(dates), 4)
 
 
@@ -101,12 +98,10 @@ def _calc_stability_score(returns: pd.Series, signals_df: pd.DataFrame) -> float
     # ── CV stability ──────────────────────────────────────────
     mean_r = returns.mean()
     std_r  = returns.std()
-
     if abs(mean_r) < 1e-9:
         cv_stability = 0.0
     else:
-        cv = abs(std_r / mean_r)
-        cv_stability = 1 / (1 + cv)
+        cv_stability = 1 / (1 + abs(std_r / mean_r))
 
     # ── Temporal consistency ──────────────────────────────────
     n = len(signals_df)
@@ -115,10 +110,8 @@ def _calc_stability_score(returns: pd.Series, signals_df: pd.DataFrame) -> float
         temporal = 0.5
     else:
         mid       = n // 2
-        first     = signals_df.iloc[:mid]
-        second    = signals_df.iloc[mid:]
-        wr_first  = (first["Return_20d (%)"] > 0).mean() * 100
-        wr_second = (second["Return_20d (%)"] > 0).mean() * 100
+        wr_first  = (signals_df.iloc[:mid]["Return_20d (%)"] > 0).mean() * 100
+        wr_second = (signals_df.iloc[mid:]["Return_20d (%)"] > 0).mean() * 100
         temporal  = 1 - abs(wr_first - wr_second) / 100
 
     return round(0.5 * cv_stability + 0.5 * temporal, 4)
@@ -135,12 +128,10 @@ def _calc_sniper_score(edge_raw: float, quality_score: float) -> float:
     - Positive edge → combined score 50-100
     """
     edge_01 = _normalize_edge(edge_raw)
-
     if edge_raw <= 0:
         score = edge_01 * quality_score * 100
     else:
         score = ((edge_01 + quality_score) / 2) * 100
-
     return round(score, 2)
 
 
@@ -153,6 +144,23 @@ def _verdict(sniper_score: float) -> str:
         return "🥈 B-TIER: MODERATE SIGNAL"
     else:
         return "🥉 C-TIER: AVOID"
+
+
+# ─────────────────────────────────────────
+#  AVGWIN / AVGLOSS HELPER
+# ─────────────────────────────────────────
+
+def _calc_win_loss(series: pd.Series) -> tuple[float, float]:
+    """
+    Returns (avg_win, avg_loss) for a return series.
+    avg_win  → mean of positive returns (or 0.0 if none)
+    avg_loss → mean of negative returns, always negative (or 0.0 if none)
+    """
+    wins   = series[series > 0]
+    losses = series[series <= 0]
+    avg_win  = round(wins.mean(),   2) if len(wins)   > 0 else 0.0
+    avg_loss = round(losses.mean(), 2) if len(losses) > 0 else 0.0
+    return avg_win, avg_loss
 
 
 # ─────────────────────────────────────────
@@ -223,9 +231,18 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
     wr20 = round((signals_df["Return_20d (%)"] > 0).mean() * 100, 2)
     n    = len(signals_df)
 
+    # ── AvgWin & AvgLoss per horizon ─────────────────────────────────────────
+    aw5,  al5  = _calc_win_loss(signals_df["Return_5d (%)"])
+    aw10, al10 = _calc_win_loss(signals_df["Return_10d (%)"])
+    aw20, al20 = _calc_win_loss(signals_df["Return_20d (%)"])
+
     stats_df = pd.DataFrame(
-        {"Avg Return (%)": [ar5, ar10, ar20],
-         "Win Rate (%)":   [wr5, wr10, wr20]},
+        {
+            "Avg Return (%)": [ar5,  ar10,  ar20],
+            "Win Rate (%)":   [wr5,  wr10,  wr20],
+            "Avg Win (%)":    [aw5,  aw10,  aw20],
+            "Avg Loss (%)":   [al5,  al10,  al20],
+        },
         index=["5-Day", "10-Day", "20-Day"]
     )
 
@@ -238,12 +255,10 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
     characteristic = _signal_characteristic(e5, e10, e20)
 
     # ── 6. Quality Score ─────────────────────────────────────────────────────
-    sample_score   = _calc_sample_score(n)
-    cluster_score  = _calc_cluster_score(signals_df["Date"].tolist())
-    stability_score = _calc_stability_score(
-        signals_df["Return_20d (%)"], signals_df
-    )
-    quality_score  = round((sample_score + cluster_score + stability_score) / 3, 4)
+    sample_score    = _calc_sample_score(n)
+    cluster_score   = _calc_cluster_score(signals_df["Date"].tolist())
+    stability_score = _calc_stability_score(signals_df["Return_20d (%)"], signals_df)
+    quality_score   = round((sample_score + cluster_score + stability_score) / 3, 4)
 
     # ── 7. Sniper Score ───────────────────────────────────────────────────────
     sniper_score = _calc_sniper_score(edge_score_raw, quality_score)
@@ -262,23 +277,29 @@ def run_single_sniper(ticker: str, company: str) -> dict | None:
 
     # ── 11. Summary row ───────────────────────────────────────────────────────
     summary = {
-        "Ticker":           ticker,
-        "Company":          company,
-        "WR_5":             wr5,
-        "WR_10":            wr10,
-        "WR_20":            wr20,
-        "AVG_5":            ar5,
-        "AVG_10":           ar10,
-        "AVG_20":           ar20,
-        "Sample":           n,
-        "Edge_Score":       edge_score_raw,
-        "Characteristic":   characteristic,
-        "Sample_Score":     sample_score,
-        "Cluster_Score":    cluster_score,
-        "Stability_Score":  stability_score,
-        "Quality_Score":    quality_score,
-        "Sniper_Score":     sniper_score,
-        "Sharia":           sharia,
+        "Ticker":          ticker,
+        "Company":         company,
+        "WR_5":            wr5,
+        "WR_10":           wr10,
+        "WR_20":           wr20,
+        "AVG_5":           ar5,
+        "AVG_10":          ar10,
+        "AVG_20":          ar20,
+        "AvgWin_5":        aw5,
+        "AvgLoss_5":       al5,
+        "AvgWin_10":       aw10,
+        "AvgLoss_10":      al10,
+        "AvgWin_20":       aw20,
+        "AvgLoss_20":      al20,
+        "Sample":          n,
+        "Edge_Score":      edge_score_raw,
+        "Characteristic":  characteristic,
+        "Sample_Score":    sample_score,
+        "Cluster_Score":   cluster_score,
+        "Stability_Score": stability_score,
+        "Quality_Score":   quality_score,
+        "Sniper_Score":    sniper_score,
+        "Sharia":          sharia,
     }
 
     print(f"  ✅ {ticker} — Edge: {edge_score_raw} | Quality: {quality_score} | Sniper: {sniper_score} | {characteristic} | {sharia}")
