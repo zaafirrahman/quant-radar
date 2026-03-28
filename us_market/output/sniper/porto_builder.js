@@ -42,7 +42,7 @@ function updateCardUI(ticker) {
   const isSel = !!state.selected[ticker];
   card.classList.toggle('selected', isSel);
   const chk = card.querySelector('.check-icon');
-  if (chk) chk.textContent = isSel ? '✓' : '';
+  if (chk) chk.textContent = isSel ? '\u2713' : '';
   const allocEl = card.querySelector('.alloc-val');
   if (allocEl && !isSel) allocEl.textContent = 'Alloc: \u2014';
 }
@@ -52,12 +52,12 @@ function updateFooter() {
   const ticks = Object.keys(sel);
   const count = ticks.length;
   document.getElementById('footerCount').textContent = count;
-  const listEl = document.getElementById('footerList');
-  const evEl   = document.getElementById('footerEv');
+  const chipsEl = document.getElementById('footerChips');
+  const evEl    = document.getElementById('footerEv');
   if (count === 0) {
-    listEl.innerHTML = '<span class="footer-empty">No stocks selected</span>';
-    evEl.textContent = '\u2014';
-    evEl.style.color = 'var(--dim)';
+    chipsEl.innerHTML = '<span class="footer-empty">No stocks selected</span>';
+    evEl.textContent  = '\u2014';
+    evEl.style.color  = 'var(--dim)';
     return;
   }
   let totalEv = 0;
@@ -68,7 +68,7 @@ function updateFooter() {
   const avgEv = totalEv / count;
   evEl.textContent = (avgEv >= 0 ? '+' : '') + avgEv.toFixed(2) + '%';
   evEl.style.color  = avgEv >= 0 ? 'var(--green)' : 'var(--red)';
-  listEl.innerHTML  = ticks.map(t => {
+  chipsEl.innerHTML = ticks.map(t => {
     const alloc = sel[t].alloc || 0;
     return '<span class="footer-chip">' + t + ' ' + alloc.toFixed(1) + '%</span>';
   }).join('');
@@ -169,7 +169,8 @@ function renderCards() {
     const ev     = s.ev[s.tf];
     const evSign = ev >= 0 ? '+' : '';
     const evDisp = 'EV: ' + evSign + ev.toFixed(2) + '%';
-    const tier   = s.tier + ' Tier \u2014 N:' + s.sample;
+    // Split tier and N: onto separate lines
+    const tierLine = s.tier + ' Tier<br>N: ' + s.sample;
     return [
       '<div class="card" data-ticker="', s.ticker, '">',
         '<div class="zone-a zone-a-btn" data-ticker="', s.ticker, '">',
@@ -178,7 +179,7 @@ function renderCards() {
         '<div class="zone-b">',
           '<div class="ticker-block">',
             '<a class="ticker-link" href="html/', s.ticker, '.html">', s.ticker, '</a>',
-            '<div class="tier-label">', tier, '</div>',
+            '<div class="tier-line">', tierLine, '</div>',
           '</div>',
           '<div class="mid-block">',
             '<div class="tf-row">TF:&nbsp;',
