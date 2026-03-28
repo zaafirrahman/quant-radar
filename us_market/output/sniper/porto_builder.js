@@ -126,7 +126,7 @@ function renderStress() {
   const aw  = s.aw[tf];
   const al  = s.al[tf];
   const ev  = s.ev[tf];
-  const avg = s.avg[tf];
+  const n   = s.sample;
   function col(v)   { return v >= 0 ? 'var(--green)' : 'var(--red)'; }
   function wrCol(v) {
     if (v >= 60) return 'var(--green)';
@@ -145,8 +145,8 @@ function renderStress() {
       '<div class="stress-cell-val" style="color:' + col(al) + '">' + (al >= 0 ? '+' : '') + al.toFixed(2) + '%</div></div>' +
     '<div class="stress-cell"><div class="stress-cell-label">EV (' + tf + ')</div>' +
       '<div class="stress-cell-val" style="color:' + col(ev) + '">' + (ev >= 0 ? '+' : '') + ev.toFixed(2) + '%</div></div>' +
-    '<div class="stress-cell"><div class="stress-cell-label">Avg Return (' + tf + ')</div>' +
-      '<div class="stress-cell-val" style="color:' + col(avg) + '">' + (avg >= 0 ? '+' : '') + avg.toFixed(2) + '%</div></div>';
+    '<div class="stress-cell"><div class="stress-cell-label">Sample (N)</div>' +
+    '<div class="stress-cell-val" style="color:var(--white)">' + n + '</div></div>';
 }
 
 function closeStress() {
@@ -169,8 +169,8 @@ function renderCards() {
     const ev     = s.ev[s.tf];
     const evSign = ev >= 0 ? '+' : '';
     const evDisp = 'EV: ' + evSign + ev.toFixed(2) + '%';
-    // Split tier and N: onto separate lines
-    const tierLine = s.tier + ' Tier<br>N: ' + s.sample;
+    // Split onto separate lines
+    const tierLine = s.tier + '<br>' + s.sharia;
     return [
       '<div class="card" data-ticker="', s.ticker, '">',
         '<div class="zone-a zone-a-btn" data-ticker="', s.ticker, '">',

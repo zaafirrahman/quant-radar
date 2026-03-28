@@ -6,10 +6,16 @@ from datetime import datetime
 import pytz
 
 _CHARACTERISTIC_TIER = {
-    "COMPOUNDER": "S",
-    "BURST":      "A",
-    "STEADY":     "B",
-    "ERRATIC":    "C",
+    "COMPOUNDER": "COMPDR",
+    "BURST":      "BURST",
+    "STEADY":     "STEADY",
+    "ERRATIC":    "ERATIC",
+}
+_SHARIA_MAP = {
+    "Halal": "Halal",
+    "Not Halal": "NoHalal",
+    "Doubtful": "Doubt",
+    "Not Covered": "Uncover",
 }
 
 def _tier_from_characteristic(val: str) -> str:
@@ -17,7 +23,12 @@ def _tier_from_characteristic(val: str) -> str:
     for key, tier in _CHARACTERISTIC_TIER.items():
         if key in val_upper:
             return tier
-    return "C"
+    return "ERRATIC"
+
+def _sharia_compliance(val: str) -> str:
+    if not val:  # handle None / "" / missing
+        return "-"
+    return _SHARIA_MAP.get(val, "-")
 
 def _safe_float(val, fallback: float = 0.0) -> float:
     """Convert to float safely; returns fallback for NaN/Inf/empty."""
@@ -58,7 +69,8 @@ def build_stocks_data(summary_df: pd.DataFrame) -> list[dict]:
         score   = _safe_float(row["Sniper_Score"])
         sample  = int(_safe_float(row["Sample"]))
         char    = _safe_str(row.get("Characteristic", ""))
-        sharia  = _safe_str(row.get("Sharia", "\u2014"), "\u2014")
+        halal  = _safe_str(row.get("Sharia", "\u2014"), "\u2014")
+        sharia   = _sharia_compliance(halal)
         tier    = _tier_from_characteristic(char)
 
         wr5  = _safe_float(row["WR_5"])  / 100
@@ -136,6 +148,7 @@ def build_porto_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         '<div class="header">\n'
         '<h1>Portfolio<br>Strategy Builder</h1>\n'
         '<p class="ts">Generated: ' + timestamp + '</p>\n'
+        '<p class="ts" style="color:#ff8c00">Todays runner ranked by sniper score</p>\n'
         '</div>\n'
 
         # ACTION BAR
@@ -179,8 +192,9 @@ def build_porto_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         '<div class="stress-tf-tabs" id="stressTabs"></div>\n'
         '<div class="stress-grid" id="stressGrid"></div>\n'
         '<div class="stress-formula">'
-        'EV Formula: <span>(WR% &times; AvgWin) + (LR% &times; AvgLoss)</span><br>'
-        'Where <span>LR% = 1 &minus; WR%</span> &nbsp;|&nbsp; <span>AvgLoss</span> is typically negative'
+        'EV : <span>(WR% &times; AvgWin) + (LR% &times; AvgLoss)</span><br>'
+        'Where <span>LR% = 1 &minus; WR%</span> &nbsp;|&nbsp; <span>AvgLoss</span> is typically negative<br>'
+        'Allocation : <span>Score / Total Score</span>'
         '</div>\n'
         '</div></div>\n'
 

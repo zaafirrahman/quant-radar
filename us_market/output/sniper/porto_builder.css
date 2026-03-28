@@ -19,9 +19,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);padding:36px
 
 .header{margin-bottom:28px}
 .header h1{font-size:28px;letter-spacing:5px;color:var(--white);font-weight:700;text-transform:uppercase;margin-bottom:6px}
-.header .ts{font-size:12px;color:var(--dim);letter-spacing:1.5px;margin-bottom:20px}
+.header .ts{font-size:12px;color:var(--dim);letter-spacing:1.5px;margin-bottom:10px}
 .action-bar{display:flex;justify-content:space-between;align-items:center;
-  border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 0;margin-bottom:28px}
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 0;margin-bottom:20px}
 .action-hint{font-size:12px;color:var(--dim);letter-spacing:1.5px}
 .how-btn{font-family:var(--font);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
   color:var(--orange);background:transparent;border:1px solid var(--orange);padding:7px 14px;
