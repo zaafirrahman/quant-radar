@@ -133,7 +133,7 @@ def build_porto_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         '<meta charset="UTF-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
         '<title>Portfolio Strategy Builder</title>\n'
-        '<link rel="icon" type="image/png" href="../../../../assets/logo.png">\n'
+        '<link rel="icon" type="image/png" href="../../../assets/logo.png">\n'
         '<link rel="stylesheet" href="porto_builder.css">\n'
         '</head>\n'
         '<body>\n'
