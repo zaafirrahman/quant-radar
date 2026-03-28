@@ -15,6 +15,7 @@ from us_market.dashboard.html_builder import (
     build_tracking_index,
     build_tracking_month,
 )
+from us_market.dashboard.porto_builder import build_porto_dashboard
 
 
 # ─────────────────────────────────────────
@@ -222,7 +223,7 @@ def main():
     print(candidates[["Ticker", "Radar_Score", "Distance_%"]].to_string(index=False))
 
     if candidates.empty:
-        print("⚠️  No candidates today — skipping sniper & tracking.")
+        print("⚠️  No candidates today — skipping sniper, porto & tracking.")
         return
 
     # ── 3. Bulk sniper ────────────────────────────────────────────────────────
@@ -252,6 +253,13 @@ def main():
     else:
         print("\n📊 Updating tracking data...")
         _append_tracking(summary_df, report, today, tracking_dir)
+
+    # ── 7. Porto Builder ──────────────────────────────────────────────────────
+    print("\n🏗️  Building porto dashboard...")
+    porto_html = build_porto_dashboard(summary_df, timestamp)
+    with open(sniper_dir / "porto_builder.html", "w", encoding="utf-8") as f:
+        f.write(porto_html)
+    print(f"🌐 Porto builder saved → output/sniper/porto_builder.html")
 
     print("\n✅ Pipeline complete!")
 
