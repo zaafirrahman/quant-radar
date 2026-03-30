@@ -178,7 +178,7 @@ function renderCards() {
         '</div>',
         '<div class="zone-b">',
           '<div class="ticker-block">',
-            '<a class="ticker-link" href="html/', s.ticker, '.html">', s.ticker, '</a>',
+            '<a class="ticker-link" href="../sniper/html/', s.ticker, '.html">', s.ticker, '</a>',
             '<div class="tier-line">', tierLine, '</div>',
           '</div>',
           '<div class="mid-block">',
