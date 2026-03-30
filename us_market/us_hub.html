@@ -139,6 +139,16 @@
             margin-left: 16px;
         }
 
+        .btn-row {
+            display: flex;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+        }
+
         /* ── FOOTER ── */
         footer {
             position: fixed;
@@ -194,13 +204,23 @@
             <span class="btn-arrow">▶</span>
         </a>
 
-        <a href="./output/tracking/html/index.html" class="btn btn-outline">
-            <div class="btn-left">
-                <div class="btn-label">Tracker Matrix</div>
-                <div class="btn-sub">Post-Mortem Interval Array</div>
-            </div>
-            <span class="btn-arrow">▶</span>
-        </a>
+        <div class="btn-row">
+            <a href="./output/tracking/html/index.html" class="btn btn-outline">
+                <div class="btn-left">
+                    <div class="btn-label">Tracker</div>
+                    <div class="btn-sub">Post-Mortem</div>
+                </div>
+                <span class="btn-arrow">▶</span>
+            </a>
+
+            <a href="./output/execution/index.html" class="btn btn-outline">
+                <div class="btn-left">
+                    <div class="btn-label">Executor</div>
+                    <div class="btn-sub">Alpha-Flow</div>
+                </div>
+                <span class="btn-arrow">▶</span>
+            </a>
+        </div>
 
         <a href="./us_docs.html" class="btn btn-outline">
             <div class="btn-left">

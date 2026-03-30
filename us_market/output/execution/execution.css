@@ -1,0 +1,265 @@
+/* execution.css — Alpha Execution Bot Dashboard */
+/* Design language: IBM Plex Mono, black bg, orange accent, monospace terminal */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "IBM Plex Mono", "Cascadia Code", monospace;
+    background: #000000;
+    color: #cccccc;
+    padding: 36px;
+    padding-bottom: 60px;
+    box-sizing: border-box;
+}
+
+/* ── HEADER ────────────────────────────────────────────────────── */
+h2 {
+    font-size: 28px;
+    letter-spacing: 5px;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    padding-top: 10px;
+}
+
+.subtitle {
+    color: #555555;
+    font-size: 13px;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+}
+
+/* ── NAV ────────────────────────────────────────────────────────── */
+.nav-btn {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #000000;
+    background: #ff8c00;
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 999;
+    transition: background 0.15s ease;
+}
+.nav-btn:hover { background: #ffaa33; }
+
+/* ── SECTION TITLE ──────────────────────────────────────────────── */
+.section-title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ff8c00;
+    border-left: 3px solid #ff8c00;
+    padding-left: 12px;
+    margin: 36px 0 14px;
+}
+
+/* ── HERO GRID ──────────────────────────────────────────────────── */
+.hero-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.hero-card {
+    background: #0d0d0d;
+    border: 1px solid #222222;
+    border-top: 3px solid #ff8c00;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hero-card.hero-main {
+    border-top-color: #ff8c00;
+}
+
+.hero-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: #555555;
+    text-transform: uppercase;
+}
+
+.hero-value {
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1;
+    color: #ff8c00;
+}
+
+.hero-main .hero-value {
+    font-size: 52px;
+}
+
+.hero-sub {
+    font-size: 11px;
+    color: #444444;
+    letter-spacing: 0.5px;
+}
+
+/* ── CHART ──────────────────────────────────────────────────────── */
+.chart-wrap {
+    background: #0a0a0a;
+    border: 1px solid #222222;
+    padding: 20px;
+    margin-bottom: 4px;
+    height: 300px;
+    position: relative;
+}
+
+#equityChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ── STATS GRID ─────────────────────────────────────────────────── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.stat-box {
+    background: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    padding: 16px 12px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #444444;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #cccccc;
+}
+
+/* ── WIN RATE BAR ───────────────────────────────────────────────── */
+.winrate-wrap {
+    margin: 16px 0 4px;
+}
+
+.winrate-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #555555;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.winrate-track {
+    background: #1a1a1a;
+    height: 6px;
+    width: 100%;
+    position: relative;
+}
+
+.winrate-fill {
+    background: #00ff88;
+    height: 100%;
+    transition: width 0.6s ease;
+}
+
+/* ── TABLE ──────────────────────────────────────────────────────── */
+.table-wrap {
+    overflow-x: auto;
+    margin-bottom: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0a0a0a;
+    border: 1px solid #222222;
+}
+
+th {
+    background: #111111;
+    color: #ffffff;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 12px 14px;
+    border-bottom: 1px solid #333333;
+    border-right: 1px solid #1a1a1a;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+th:last-child { border-right: none; }
+
+td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #141414;
+    border-right: 1px solid #141414;
+    font-size: 14px;
+}
+
+td:last-child  { border-right: none; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #111111; }
+
+/* ── FOOTER ─────────────────────────────────────────────────────── */
+.footer {
+    color: #555555;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 60px;
+    letter-spacing: 1px;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    body { padding: 16px; }
+
+    .hero-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .hero-main {
+        grid-column: span 2;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero-value { font-size: 28px; }
+    .hero-main .hero-value { font-size: 36px; }
+
+    h2 { font-size: 20px; letter-spacing: 3px; }
+
+    /* .nav-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 16px;
+    } */
+
+    .chart-wrap { height: 240px; }
+}
+
+@media (max-width: 560px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-main { grid-column: span 1; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}

@@ -17,6 +17,8 @@ from us_market.dashboard.html_builder import (
 )
 from us_market.dashboard.porto_builder import build_porto_dashboard
 from us_market.pipeline.tracking_helper import _append_tracking
+from us_market.execution.run_execution import run_execution
+from us_market.execution.build_execution_dashboard import build_execution_dashboard
 
 
 # ─────────────────────────────────────────
@@ -116,6 +118,18 @@ def main():
     print(f"🌐 Porto builder saved → output/portfolio/porto_builder.html")
 
     print("\n✅ Pipeline complete!")
+
+    # ── 8. Execution Bot ─────────────────────────────────────────────────────
+    print("\n⚡ Running execution engine...")
+    execution_dir = BASE_DIR / "output" / "execution"
+    execution_dir.mkdir(parents=True, exist_ok=True)
+ 
+    try:
+        run_execution(summary_df=summary_df, today_str=today)
+        exec_html = build_execution_dashboard(timestamp=timestamp)
+        print("✅ Execution dashboard updated")
+    except Exception as e:
+        print(f"⚠️  Execution engine error: {e}")
 
 
 if __name__ == "__main__":
