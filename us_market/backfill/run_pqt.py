@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 from us_market.dashboard.html_builder import build_tracking_month, build_tracking_index
 
-BASE_DIR     = Path("us_market")
+BASE_DIR     = Path(__file__).resolve().parent.parent
 tracking_dir = BASE_DIR / "output" / "tracking"
 parquet_path = tracking_dir / "master.parquet"
 json_dir     = tracking_dir / "json"

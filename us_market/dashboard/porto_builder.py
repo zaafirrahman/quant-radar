@@ -140,7 +140,7 @@ def build_porto_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
 
         # NAV — stacked group 
         '<div class="nav-group">\n'
-        '<a href="index.html" class="nav-btn">&#9664; Sniper</a>\n'
+        '<a href="../sniper/index.html" class="nav-btn nav-sniper">&#9664; Sniper</a>\n'
         '<a href="../../us_hub.html" class="nav-btn">&#9664; Hub</a>\n'
         '</div>\n'
 
