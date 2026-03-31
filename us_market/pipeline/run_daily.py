@@ -7,6 +7,7 @@ from pathlib import Path
 
 from us_market.config.ticker_universe import US_TICKERS
 from us_market.analysis.screener import run_screener
+from us_market.dashboard.universe_builder import build_universe_dashboard
 from us_market.analysis.bulk_sniper import run_bulk_sniper
 from us_market.dashboard.html_builder import (
     build_radar_dashboard,
@@ -69,6 +70,10 @@ def main():
     with open(radar_dir / "us_radar.html", "w", encoding="utf-8") as f:
         f.write(html)
     print(f"🌐 Radar dashboard saved")
+
+    # ── 1.5. Universe Dashboard ───────────────────────────────────────────────
+    print("\n🌍 Building universe dashboard...")
+    build_universe_dashboard(BASE_DIR)
 
     # ── 2. Filter candidates ──────────────────────────────────────────────────
     candidates = report[report["Distance_%"] > 0].copy()
