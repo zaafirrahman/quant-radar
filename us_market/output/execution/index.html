@@ -17,26 +17,38 @@
 
 <!-- ── HERO SNAPSHOT ──────────────────────────────────────────── -->
 <div class="hero-grid">
+
+    <!-- Row 1: Equity full width -->
     <div class="hero-card hero-main">
         <div class="hero-label">CURRENT EQUITY</div>
-        <div class="hero-value" style="color:#ff8c00;">119.5564</div>
+        <div class="hero-value">119.5564</div>
         <div class="hero-sub">started at 100.00</div>
     </div>
-    <div class="hero-card">
+
+    <!-- Row 2: Return + Drawdown -->
+    <div class="hero-card hero-return">
         <div class="hero-label">TOTAL RETURN</div>
         <div class="hero-value" style="color:#00ff88;">+19.56%</div>
         <div class="hero-sub">since 2026-01-02</div>
     </div>
-    <div class="hero-card">
+    <div class="hero-card hero-dd">
         <div class="hero-label">MAX DRAWDOWN</div>
         <div class="hero-value" style="color:#ff4d4d;">-16.76%</div>
         <div class="hero-sub">peak-to-trough</div>
     </div>
-    <div class="hero-card">
+
+    <!-- Row 3: Batch + VS SPY -->
+    <div class="hero-card hero-batch">
         <div class="hero-label">ACTIVE BATCH</div>
         <div class="hero-value" style="color:#ffffff;">#4</div>
-        <div class="hero-sub">day 6 / 20</div>
+        <div class="hero-sub">day 2 / 20</div>
     </div>
+    <div class="hero-card hero-vspy">
+        <div class="hero-label">VS BENCHMARK</div>
+        <div class="hero-value" style="color:#00ff88;">+24.71 pts</div>
+        <div class="hero-sub2" style="color:#00ff88;">+26.05% vs SPY</div>
+    </div>
+
 </div>
 
 <!-- ── EQUITY CHART ───────────────────────────────────────────── -->
@@ -50,11 +62,11 @@
 <div class="stats-grid">
     <div class="stat-box">
         <div class="stat-label">AVG DAILY RETURN</div>
-        <div class="stat-value" style="color:#00ff88;">+0.325%</div>
+        <div class="stat-value" style="color:#00ff88;">+0.346%</div>
     </div>
     <div class="stat-box">
         <div class="stat-label">DAILY VOLATILITY</div>
-        <div class="stat-value" style="color:#cccccc;">3.021%</div>
+        <div class="stat-value" style="color:#cccccc;">3.111%</div>
     </div>
     <div class="stat-box">
         <div class="stat-label">BEST DAY</div>
@@ -76,14 +88,14 @@
 
 <!-- Win Rate Bar -->
 <div class="winrate-wrap">
-    <div class="winrate-label">WIN RATE (daily) <span style="color:#00ff88;">56.2%</span></div>
+    <div class="winrate-label">WIN RATE (daily) <span style="color:#00ff88;">55.0%</span></div>
     <div class="winrate-track">
-        <div class="winrate-fill" style="width:56.2%;"></div>
+        <div class="winrate-fill" style="width:55.0%;"></div>
     </div>
 </div>
 
 
-        <div class="section-title">📋 BATCH 4 HOLDINGS <span style="color:#555;font-size:11px;margin-left:8px;">DAY 6/20</span></div>
+        <div class="section-title">📋 BATCH 4 HOLDINGS <span style="color:#555;font-size:11px;margin-left:8px;">DAY 2/20</span></div>
         <div class="table-wrap">
             <table>
                 <thead>
@@ -102,7 +114,7 @@
                 <td style="color:#888888;">79.3</td>
                 <td style="color:#ff8c00;">20.9%</td>
                 <td style="color:#cccccc;">55.22</td>
-                <td style="color:#00ff88;font-weight:bold;">+1.61%</td>
+                <td style="color:#00ff88;font-weight:bold;">+1.0%</td>
                 <td style="color:#555555;font-size:11px;">CLOSED</td>
             </tr>
             <tr>
@@ -110,7 +122,7 @@
                 <td style="color:#888888;">78.0</td>
                 <td style="color:#ff8c00;">20.5%</td>
                 <td style="color:#cccccc;">26.82</td>
-                <td style="color:#00ff88;font-weight:bold;">+1.9%</td>
+                <td style="color:#ff4d4d;font-weight:bold;">-0.93%</td>
                 <td style="color:#555555;font-size:11px;">CLOSED</td>
             </tr>
             <tr>
@@ -118,7 +130,7 @@
                 <td style="color:#888888;">74.96</td>
                 <td style="color:#ff8c00;">19.7%</td>
                 <td style="color:#cccccc;">251.91</td>
-                <td style="color:#ff4d4d;font-weight:bold;">-0.86%</td>
+                <td style="color:#ff4d4d;font-weight:bold;">-2.68%</td>
                 <td style="color:#555555;font-size:11px;">CLOSED</td>
             </tr>
             <tr>
@@ -126,7 +138,7 @@
                 <td style="color:#888888;">73.95</td>
                 <td style="color:#ff8c00;">19.5%</td>
                 <td style="color:#cccccc;">53.5</td>
-                <td style="color:#ff4d4d;font-weight:bold;">-0.91%</td>
+                <td style="color:#ff4d4d;font-weight:bold;">-3.68%</td>
                 <td style="color:#555555;font-size:11px;">CLOSED</td>
             </tr>
             <tr>
@@ -134,7 +146,7 @@
                 <td style="color:#888888;">73.61</td>
                 <td style="color:#ff8c00;">19.4%</td>
                 <td style="color:#cccccc;">65.32</td>
-                <td style="color:#00ff88;font-weight:bold;">+1.99%</td>
+                <td style="color:#00ff88;font-weight:bold;">+1.41%</td>
                 <td style="color:#555555;font-size:11px;">CLOSED</td>
             </tr></tbody>
             </table>
@@ -169,11 +181,11 @@
             </table>
         </div>
 
-<p class="footer">Generated 2026-03-30 19:31:53 · Alpha Execution Bot · Quant Radar</p>
+<p class="footer">Generated 2026-03-30 23:55:48 · Alpha Executor · Quant Radar</p>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-const DATA = {"dates": ["2026-01-02", "2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09", "2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15", "2026-01-16", "2026-01-20", "2026-01-21", "2026-01-22", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-01-29", "2026-01-30", "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06", "2026-02-09", "2026-02-10", "2026-02-11", "2026-02-12", "2026-02-13", "2026-02-17", "2026-02-18", "2026-02-19", "2026-02-20", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27", "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-30", "2026-03-30", "2026-03-30", "2026-03-30", "2026-03-30"], "equity": [100.6401, 102.073, 104.7714, 103.7089, 101.7417, 104.9394, 105.0797, 104.6237, 103.7024, 105.2354, 108.0787, 106.0286, 109.07, 109.0442, 109.1102, 109.0456, 112.0375, 112.505, 113.7316, 114.5656, 118.6685, 119.1674, 114.0027, 112.7459, 117.0152, 117.5153, 113.6832, 116.8368, 114.3833, 115.0222, 114.9866, 118.7715, 117.6028, 118.9402, 116.463, 115.6402, 119.1268, 118.3283, 118.3283, 126.4425, 118.1282, 116.9094, 112.9801, 105.248, 110.3431, 115.73, 116.8712, 112.7532, 114.0221, 115.9999, 113.1387, 115.0974, 121.7159, 116.6452, 126.3481, 130.9371, 131.4861, 120.7109, 120.7109, 121.636, 121.7713, 122.2453, 121.7956, 119.5564], "spy": [100.0, 100.666, 101.2647, 100.9383, 100.928, 101.5955, 101.7551, 101.5516, 101.0524, 101.3276, 101.2427, 99.1818, 100.3264, 100.8504, 100.887, 101.3994, 101.8034, 101.7931, 101.5911, 100.0, 100.4971, 99.6474, 99.1647, 97.9262, 99.8049, 100.2861, 100.0217, 99.9986, 98.4537, 98.5231, 98.682, 99.1792, 98.9176, 99.6329, 98.6156, 99.3323, 100.1705, 99.6141, 100.0, 100.0569, 99.1749, 99.8746, 99.3178, 98.016, 98.8746, 98.7157, 98.5918, 97.0947, 96.5451, 97.5277, 97.7842, 96.4198, 96.1822, 94.5451, 95.5378, 95.2171, 95.7478, 94.0378, 100.0, 100.4053, null, null, null, null], "rebalance_dates": ["2026-01-02", "2026-01-30", "2026-02-27", "2026-03-27"]};
+const DATA = {"dates": ["2026-01-02", "2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09", "2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15", "2026-01-16", "2026-01-20", "2026-01-21", "2026-01-22", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-01-29", "2026-01-30", "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06", "2026-02-09", "2026-02-10", "2026-02-11", "2026-02-12", "2026-02-13", "2026-02-17", "2026-02-18", "2026-02-19", "2026-02-20", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27", "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-30"], "equity": [100.6401, 102.073, 104.7714, 103.7089, 101.7417, 104.9394, 105.0797, 104.6237, 103.7024, 105.2354, 108.0787, 106.0286, 109.07, 109.0442, 109.1102, 109.0456, 112.0375, 112.505, 113.7316, 114.5656, 118.6685, 119.1674, 114.0027, 112.7459, 117.0152, 117.5153, 113.6832, 116.8368, 114.3833, 115.0222, 114.9866, 118.7715, 117.6028, 118.9402, 116.463, 115.6402, 119.1268, 118.3283, 118.3283, 126.4425, 118.1282, 116.9094, 112.9801, 105.248, 110.3431, 115.73, 116.8712, 112.7532, 114.0221, 115.9999, 113.1387, 115.0974, 121.7159, 116.6452, 126.3481, 130.9371, 131.4861, 120.7109, 120.7109, 119.5564], "spy": [100.0, 100.666, 101.2647, 100.9383, 100.928, 101.5955, 101.7551, 101.5516, 101.0524, 101.3276, 101.2427, 99.1818, 100.3264, 100.8504, 100.887, 101.3994, 101.8034, 101.7931, 101.5911, 101.5911, 102.0962, 101.2329, 100.7425, 99.4843, 101.3929, 101.8818, 101.6131, 101.5897, 100.0202, 100.0907, 100.2522, 100.7572, 100.4915, 101.2182, 100.1846, 100.9128, 101.7644, 101.1991, 101.1991, 101.2567, 100.3641, 101.0723, 100.5087, 99.1913, 100.0602, 99.8994, 99.7741, 98.259, 97.7028, 98.6971, 98.9568, 97.576, 97.3355, 95.6788, 96.6834, 96.3589, 96.8959, 95.1654, 95.1654, 94.8473], "rebalance_dates": ["2026-01-02", "2026-01-30", "2026-02-27", "2026-03-27"]};
 </script>
 <script src="execution.js"></script>
 </body>

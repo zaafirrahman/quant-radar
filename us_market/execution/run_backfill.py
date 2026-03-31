@@ -127,14 +127,19 @@ def _trading_days_from(start_str, n=20, prices_index=None):
     return days.tolist()
 
 
-def _simulate_batch(batch, initial_equity, spy_prices):
+def _simulate_batch(batch, initial_equity, spy_prices, spy_anchor_equity=100.0):
     """
     Simulate one 20-day batch.
+
+    spy_anchor_equity : the SPY equity value at the END of the previous batch
+                        (so SPY curve is continuous, never resets to 100).
+
     Returns:
-        equity_rows   : list of dicts for equity_curve.csv
-        rebal_rows    : list of dicts for rebalance_log.csv
-        cycle_return  : float
-        final_equity  : float
+        equity_rows      : list of dicts for equity_curve.csv
+        rebal_rows       : list of dicts for rebalance_log.csv
+        cycle_return     : float
+        final_equity     : float
+        spy_final_equity : float  ← pass to next batch as spy_anchor_equity
     """
     rid       = batch["rebalance_id"]
     holdings  = batch["holdings"]
@@ -160,7 +165,7 @@ def _simulate_batch(batch, initial_equity, spy_prices):
 
     if not trading_days:
         print(f"  ⚠️  No price data for batch {rid}, skipping.")
-        return [], [], None, initial_equity
+        return [], [], None, initial_equity, spy_anchor_equity
 
     # Allocate shares on entry day
     entry_day = trading_days[0]
@@ -173,14 +178,16 @@ def _simulate_batch(batch, initial_equity, spy_prices):
 
     # Daily loop
     equity_rows = []
-    prev_equity = initial_equity
+    prev_equity  = initial_equity
+    spy_prev_price = None  # SPY raw price on previous day (for daily SPY return)
 
-    # SPY baseline alignment
-    spy_start_price = None
+    # SPY raw price at batch entry — used to chain equity, NOT to rebase to 100
     if spy_prices is not None and entry_day in spy_prices.index:
-        spy_start_price = spy_prices.loc[entry_day]
+        spy_prev_price = float(spy_prices.loc[entry_day])
 
-    for day in trading_days:
+    spy_running = spy_anchor_equity  # starts where last batch ended
+
+    for i, day in enumerate(trading_days):
         # Portfolio value
         day_vals = {}
         for t in tickers:
@@ -192,13 +199,23 @@ def _simulate_batch(batch, initial_equity, spy_prices):
             else:
                 day_vals[t] = shares[t] * holdings[[h["ticker"] for h in holdings].index(t)]
 
-        equity_t = sum(v for v in day_vals.values() if not np.isnan(v))
+        equity_t  = sum(v for v in day_vals.values() if not np.isnan(v))
         daily_ret = (equity_t / prev_equity) - 1 if prev_equity > 0 else 0
 
-        # SPY equity
+        # SPY: chain daily return onto running equity (never reset)
         spy_eq = None
-        if spy_prices is not None and spy_start_price and day in spy_prices.index:
-            spy_eq = round(100 * (spy_prices.loc[day] / spy_start_price), 6)
+        if spy_prices is not None and day in spy_prices.index:
+            spy_raw = float(spy_prices.loc[day])
+            if i == 0:
+                # First day of batch: SPY equity = anchor (no change yet)
+                spy_running    = spy_anchor_equity
+                spy_prev_price = spy_raw
+            else:
+                if spy_prev_price and spy_prev_price > 0:
+                    spy_daily_ret = (spy_raw / spy_prev_price) - 1
+                    spy_running   = spy_running * (1 + spy_daily_ret)
+                spy_prev_price = spy_raw
+            spy_eq = round(spy_running, 6)
 
         equity_rows.append({
             "date":         day.strftime("%Y-%m-%d"),
@@ -210,8 +227,9 @@ def _simulate_batch(batch, initial_equity, spy_prices):
 
         prev_equity = equity_t
 
-    final_equity = equity_rows[-1]["equity"] if equity_rows else initial_equity
-    cycle_return = (final_equity / initial_equity) - 1
+    final_equity     = equity_rows[-1]["equity"] if equity_rows else initial_equity
+    spy_final_equity = equity_rows[-1]["spy_equity"] if equity_rows and equity_rows[-1]["spy_equity"] else spy_anchor_equity
+    cycle_return     = (final_equity / initial_equity) - 1
 
     # Rebalance log rows
     rebal_rows = []
@@ -236,13 +254,19 @@ def _simulate_batch(batch, initial_equity, spy_prices):
             "return_per_ticker": round(ticker_ret * 100, 4) if ticker_ret is not None else None,
         })
 
-    return equity_rows, rebal_rows, round(cycle_return * 100, 4), final_equity
+    return equity_rows, rebal_rows, round(cycle_return * 100, 4), final_equity, spy_final_equity
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run_backfill():
     print("🔁 Starting backfill...")
+
+    # ── Weekend guard ──────────────────────────────────────────────────────────
+    from datetime import datetime
+    today_dt = datetime.today()
+    if today_dt.weekday() >= 5:
+        print("⚠️  Weekend detected — backfill will still run (historical data only).")
 
     # Collect all tickers across all batches (incl batch 4)
     all_batches = BATCHES + [BATCH_4]
@@ -262,9 +286,12 @@ def run_backfill():
     all_rebal    = []
     all_cycles   = []
     equity       = 100.0
+    spy_anchor   = 100.0   # SPY starts at 100 on day 1, chains from there
 
     for batch in BATCHES:
-        eq_rows, rb_rows, cyc_ret, equity = _simulate_batch(batch, equity, spy_prices)
+        eq_rows, rb_rows, cyc_ret, equity, spy_anchor = _simulate_batch(
+            batch, equity, spy_prices, spy_anchor_equity=spy_anchor
+        )
         all_equity.extend(eq_rows)
         all_rebal.extend(rb_rows)
         if cyc_ret is not None:
@@ -275,11 +302,13 @@ def run_backfill():
                 "cycle_return":  cyc_ret,
                 "equity_end":    round(equity, 6),
             })
-        print(f"  ✅ Batch {batch['rebalance_id']} done | cycle return: {cyc_ret:.2f}% | equity: {equity:.4f}")
+        print(f"  ✅ Batch {batch['rebalance_id']} done | cycle return: {cyc_ret:.2f}% | equity: {equity:.4f} | spy: {spy_anchor:.4f}")
 
     # Simulate batch 4 (ongoing)
     print("\n  Simulating batch 4 (ongoing)...")
-    eq_rows, rb_rows, cyc_ret, equity = _simulate_batch(BATCH_4, equity, spy_prices)
+    eq_rows, rb_rows, cyc_ret, equity, spy_anchor = _simulate_batch(
+        BATCH_4, equity, spy_prices, spy_anchor_equity=spy_anchor
+    )
     all_equity.extend(eq_rows)
     all_rebal.extend(rb_rows)
     # Don't log cycle_return for ongoing batch — will be done at close

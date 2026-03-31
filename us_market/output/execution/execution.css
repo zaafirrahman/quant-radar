@@ -11,7 +11,6 @@ body {
     color: #cccccc;
     padding: 36px;
     padding-bottom: 60px;
-    box-sizing: border-box;
 }
 
 /* ── HEADER ────────────────────────────────────────────────────── */
@@ -20,7 +19,7 @@ h2 {
     letter-spacing: 5px;
     color: #ffffff;
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     text-transform: uppercase;
     padding-top: 10px;
 }
@@ -65,9 +64,15 @@ h2 {
 }
 
 /* ── HERO GRID ──────────────────────────────────────────────────── */
+/*
+  Layout:
+    Row 1: [       CURRENT EQUITY — full width        ]
+    Row 2: [  TOTAL RETURN  |  MAX DRAWDOWN           ]
+    Row 3: [  ACTIVE BATCH  |  VS SPY                 ]
+*/
 .hero-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-bottom: 8px;
 }
@@ -75,16 +80,25 @@ h2 {
 .hero-card {
     background: #0d0d0d;
     border: 1px solid #222222;
-    border-top: 3px solid #ff8c00;
-    padding: 24px 20px;
+    border-top: 3px solid #333333;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
 }
 
+/* Row 1: equity spans both columns */
 .hero-card.hero-main {
+    grid-column: span 2;
     border-top-color: #ff8c00;
+    padding: 24px 20px;
 }
+
+/* Accent colors per card */
+.hero-card.hero-return { border-top-color: #00ff88; }
+.hero-card.hero-dd     { border-top-color: #ff4d4d; }
+.hero-card.hero-batch  { border-top-color: #555555; }
+.hero-card.hero-vspy   { border-top-color: #4488ff; }
 
 .hero-label {
     font-size: 10px;
@@ -94,20 +108,29 @@ h2 {
 }
 
 .hero-value {
-    font-size: 38px;
+    font-size: 32px;
     font-weight: 600;
     line-height: 1;
-    color: #ff8c00;
+    color: #cccccc;
 }
 
 .hero-main .hero-value {
     font-size: 52px;
+    color: #ff8c00;
 }
 
 .hero-sub {
     font-size: 11px;
     color: #444444;
     letter-spacing: 0.5px;
+}
+
+/* VS SPY ratio line below pts */
+.hero-sub2 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-top: 1px;
 }
 
 /* ── CHART ──────────────────────────────────────────────────────── */
@@ -232,20 +255,13 @@ tr:hover td { background: #111111; }
 @media (max-width: 900px) {
     body { padding: 16px; }
 
-    .hero-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .hero-main {
-        grid-column: span 2;
-    }
+    /* hero-grid already 1fr 1fr — pairs stay side by side on mobile too */
+    .hero-main .hero-value { font-size: 40px; }
+    .hero-value { font-size: 26px; }
 
     .stats-grid {
         grid-template-columns: repeat(3, 1fr);
     }
-
-    .hero-value { font-size: 28px; }
-    .hero-main .hero-value { font-size: 36px; }
 
     h2 { font-size: 20px; letter-spacing: 3px; }
 
@@ -258,8 +274,9 @@ tr:hover td { background: #111111; }
     .chart-wrap { height: 240px; }
 }
 
-@media (max-width: 560px) {
-    .hero-grid { grid-template-columns: 1fr; }
-    .hero-main { grid-column: span 1; }
+@media (max-width: 480px) {
+    .hero-main .hero-value { font-size: 34px; }
+    .hero-value { font-size: 22px; }
+    .hero-sub2  { font-size: 11px; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
 }

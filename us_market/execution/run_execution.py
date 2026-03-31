@@ -208,6 +208,13 @@ def run_execution(summary_df=None, today_str=None):
     if today_str is None:
         today_str = datetime.today().strftime("%Y-%m-%d")
 
+    # ── Weekend guard ──────────────────────────────────────────────────────────
+    today_dt = datetime.strptime(today_str, "%Y-%m-%d")
+    if today_dt.weekday() >= 5:
+        print(f"\n⚡ Execution Engine | {today_str}")
+        print("  ⚠️  Weekend detected — skipping Alpha Execution append. No data updated.")
+        return
+
     print(f"\n⚡ Execution Engine | {today_str}")
 
     # Load existing data
@@ -217,6 +224,12 @@ def run_execution(summary_df=None, today_str=None):
     if rebal_df.empty:
         print("  ❌ No rebalance_log found. Run run_backfill.py first.")
         return
+
+    # ── Dedup: skip if today already has a row ─────────────────────────────────
+    if not equity_df.empty and today_str in equity_df["date"].astype(str).values:
+        print(f"  ⚠️  {today_str} already in equity_curve — replacing with fresh price.")
+        equity_df = equity_df[equity_df["date"].astype(str) != today_str]
+        # Don't return — continue to fetch latest price and rewrite the row
 
     # Get active batch
     rid, rebal_rows = _active_batch(rebal_df)
@@ -229,7 +242,7 @@ def run_execution(summary_df=None, today_str=None):
     weights   = rebal_rows.set_index("ticker")["weight"].to_dict()
     entries   = rebal_rows.set_index("ticker")["entry_price"].to_dict()
 
-    # Previous equity (last row in equity_curve)
+    # Previous equity (last row in equity_curve after dedup)
     if not equity_df.empty:
         prev_equity = float(equity_df["equity"].iloc[-1])
     else:
@@ -237,42 +250,52 @@ def run_execution(summary_df=None, today_str=None):
 
     # Fetch today's prices
     print(f"  📡 Fetching prices for batch {rid}: {tickers}")
+
+    # Reconstruct equity_open for this batch (needed for shares calc)
+    batch_equity_rows = equity_df[equity_df["rebalance_id"] == rid] if not equity_df.empty else pd.DataFrame()
+    if not batch_equity_rows.empty:
+        first_row   = batch_equity_rows.iloc[0]
+        equity_open = float(first_row["equity"]) / (1 + float(first_row["daily_return"]))
+    else:
+        equity_open = prev_equity
+
     day_vals = {}
     for t in tickers:
         price = _safe_price(t)
         if price is None:
             print(f"  ❌ Missing price for {t}. Skipping today's append.")
             return
-        alloc  = prev_equity  # equity at entry (will be scaled by weight below)
-        # Reconstruct shares: allocation = equity_at_entry_day * weight / entry_price
-        # We need the equity at the START of this batch
-        batch_equity_rows = equity_df[equity_df["rebalance_id"] == rid]
-        if not batch_equity_rows.empty:
-            first_row   = batch_equity_rows.iloc[0]
-            equity_open = first_row["equity"] / (1 + first_row["daily_return"])
-        else:
-            # First day of batch
-            equity_open = prev_equity
-
-        shares  = (equity_open * weights[t]) / entries[t]
-        day_vals[t] = shares * price
+        shares       = (equity_open * weights[t]) / entries[t]
+        day_vals[t]  = shares * price
 
     equity_today = sum(day_vals.values())
     daily_ret    = (equity_today / prev_equity) - 1 if prev_equity > 0 else 0
 
-    # Fetch SPY for benchmark
-    spy_price    = _safe_price("SPY")
+    # ── SPY: chain onto previous spy_equity (never reset) ─────────────────────
     spy_eq       = None
-    # Find SPY equity at batch open to compute relative benchmark
-    batch_eq     = equity_df[equity_df["rebalance_id"] == rid]
-    if not batch_eq.empty and spy_price:
-        # Simple: find first SPY equity in this batch
-        first_spy = batch_eq["spy_equity"].iloc[0]
-        if first_spy and first_spy > 0:
-            # SPY equity is stored as rebased to 100 at portfolio start
-            # Keep it on same base by using ratio
-            pass  # spy_eq will be appended as raw SPY price ratio
-        spy_eq = None  # Will be calculated in dashboard from raw equity
+    spy_price    = _safe_price("SPY")
+    if spy_price and not equity_df.empty:
+        # Find last valid SPY equity + last SPY raw price
+        spy_col = equity_df["spy_equity"].dropna()
+        if not spy_col.empty:
+            spy_prev_eq = float(spy_col.iloc[-1])
+            # We need yesterday's SPY raw price to compute today's daily return
+            # Fetch 2 days of SPY to get prev close
+            try:
+                spy_hist = yf.Ticker("SPY").history(period="3d", auto_adjust=False)
+                spy_hist.index = spy_hist.index.tz_localize(None) if spy_hist.index.tz else spy_hist.index
+                if len(spy_hist) >= 2:
+                    spy_prev_raw = float(spy_hist["Close"].iloc[-2])
+                    spy_today_raw = spy_price
+                    spy_daily_ret = (spy_today_raw / spy_prev_raw) - 1
+                    spy_eq = round(spy_prev_eq * (1 + spy_daily_ret), 6)
+                else:
+                    spy_eq = spy_prev_eq  # flat if can't compute
+            except Exception:
+                spy_eq = spy_prev_eq
+        else:
+            # No prior SPY data — start at 100
+            spy_eq = 100.0
 
     # Append to equity_curve
     new_row = {
@@ -284,7 +307,7 @@ def run_execution(summary_df=None, today_str=None):
     }
     equity_df = pd.concat([equity_df, pd.DataFrame([new_row])], ignore_index=True)
     equity_df.to_csv(EQUITY_PATH, index=False)
-    print(f"  ✅ Appended | equity={equity_today:.4f} | daily_return={daily_ret:.4%}")
+    print(f"  ✅ Appended | equity={equity_today:.4f} | daily_return={daily_ret:.4%} | spy={spy_eq}")
 
     days_done += 1
     print(f"  📅 Day {days_done}/{HOLD_DAYS} of batch {rid}")

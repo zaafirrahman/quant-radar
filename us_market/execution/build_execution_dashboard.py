@@ -204,6 +204,24 @@ def build_execution_dashboard(timestamp=None):
     bc_color   = _color(best_cycle)
     wc_color   = _color(worst_cycle)
 
+    # VS SPY: both values rebased from 100 on same start date → direct comparison
+    spy_latest    = None
+    vs_spy_pts    = None
+    vs_spy_pct    = None
+    vs_spy_color  = "#888888"
+    vs_spy_str    = "—"
+    vs_spy_sub    = ""
+    if chart_spy and any(v is not None for v in chart_spy):
+        last_valid = next((v for v in reversed(chart_spy) if v is not None), None)
+        if last_valid:
+            spy_latest   = last_valid
+            vs_spy_pts   = round(current_equity - spy_latest, 2)
+            vs_spy_pct   = round((current_equity / spy_latest - 1) * 100, 2)
+            vs_spy_color = _color(vs_spy_pts)
+            sign         = "+" if vs_spy_pts >= 0 else ""
+            vs_spy_str   = f"{sign}{vs_spy_pts:.2f} pts"
+            vs_spy_sub   = f"{sign}{vs_spy_pct:.2f}% vs SPY"
+
     # Win rate bar
     wr_bar_pct = round(win_rate, 1)
 
@@ -226,26 +244,38 @@ def build_execution_dashboard(timestamp=None):
 
 <!-- ── HERO SNAPSHOT ──────────────────────────────────────────── -->
 <div class="hero-grid">
+
+    <!-- Row 1: Equity full width -->
     <div class="hero-card hero-main">
         <div class="hero-label">CURRENT EQUITY</div>
-        <div class="hero-value" style="color:#ff8c00;">{_safe(current_equity, 4)}</div>
+        <div class="hero-value">{_safe(current_equity, 4)}</div>
         <div class="hero-sub">started at 100.00</div>
     </div>
-    <div class="hero-card">
+
+    <!-- Row 2: Return + Drawdown -->
+    <div class="hero-card hero-return">
         <div class="hero-label">TOTAL RETURN</div>
         <div class="hero-value" style="color:{tr_color};">{'+' if total_return >= 0 else ''}{_safe(total_return, 2)}%</div>
         <div class="hero-sub">since 2026-01-02</div>
     </div>
-    <div class="hero-card">
+    <div class="hero-card hero-dd">
         <div class="hero-label">MAX DRAWDOWN</div>
         <div class="hero-value" style="color:{dd_color};">{_safe(max_dd, 2)}%</div>
         <div class="hero-sub">peak-to-trough</div>
     </div>
-    <div class="hero-card">
+
+    <!-- Row 3: Batch + VS SPY -->
+    <div class="hero-card hero-batch">
         <div class="hero-label">ACTIVE BATCH</div>
         <div class="hero-value" style="color:#ffffff;">#{active_rid}</div>
         <div class="hero-sub">day {days_elapsed} / 20</div>
     </div>
+    <div class="hero-card hero-vspy">
+        <div class="hero-label">VS BENCHMARK</div>
+        <div class="hero-value" style="color:{vs_spy_color};">{vs_spy_str}</div>
+        <div class="hero-sub2" style="color:{vs_spy_color};">{vs_spy_sub}</div>
+    </div>
+
 </div>
 
 <!-- ── EQUITY CHART ───────────────────────────────────────────── -->
@@ -295,7 +325,7 @@ def build_execution_dashboard(timestamp=None):
 
 {cycles_html}
 
-<p class="footer">Generated {timestamp} · Alpha Execution Bot · Quant Radar</p>
+<p class="footer">Generated {timestamp} · Alpha Executor · Quant Radar</p>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
