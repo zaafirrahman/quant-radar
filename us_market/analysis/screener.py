@@ -50,6 +50,7 @@ def run_screener(tickers):
             distance_pct = (current_score - threshold) / threshold
 
             last = score_df.iloc[-1]
+            prev = score_df.iloc[-2]
 
             results.append({
                 "Ticker": ticker,
@@ -61,7 +62,9 @@ def run_screener(tickers):
                 "Radar_Score": round(current_score, 4),
                 "Threshold": round(threshold, 4),
                 "Distance_%": round(distance_pct * 100, 2),
-                "Z_Score": round(z_score, 2)
+                "Z_Score": round(z_score, 2),
+
+                "Prev_Close": round(float(prev["Close"]), 2),
             })
 
         except Exception as e:
