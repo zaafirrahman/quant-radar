@@ -255,7 +255,7 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀ Hub</a>
         <a href="../sniper/index.html" class="nav-btn">Sniper ▶</a>
         <h2>Radar</h2>
-        <h2>Overview</h2>
+        <h2>Scanner</h2>
         <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;">
             Ranked based on radar-threshold distance percentage
@@ -307,14 +307,14 @@ def build_bulk_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀| Hub</a>
         <a href="../radar/us_radar.html" class="nav-btn">◀ Radar</a>
         <h2>Sniper</h2>
-        <h2>Overview</h2>
+        <h2>Validator</h2>
         <p class="subtitle" style="margin-bottom:10px;color:#999999;">Generated {timestamp} EDT</p>
         <p class="subtitle" style="color:#ff8c00;font-weight:bold">
             Click ticker ↓ to see sniper details
         </p>
         <div class="table-wrap">{table}</div>
     """
-    return _wrap_html("Sniper - Runner Performance Protocol", body)
+    return _wrap_html("Sniper - Backtest Performance Protocol", body)
 
 
 # ══════════════════════════════════════════════════════════════

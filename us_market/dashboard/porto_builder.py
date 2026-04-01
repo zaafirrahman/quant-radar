@@ -132,7 +132,7 @@ def build_porto_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
         '<head>\n'
         '<meta charset="UTF-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        '<title>Portfolio Strategy Builder</title>\n'
+        '<title>Portfolio Strategy Planner</title>\n'
         '<link rel="icon" type="image/png" href="../../../assets/logo.png">\n'
         '<link rel="stylesheet" href="porto_builder.css">\n'
         '</head>\n'
@@ -146,7 +146,7 @@ def build_porto_dashboard(summary_df: pd.DataFrame, timestamp: str) -> str:
 
         # HEADER
         '<div class="header">\n'
-        '<h1>Portfolio<br>Strategy Builder</h1>\n'
+        '<h1>Portfolio<br>Strategy Planner</h1>\n'
         '<p class="ts">Generated: ' + timestamp + '</p>\n'
         '<p class="ts" style="color:#ff8c00">Todays runner ranked by sniper score</p>\n'
         '</div>\n'
