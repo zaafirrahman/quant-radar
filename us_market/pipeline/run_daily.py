@@ -122,7 +122,6 @@ def main():
         f.write(porto_html)
     print(f"🌐 Porto builder saved → output/portfolio/porto_builder.html")
 
-    print("\n✅ Pipeline complete!")
 
     # ── 8. Execution Bot ─────────────────────────────────────────────────────
     print("\n⚡ Running execution engine...")
@@ -132,10 +131,12 @@ def main():
     try:
         run_execution(summary_df=summary_df, today_str=today)
         exec_html = build_execution_dashboard(timestamp=timestamp)
-        print("✅ Execution dashboard updated")
+        print("📈 Execution dashboard updated")
     except Exception as e:
         print(f"⚠️  Execution engine error: {e}")
 
+
+    print("\n✅ PIPELINE COMPLETE!")
 
 if __name__ == "__main__":
     main()

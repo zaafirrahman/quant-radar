@@ -219,16 +219,22 @@ def _td(content, style="color:#ffffff;"):
 # ══════════════════════════════════════════════════════════════
 
 def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
-    col_names = [
+    visible_cols = [
         "Rank", "Ticker", "Last_Price", "Momentum_14d", "Vol_Surge",
         "Range_Pos_325", "Radar_Score", "Threshold", "Distance_%", "Z_Score"
     ]
-    header = "".join(f"<th>{c}</th>" for c in col_names)
+    
+    display_df = df[visible_cols]
+
+    # Header
+    header = "".join(f"<th>{c}</th>" for c in visible_cols)
+
     rows = []
-    for i, row in df.iterrows():
+    for i, row in display_df.iterrows():
         cells = []
-        for j, col in enumerate(df.columns):
+        for j, col in enumerate(visible_cols):
             val = row[col]
+
             if   j == 0: style = "color:#aaaaaa;"
             elif j == 1: style = "color:#ff8c00;font-weight:bold;"
             elif j in [2, 3, 4, 5]: style = "color:#ffffff;"
@@ -237,11 +243,14 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
             elif j == 8: style = _color_distance(float(val))
             elif j == 9: style = _color_z(float(val))
             else:        style = "color:#ffffff;"
+
             cells.append(f'<td style="{style}">{val}</td>')
+
         cls = "top5" if i < 5 else ""
         rows.append(f'<tr class="{cls}">{"".join(cells)}</tr>')
 
     table = f'<table class="sticky-table"><thead><tr>{header}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
+
     body = f"""
         <a href="../../us_hub.html" class="nav-btn" style="top:70px;">◀ Hub</a>
         <a href="../sniper/index.html" class="nav-btn">Sniper ▶</a>
@@ -253,6 +262,7 @@ def build_radar_dashboard(df: pd.DataFrame, timestamp: str) -> str:
         </p>
         <div class="table-wrap">{table}</div>
     """
+
     return _wrap_html("Radar - Signal Surge Amplifier Grid", body)
 
 
