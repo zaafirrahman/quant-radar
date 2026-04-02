@@ -952,96 +952,602 @@
                 <span class="module-title">Sniper Validator</span>
             </div>
 
-            <!-- STEP 2 -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="step-num">STEP 02</span>
-                    <span class="section-title">Sniper Engine — Signal Day Detection</span>
+            <div class="intro" style="margin-bottom:36px;">
+                <p>
+                    Sniper Validator receives the candidates that passed Radar's distance gate and subjects
+                    each one to a full event-based backtest. The goal is to answer two independent questions:
+                    does this signal actually make money (edge), and is that performance consistent enough
+                    to be trusted (quality)?
+                </p>
+                <p>
+                    Both dimensions are scored independently on a 0–1 scale, then combined into a
+                    final <span style="color:#ff8c00;">Sniper Score</span> (0–100) that drives the ranking table and the per-ticker conviction verdict.
+                </p>
+            </div>
+
+            <!-- ─────────────────────────────────── -->
+            <!-- PART A: EDGE / PROFITABILITY -->
+            <!-- ─────────────────────────────────── -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.1</span>
+                    <span class="subsection-title">Event-Based Backtest</span>
                 </div>
                 <p class="section-body">
-                    For each candidate, the engine scans 3 years of historical data to detect
-                    every day the screener conditions were triggered above the threshold.
-                    These are called <span style="color:#cccccc;">Signal Days</span> — moments where the system would have
-                    generated a trade opportunity.
+                    For each candidate ticker, the engine replays the past 3 years of daily data and identifies
+                    every day on which the Radar score exceeded that ticker's rolling threshold. Each such day
+                    is recorded as a <span style="color:#cccccc;">Signal Day</span> — a historical moment where the system
+                    would have triggered an entry. From each signal day, forward returns are measured across
+                    three horizons to simulate actual trade outcomes.
                 </p>
-                <div class="tags">
-                    <span class="tag">Output: Signal Day Dataset per Ticker</span>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">TICKER</span>
+                    <span class="io-tag in">DISTANCE_% &gt; 0 (from Radar)</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">SIGNAL_DAYS dataset</span>
+                    <span class="io-tag out">ENTRY price per signal</span>
+                    <span class="io-tag out">RETURN_5D / 10D / 20D per signal</span>
                 </div>
             </div>
 
-            <!-- STEP 3 -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="step-num">STEP 03</span>
-                    <span class="section-title">Backtest Layer — Edge Measurement</span>
+            <!-- 3.2 BACKTEST METRICS -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.2</span>
+                    <span class="subsection-title">Backtest Metrics — Win Rate &amp; Avg Return</span>
                 </div>
                 <p class="section-body">
-                    Each signal day is evaluated by measuring forward returns over three horizons.
-                    From these results, edge metrics are calculated per ticker.
+                    Across all signal days, six aggregate metrics are computed per ticker — three win rates
+                    and three average returns, one for each forward horizon. These six values are the
+                    foundational inputs to the entire edge and quality pipeline.
                 </p>
-                <div class="tags">
-                    <span class="tag orange">5-Day Return</span>
-                    <span class="tag orange">10-Day Return</span>
-                    <span class="tag orange">20-Day Return</span>
-                    <span class="tag">Win Rate</span>
-                    <span class="tag">Avg Return</span>
-                    <span class="tag">Swing Score</span>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">WR_5</span>
+                    <span class="io-tag out">WR_10</span>
+                    <span class="io-tag out">WR_20</span>
+                    <span class="io-tag out">AVG_5</span>
+                    <span class="io-tag out">AVG_10</span>
+                    <span class="io-tag out">AVG_20</span>
                 </div>
-                <div class="tags">
-                    <span class="tag">Output: Runner Performance Protocol</span>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">WR_5 / 10 / 20</div>
+                        <div class="var-def">
+                            <span class="vd-label">Win rate — % of signal days with positive forward return</span>
+                            Percentage of all signal days where the price was higher than entry after 5, 10,
+                            or 20 trading days respectively. A WR of 75 means 3 out of 4 historical signals
+                            closed in profit at that horizon. Displayed with color coding: bright green ≥ 70%,
+                            green ≥ 55%, orange ≥ 40%, red below 40%.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">AVG_5 / 10 / 20</div>
+                        <div class="var-def">
+                            <span class="vd-label">Average return (%) across all signal days — expected value</span>
+                            Mean percentage return measured from signal day entry to the close at 5, 10, or
+                            20 trading days. Positive values are green; negative values are red. Equivalent
+                            to the expected value of a single trade at that horizon — also used directly in
+                            the Portfolio Planner as a forward return estimate.
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- STEP 4 -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="step-num">STEP 04</span>
-                    <span class="section-title">Signal Quality Engine — Reliability Filtering</span>
+            <!-- 3.3 EDGE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.3</span>
+                    <span class="subsection-title">Edge Score — Profitability</span>
                 </div>
                 <p class="section-body">
-                    Not all profitable signals are reliable. This layer evaluates the statistical
-                    quality of the signal dataset using three independent drivers.
+                    Edge measures the risk-adjusted expected value of the signal across all three time horizons.
+                    Each horizon produces its own edge value by weighting average return by win rate, then
+                    the three are averaged into a single raw score. A positive edge means the signal has
+                    historically produced a net positive outcome; zero or below means it has not.
+                </p>
+
+                <div class="formula-block">
+                    <div class="formula-main" style="margin-bottom:16px;">
+                        <span class="f-var">E₅</span><span class="f-eq">=</span>
+                        <span style="color:#cccccc;">AVG_5</span>
+                        <span class="f-op">×</span>
+                        <span class="f-frac">
+                            <span class="f-num">WR_5</span>
+                            <span class="f-den">100</span>
+                        </span>
+                        &nbsp;&nbsp;
+                        <span style="color:#333;font-size:12px;">— same for E₁₀, E₂₀</span>
+                    </div>
+                    <div class="formula-main" style="margin-bottom:16px;">
+                        <span class="f-var">EDGE_RAW</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">E₅ + E₁₀ + E₂₀</span>
+                            <span class="f-den">3</span>
+                        </span>
+                    </div>
+                    <div class="formula-main">
+                        <span class="f-var">EDGE_NORM</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">tanh(EDGE_RAW / 3) + 1</span>
+                            <span class="f-den">2</span>
+                        </span>
+                        <span style="color:#333;font-size:11px;margin-left:12px;">→ range 0..1</span>
+                    </div>
+                </div>
+
+                <p class="section-body">
+                    The tanh normalization compresses extreme outliers without distorting the distribution
+                    of typical values. A ticker with an unusually massive average return won't dominate
+                    the ranking at the expense of more consistent performers. The normalization is applied
+                    only internally for scoring — the table displays the raw pre-tanh value for transparency.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT (table)</span>
+                    <span class="io-tag out">EDGE_SCORE</span>
+                    <span style="font-size:11px;color:#333;align-self:center;padding-left:4px;">= EDGE_RAW (pre-tanh)</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT (internal)</span>
+                    <span class="io-tag out">EDGE_NORM</span>
+                    <span style="font-size:11px;color:#333;align-self:center;padding-left:4px;">= tanh-normalized, used in Sniper Score</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">EDGE_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Raw edge — displayed in table, pre-normalization</span>
+                            The uncompressed average of E₅, E₁₀, E₂₀. Shown in the Sniper table and detail page
+                            for transparency. Color coded: bright green for high positive edge, green moderate,
+                            orange low, red negative. Outlier values are preserved here for full visibility.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">EDGE_NORM</div>
+                        <div class="var-def">
+                            <span class="vd-label">Tanh-compressed edge — used internally in Sniper Score</span>
+                            EDGE_RAW passed through (tanh(x/3)+1)/2. Maps any real-valued edge into the 0–1
+                            range with diminishing sensitivity to extremes. Not displayed in the table.
+                            Used as one of the two inputs to the Sniper Score formula.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.4 CHARACTERISTIC -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.4</span>
+                    <span class="subsection-title">Signal Characteristic</span>
+                </div>
+                <p class="section-body">
+                    Each ticker is assigned a behavioral label based on the directional pattern of its
+                    per-horizon edge values. This describes how the profitability of the signal evolves
+                    over time — whether it peaks early, compounds late, or behaves inconsistently.
                 </p>
                 <div class="sub-blocks">
                     <div class="sub-block">
-                        <div class="sub-block-title">Sample Reliability</div>
-                        <p>Measures whether the signal appears often enough to be statistically meaningful.
-                        Avoids signals based on too few observations and reduces random performance spikes.</p>
+                        <div class="sub-block-title" style="color:#00ff88;">COMPOUNDER</div>
+                        <p>Edge grows over time: E₂₀ ≥ E₁₀ ≥ E₅ (all positive), or E₂₀ is positive while
+                        E₅ is flat or negative. The signal strengthens the longer it is held.
+                        Favored for position sizing with longer hold periods.</p>
                     </div>
                     <div class="sub-block">
-                        <div class="sub-block-title">Return Stability</div>
-                        <p>Evaluates how consistent signal returns are across time. Detects whether
-                        profitability is stable or driven by rare outliers.</p>
+                        <div class="sub-block-title" style="color:#ffff00;">BURST</div>
+                        <p>Edge peaks early and decays: E₅ ≥ E₁₀ ≥ E₂₀ (all positive), or E₅ is positive
+                        while E₂₀ is flat or negative. The signal fires fast and fades.
+                        Best captured within the first 5 trading days.</p>
                     </div>
                     <div class="sub-block">
-                        <div class="sub-block-title">Cluster Distribution</div>
-                        <p>Checks whether signals are spread across time or only appear during specific
-                        short market regimes. Prevents regime-dependent signals.</p>
+                        <div class="sub-block-title" style="color:#ffa500;">STEADY</div>
+                        <p>All three edges are positive but the pattern is neither strictly accelerating
+                        nor strictly decelerating. Consistent performance across all horizons
+                        without a dominant direction.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title" style="color:#ff4d4d;">ERRATIC</div>
+                        <p>Mixed edge signs across horizons — no consistent profitability pattern.
+                        At least one horizon is negative without a clear directional structure.
+                        Treat with caution; the signal behavior is unpredictable.</p>
                     </div>
                 </div>
-                <div class="tags" style="margin-top:16px;">
-                    <span class="tag">Output: Signal Quality Score</span>
+                <div class="io-row" style="margin-top:16px;">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">CHARACTERISTIC</span>
                 </div>
             </div>
 
-            <!-- STEP 5 -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="step-num">STEP 05</span>
-                    <span class="section-title">Final Ranking — Edge × Quality</span>
+            <!-- ─────────────────────────────────── -->
+            <!-- PART B: QUALITY / RELIABILITY -->
+            <!-- ─────────────────────────────────── -->
+
+            <!-- 3.5 SAMPLE SCORE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.5</span>
+                    <span class="subsection-title">Sample Score — Signal Frequency</span>
                 </div>
                 <p class="section-body">
-                    The final ranking combines profitability and reliability into a single score,
-                    ensuring candidates are ranked on both expected return and signal robustness —
-                    not raw momentum alone.
+                    A signal with strong edge metrics but only 2 or 3 historical occurrences is statistically
+                    meaningless — the results could be pure luck. Sample Score rewards tickers with more
+                    signal days using a square-root scale to reflect diminishing returns: going from 2 to
+                    10 signals matters far more than going from 40 to 50.
                 </p>
-                <div class="formula">
-                    Final Score = <span>Edge</span> × <span>Quality</span>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">SAMPLE_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span style="color:#cccccc;">min</span>
+                        <span style="color:#555;margin:0 4px;">(</span>
+                        <span class="f-frac">
+                            <span class="f-num">√n</span>
+                            <span class="f-den">√50</span>
+                        </span>
+                        <span style="color:#555;margin:0 4px;">,</span>
+                        <span style="color:#cccccc;">1.0</span>
+                        <span style="color:#555;margin:0 4px;">)</span>
+                    </div>
                 </div>
-                <div class="tags">
-                    <span class="tag">Output: Ranked Candidate List</span>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">SAMPLE</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">SAMPLE_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name">SAMPLE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Total number of signal days in the 3-year backtest window</span>
+                            Count of historical days where the ticker's Radar score exceeded its rolling threshold.
+                            Shown in the Sniper table. Used as the input n to Sample Score.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">SAMPLE_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Statistical credibility of the sample size — range 0..1</span>
+                            Reaches 1.0 at 50 or more signals. Scores below 0.5 correspond to fewer than
+                            13 signals, indicating limited statistical confidence. A score of exactly 0
+                            means the ticker had no historical signal days.
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <!-- 3.6 CLUSTER SCORE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.6</span>
+                    <span class="subsection-title">Cluster Score — Temporal Distribution</span>
+                </div>
+                <p class="section-body">
+                    A signal that fired 20 times but all within the same 3-week bull run is regime-dependent —
+                    it only works in one specific market condition. Cluster Score detects this by grouping
+                    consecutive signal days into clusters (gap below 5 trading days = same cluster) and measuring
+                    what fraction of signals represent distinct, independent episodes.
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">CLUSTER_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">n_clusters</span>
+                            <span class="f-den">n_signals</span>
+                        </span>
+                    </div>
+                </div>
+                <p class="section-body">
+                    A score near 1.0 means almost every signal occurred in a separate market episode —
+                    the strategy has worked across many different regimes. A score near 0.0 means nearly
+                    all signals were clustered together, suggesting regime dependency.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">CLUSTER_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">CLUSTER_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Fraction of signals from independent time clusters — range 0..1</span>
+                            Two signal days belong to the same cluster if they are separated by fewer than
+                            5 calendar days. A ticker with 20 signals across 18 distinct clusters scores
+                            0.9 — highly distributed. A ticker with 20 signals in 2 clusters scores 0.1 —
+                            highly regime-dependent.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.7 STABILITY SCORE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.7</span>
+                    <span class="subsection-title">Stability Score — Return Consistency</span>
+                </div>
+                <p class="section-body">
+                    Even with good average returns and wide cluster distribution, a signal can still be
+                    unreliable if its returns are wildly inconsistent — one massive win skewing an otherwise
+                    poor record. Stability Score uses two complementary lenses to assess consistency:
+                    magnitude stability (via coefficient of variation) and temporal consistency (via
+                    win rate decay over time).
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">CV Stability — Magnitude Consistency</div>
+                        <p>Coefficient of variation (σ/μ) measures return spread relative to average return.
+                        Unlike raw standard deviation, CV is scale-independent — a $5 stock and a $500 stock
+                        can be compared fairly. CV Stability = 1 / (1 + |σ/μ|). A tight return distribution
+                        around a positive mean scores near 1.0; high variance or near-zero mean scores near 0.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Temporal Consistency — Win Rate Decay</div>
+                        <p>Splits the backtest into chronological first and second halves, then compares
+                        win rates (based on 20-day returns). If performance is equally strong in both halves,
+                        the strategy is not decaying. Score = 1 − |WR_first − WR_second| / 100.
+                        A strategy with identical win rates in both periods scores 1.0;
+                        large divergence scores near 0. Below 4 signals, temporal check defaults to 0.5 (neutral).</p>
+                    </div>
+                </div>
+                <div class="formula-block" style="margin-top:20px;">
+                    <div class="formula-main">
+                        <span class="f-var">STABILITY_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span style="color:#cccccc;">0.5</span>
+                        <span class="f-op">×</span>
+                        <span style="color:#ff8c00;">CV_stability</span>
+                        <span class="f-op">+</span>
+                        <span style="color:#cccccc;">0.5</span>
+                        <span class="f-op">×</span>
+                        <span style="color:#ff8c00;">temporal</span>
+                    </div>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">STABILITY_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">STABILITY_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Equal-weighted average of CV stability and temporal consistency — range 0..1</span>
+                            A score of 1.0 requires both low return variance (relative to the mean) and
+                            stable win rates across the full backtest period. Neither dimension alone is sufficient.
+                            Both must hold to indicate a genuinely consistent signal.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.8 QUALITY SCORE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.8</span>
+                    <span class="subsection-title">Quality Score — Reliability</span>
+                </div>
+                <p class="section-body">
+                    The three quality dimensions — sample credibility, temporal distribution, and return
+                    consistency — are averaged with equal weight into a single reliability score.
+                    Each dimension is independent and tests a different failure mode:
+                    too few samples, regime clustering, and return instability. All three must be strong
+                    for the quality score to be high.
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">QUALITY_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">SAMPLE_SCORE + CLUSTER_SCORE + STABILITY_SCORE</span>
+                            <span class="f-den">3</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">SAMPLE_SCORE</span>
+                    <span class="io-tag in">CLUSTER_SCORE</span>
+                    <span class="io-tag in">STABILITY_SCORE</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">QUALITY_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">QUALITY_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Composite reliability score — range 0..1</span>
+                            Displayed in the Sniper table. Color coded: bright green ≥ 0.7, green ≥ 0.55,
+                            orange ≥ 0.4, red below 0.4. A high quality score without positive edge does not
+                            guarantee a good Sniper Score — edge is the primary gate.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.9 SNIPER SCORE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.9</span>
+                    <span class="subsection-title">Sniper Score — Final Conviction</span>
+                </div>
+                <p class="section-body">
+                    Sniper Score is the core output that drives ranking. It combines edge and quality
+                    into a single 0–100 conviction score, but the formula deliberately applies an asymmetric
+                    penalty: tickers with zero or negative edge are not simply ranked lower — they are
+                    mathematically suppressed regardless of quality. A perfectly reliable signal with
+                    no historical profitability is not a trading opportunity.
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main" style="margin-bottom:16px;">
+                        <span style="color:#555;font-size:12px;margin-right:8px;">if EDGE_RAW ≤ 0:</span>
+                        <span class="f-var">SNIPER_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span style="color:#ff8c00;">EDGE_NORM</span>
+                        <span class="f-op">×</span>
+                        <span style="color:#ff8c00;">QUALITY_SCORE</span>
+                        <span class="f-op">×</span>
+                        <span style="color:#cccccc;">100</span>
+                    </div>
+                    <div class="formula-main">
+                        <span style="color:#555;font-size:12px;margin-right:8px;">if EDGE_RAW &gt; 0:</span>
+                        <span class="f-var">SNIPER_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">EDGE_NORM + QUALITY_SCORE</span>
+                            <span class="f-den">2</span>
+                        </span>
+                        <span class="f-op">×</span>
+                        <span style="color:#cccccc;">100</span>
+                    </div>
+                </div>
+                <p class="section-body">
+                    When edge is negative, the score becomes a product rather than an average — both
+                    factors multiply each other, creating a double-penalty that prevents quality alone
+                    from rescuing an unprofitable signal. When edge is positive, edge and quality are
+                    weighted equally, rewarding tickers that are both profitable and consistent.
+                    Scores below 50 are considered low conviction regardless of other metrics.
+                </p>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">EDGE_NORM</span>
+                    <span class="io-tag in">QUALITY_SCORE</span>
+                    <span class="io-tag in">EDGE_RAW (gate)</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">SNIPER_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">SNIPER_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Final conviction score — range 0..100, primary sort key</span>
+                            Drives the ranking order of the Sniper table. Scores ≥ 75 = S-Tier (high conviction);
+                            ≥ 60 = A-Tier (strong); ≥ 50 = B-Tier (moderate); below 50 = C-Tier (avoid).
+                            A ticker with negative edge is structurally capped below 50 due to the multiplicative penalty.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.10 VERDICT -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.10</span>
+                    <span class="subsection-title">Conviction Verdict</span>
+                </div>
+                <p class="section-body">
+                    Every ticker in the Sniper table receives a verdict label derived directly from its
+                    Sniper Score. The verdict is displayed prominently on the per-ticker detail page
+                    alongside the Sniper Score and characteristic type.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">💎 S-TIER — HIGH CONVICTION &nbsp;<span style="color:#555;font-weight:400;font-size:11px;">≥ 75</span></div>
+                        <p>Strong edge confirmed by strong reliability. The signal is both profitable and
+                        consistent across historical regimes. Highest priority for position consideration.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">🥇 A-TIER — STRONG SIGNAL &nbsp;<span style="color:#555;font-weight:400;font-size:11px;">≥ 60</span></div>
+                        <p>Good combination of profitability and reliability. A reliable candidate with
+                        meaningful historical edge. Worth analysis before entry.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">🥈 B-TIER — MODERATE SIGNAL &nbsp;<span style="color:#555;font-weight:400;font-size:11px;">≥ 50</span></div>
+                        <p>Marginal conviction. Either edge or quality is weaker than ideal.
+                        Acceptable for consideration but requires additional context before entry.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">🥉 C-TIER — AVOID &nbsp;<span style="color:#555;font-weight:400;font-size:11px;">&lt; 50</span></div>
+                        <p>Insufficient edge, poor reliability, or both. Structurally below the
+                        conviction threshold. Not recommended for position consideration under this system.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.11 SHARIA -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.11</span>
+                    <span class="subsection-title">Sharia Compliance</span>
+                </div>
+                <p class="section-body">
+                    For Muslim investors, each ticker in the Sniper table is tagged with its sharia
+                    compliance status sourced directly from Zoya Finance. The data is scraped on each
+                    run and displayed transparently in both the main table and the per-ticker detail page.
+                    Possible values are <span style="color:#4dcc88;">Halal</span>,
+                    <span style="color:#ff5555;">Not Halal</span>, or
+                    <span style="color:#888;">Not Covered</span> (no Zoya data available for that ticker).
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">SHARIA</span>
+                </div>
+            </div>
+
+            <!-- 3.12 DETAIL PAGE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.12</span>
+                    <span class="subsection-title">Per-Ticker Detail Page</span>
+                </div>
+                <p class="section-body">
+                    Each ticker in the Sniper table is clickable and opens a dedicated detail page.
+                    The page consolidates all computed metrics into a structured breakdown to support
+                    manual review before any position decision.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Radar Overview</div>
+                        <p>Displays last price, current Radar Score vs the rolling 95th-percentile threshold,
+                        and a confirmation status (Radar Confirmed if DISTANCE_% > 0). Provides immediate
+                        context on why this ticker was surfaced today.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Robustness &amp; Consistency (Reliability)</div>
+                        <p>Shows the three quality sub-scores — Sample Signals count, Sample Quality score,
+                        Cluster Spread score, and Stability score — alongside the composite Quality Score
+                        and its tier label. Color coded consistently with the main table.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Average Strategy Performance (Profitability)</div>
+                        <p>Presents the 3×4 stress-test grid: for each of the three horizons (5D, 10D, 20D),
+                        shows average return, win rate, average winning trade return, and average losing
+                        trade return. The last two columns (avg win / avg loss) are additional detail
+                        not shown in the main table. Edge Score and its tier label appear alongside.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">10 Recent Signals — Regime Check</div>
+                        <p>Lists the 10 most recent signal days in chronological order, with the Radar Score
+                        at entry, entry price, and forward returns at all three horizons with W/L outcome.
+                        Used to visually assess whether recent signals are performing consistently.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Complete Power Ranking</div>
+                        <p>All historical signal days sorted by Radar Score (descending) — showing the strongest
+                        signal occurrences across the entire 3-year backtest window. Entry price and all
+                        three forward return columns included. Useful for understanding what the ticker looks
+                        like during its strongest signal moments.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Final Conviction Panel</div>
+                        <p>Displayed top-right on the detail page. Shows Sniper Score prominently,
+                        the Characteristic label (COMPOUNDER / BURST / STEADY / ERRATIC), and the
+                        full Verdict tier (S / A / B / C). This is the summary conclusion of the
+                        entire Sniper analysis for this ticker.</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="module-divider"></div>
