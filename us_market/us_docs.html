@@ -12,7 +12,11 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html, body {
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
             background: #000000;
             color: #cccccc;
             font-family: "IBM Plex Mono", "Courier New", monospace;
@@ -69,7 +73,63 @@
             color: #555555;
             text-align: center;
             letter-spacing: 1px;
-            margin-bottom: 56px;
+            margin-bottom: 36px;
+        }
+
+        /* ── TOC NAV ── */
+        .toc-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 52px;
+        }
+
+        .toc-btn {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #555555;
+            background: transparent;
+            border: 1px solid #222222;
+            padding: 9px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+            white-space: nowrap;
+        }
+
+        .toc-btn:hover {
+            color: #ff8c00;
+            border-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .toc-btn.active {
+            color: #000000;
+            background: #ff8c00;
+            border-color: #ff8c00;
+        }
+
+        /* Desktop: force single row if possible */
+        @media (min-width: 601px) {
+            .toc-nav {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+        }
+
+        /* Mobile: max 2 rows — 4 on first, 3 on second naturally */
+        @media (max-width: 600px) {
+            .toc-nav {
+                flex-wrap: wrap;
+            }
+            .toc-btn {
+                font-size: 10px;
+                padding: 8px 12px;
+                letter-spacing: 1.5px;
+            }
         }
 
         /* ── INTRO BLOCK ── */
@@ -78,7 +138,7 @@
             border: 1px solid #1a1a1a;
             border-left: 3px solid #ff8c00;
             padding: 24px 28px;
-            margin-bottom: 52px;
+            margin-bottom: 20px;
             line-height: 2;
         }
 
@@ -89,9 +149,48 @@
         }
         .intro p:last-child { margin-bottom: 0; }
 
-        /* ── SECTION ── */
+        /* ── MODULE SECTION ── */
+        .module-section {
+            margin-bottom: 64px;
+        }
+
+        /* Scroll offset compensation for fixed back btn */
+        .module-section[id] {
+            scroll-margin-top: 24px;
+        }
+
+        /* ── MODULE HEADER ── */
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #1e1e1e;
+        }
+
+        .module-tag {
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            color: #ff8c00;
+            font-weight: 600;
+            text-transform: uppercase;
+            border: 1px solid #ff8c00;
+            padding: 4px 10px;
+            flex-shrink: 0;
+        }
+
+        .module-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+
+        /* ── STEP SECTION ── */
         .section {
-            margin-bottom: 48px;
+            margin-bottom: 40px;
         }
 
         .section-header {
@@ -100,7 +199,7 @@
             gap: 14px;
             margin-bottom: 20px;
             padding-bottom: 12px;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid #111111;
         }
 
         .step-num {
@@ -112,9 +211,9 @@
         }
 
         .section-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            color: #ffffff;
+            color: #dddddd;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
@@ -148,7 +247,7 @@
             color: #ff8c00;
         }
 
-        /* ── SUB BLOCKS (Signal Quality drivers) ── */
+        /* ── SUB BLOCKS ── */
         .sub-blocks {
             display: flex;
             flex-direction: column;
@@ -217,6 +316,35 @@
             margin-top: 2px;
         }
 
+        /* ── EMPTY MODULE PLACEHOLDER ── */
+        .module-placeholder {
+            background: #080808;
+            border: 1px dashed #1c1c1c;
+            padding: 40px 28px;
+            text-align: center;
+        }
+
+        .placeholder-label {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: #2a2a2a;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .placeholder-text {
+            font-size: 12px;
+            color: #2e2e2e;
+            line-height: 2;
+        }
+
+        /* ── MODULE DIVIDER ── */
+        .module-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #1a1a1a 20%, #1a1a1a 80%, transparent);
+            margin-bottom: 64px;
+        }
+
         /* ── STATUS BANNER ── */
         .status-banner {
             background: #0a0a0a;
@@ -259,7 +387,8 @@
             .doc-title { font-size: 20px; letter-spacing: 2px; }
             .back-btn { font-size: 10px; padding: 8px 14px; top: 16px; right: 16px; }
             .intro { padding: 18px 20px; }
-            .section-title { font-size: 13px; }
+            .module-title { font-size: 13px; }
+            .section-title { font-size: 12px; }
         }
     </style>
 </head>
@@ -274,162 +403,274 @@
         <h1 class="doc-title">How It Works</h1>
         <p class="doc-subtitle">Quantitative Momentum Screening &amp; Signal Evaluation Pipeline</p>
 
-        <!-- INTRO -->
-        <div class="intro">
-            <p>
-                Quant Radar implements a signal-first, statistics-driven pipeline to identify
-                high-probability swing trading opportunities in the US stock market.
-            </p>
-            <p>
-                Instead of predicting markets, the system evaluates <span style="color:#ff8c00;">historical signal behavior</span>
-                to rank opportunities based on edge and signal quality — eliminating subjective bias.
-            </p>
-        </div>
+        <!-- TOC NAV -->
+        <nav class="toc-nav" aria-label="Table of Contents">
+            <a class="toc-btn" href="#overview">Overview</a>
+            <a class="toc-btn" href="#universe">Universe</a>
+            <a class="toc-btn" href="#radar">Radar</a>
+            <a class="toc-btn" href="#sniper">Sniper</a>
+            <a class="toc-btn" href="#planner">Planner</a>
+            <a class="toc-btn" href="#tracker">Tracker</a>
+            <a class="toc-btn" href="#executor">Executor</a>
+        </nav>
 
-        <!-- STEP 1 -->
-        <div class="section">
-            <div class="section-header">
-                <span class="step-num">STEP 01</span>
-                <span class="section-title">Market Screener — Momentum Candidates</span>
+        <!-- ══════════════════════════════════════════ -->
+        <!-- OVERVIEW -->
+        <!-- ══════════════════════════════════════════ -->
+        <div id="overview" class="module-section">
+            <div class="module-header">
+                <span class="module-tag">00</span>
+                <span class="module-title">System Overview</span>
             </div>
-            <p class="section-body">
-                Scans the entire stock universe and scores each ticker based on three
-                compounding momentum conditions. Only structurally active, high-momentum
-                assets pass through.
-            </p>
-            <div class="tags">
-                <span class="tag orange">14-Day Price Momentum</span>
-                <span class="tag orange">Volume Expansion</span>
-                <span class="tag orange">325-Day Range Position</span>
-            </div>
-            <p class="section-body">
-                Stocks are ranked by <span style="color:#cccccc;">Distance %</span> — how far the current signal score sits
-                above its historical 95th percentile threshold. Only tickers with Distance &gt; 0
-                advance to the Sniper Engine.
-            </p>
-            <div class="tags">
-                <span class="tag">Output: Signal Surge Amplifier Grid</span>
-            </div>
-        </div>
 
-        <!-- STEP 2 -->
-        <div class="section">
-            <div class="section-header">
-                <span class="step-num">STEP 02</span>
-                <span class="section-title">Sniper Engine — Signal Day Detection</span>
+            <div class="intro">
+                <p>
+                    Quant Radar implements a signal-first, statistics-driven pipeline to identify
+                    high-probability swing trading opportunities in the US stock market.
+                </p>
+                <p>
+                    Instead of predicting markets, the system evaluates <span style="color:#ff8c00;">historical signal behavior</span>
+                    to rank opportunities based on edge and signal quality — eliminating subjective bias.
+                </p>
             </div>
-            <p class="section-body">
-                For each candidate, the engine scans 3 years of historical data to detect
-                every day the screener conditions were triggered above the threshold.
-                These are called <span style="color:#cccccc;">Signal Days</span> — moments where the system would have
-                generated a trade opportunity.
-            </p>
-            <div class="tags">
-                <span class="tag">Output: Signal Day Dataset per Ticker</span>
-            </div>
-        </div>
 
-        <!-- STEP 3 -->
-        <div class="section">
-            <div class="section-header">
-                <span class="step-num">STEP 03</span>
-                <span class="section-title">Backtest Layer — Edge Measurement</span>
-            </div>
-            <p class="section-body">
-                Each signal day is evaluated by measuring forward returns over three horizons.
-                From these results, edge metrics are calculated per ticker.
-            </p>
-            <div class="tags">
-                <span class="tag orange">5-Day Return</span>
-                <span class="tag orange">10-Day Return</span>
-                <span class="tag orange">20-Day Return</span>
-                <span class="tag">Win Rate</span>
-                <span class="tag">Avg Return</span>
-                <span class="tag">Swing Score</span>
-            </div>
-            <div class="tags">
-                <span class="tag">Output: Runner Performance Protocol</span>
+            <!-- CORE PRINCIPLES -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="step-num">CORE</span>
+                    <span class="section-title">Design Principles</span>
+                </div>
+                <div class="principles">
+                    <div class="principle">
+                        <span class="principle-dot">▶</span>
+                        <span>Signal-first approach — evaluate signals, not predictions</span>
+                    </div>
+                    <div class="principle">
+                        <span class="principle-dot">▶</span>
+                        <span>Edge + Reliability framework — profitability must be consistent</span>
+                    </div>
+                    <div class="principle">
+                        <span class="principle-dot">▶</span>
+                        <span>Event-based backtesting — grounded in observable historical events</span>
+                    </div>
+                    <div class="principle">
+                        <span class="principle-dot">▶</span>
+                        <span>Statistical filtering before ranking — no raw momentum shortcuts</span>
+                    </div>
+                    <div class="principle">
+                        <span class="principle-dot">▶</span>
+                        <span>Momentum-driven swing opportunities — short to mid-term horizon</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- STEP 4 -->
-        <div class="section">
-            <div class="section-header">
-                <span class="step-num">STEP 04</span>
-                <span class="section-title">Signal Quality Engine — Reliability Filtering</span>
+        <div class="module-divider"></div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- UNIVERSE -->
+        <!-- ══════════════════════════════════════════ -->
+        <div id="universe" class="module-section">
+            <div class="module-header">
+                <span class="module-tag">01</span>
+                <span class="module-title">Stocks Universe</span>
             </div>
-            <p class="section-body">
-                Not all profitable signals are reliable. This layer evaluates the statistical
-                quality of the signal dataset using three independent drivers.
-            </p>
-            <div class="sub-blocks">
-                <div class="sub-block">
-                    <div class="sub-block-title">Sample Reliability</div>
-                    <p>Measures whether the signal appears often enough to be statistically meaningful.
-                    Avoids signals based on too few observations and reduces random performance spikes.</p>
-                </div>
-                <div class="sub-block">
-                    <div class="sub-block-title">Return Stability</div>
-                    <p>Evaluates how consistent signal returns are across time. Detects whether
-                    profitability is stable or driven by rare outliers.</p>
-                </div>
-                <div class="sub-block">
-                    <div class="sub-block-title">Cluster Distribution</div>
-                    <p>Checks whether signals are spread across time or only appear during specific
-                    short market regimes. Prevents regime-dependent signals.</p>
-                </div>
-            </div>
-            <div class="tags" style="margin-top:16px;">
-                <span class="tag">Output: Signal Quality Score</span>
+
+            <div class="module-placeholder">
+                <p class="placeholder-label">Documentation Pending</p>
+                <p class="placeholder-text">Content for this module will be added shortly.</p>
             </div>
         </div>
 
-        <!-- STEP 5 -->
-        <div class="section">
-            <div class="section-header">
-                <span class="step-num">STEP 05</span>
-                <span class="section-title">Final Ranking — Edge × Quality</span>
+        <div class="module-divider"></div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- RADAR -->
+        <!-- ══════════════════════════════════════════ -->
+        <div id="radar" class="module-section">
+            <div class="module-header">
+                <span class="module-tag">02</span>
+                <span class="module-title">Radar Scanner</span>
             </div>
-            <p class="section-body">
-                The final ranking combines profitability and reliability into a single score,
-                ensuring candidates are ranked on both expected return and signal robustness —
-                not raw momentum alone.
-            </p>
-            <div class="formula">
-                Final Score = <span>Edge</span> × <span>Quality</span>
-            </div>
-            <div class="tags">
-                <span class="tag">Output: Ranked Candidate List</span>
+
+            <!-- STEP 1 -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="step-num">STEP 01</span>
+                    <span class="section-title">Market Screener — Momentum Candidates</span>
+                </div>
+                <p class="section-body">
+                    Scans the entire stock universe and scores each ticker based on three
+                    compounding momentum conditions. Only structurally active, high-momentum
+                    assets pass through.
+                </p>
+                <div class="tags">
+                    <span class="tag orange">14-Day Price Momentum</span>
+                    <span class="tag orange">Volume Expansion</span>
+                    <span class="tag orange">325-Day Range Position</span>
+                </div>
+                <p class="section-body">
+                    Stocks are ranked by <span style="color:#cccccc;">Distance %</span> — how far the current signal score sits
+                    above its historical 95th percentile threshold. Only tickers with Distance &gt; 0
+                    advance to the Sniper Engine.
+                </p>
+                <div class="tags">
+                    <span class="tag">Output: Signal Surge Amplifier Grid</span>
+                </div>
             </div>
         </div>
 
-        <!-- CORE PRINCIPLES -->
-        <div class="section">
-            <div class="section-header">
-                <span class="step-num">CORE</span>
-                <span class="section-title">Design Principles</span>
+        <div class="module-divider"></div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SNIPER -->
+        <!-- ══════════════════════════════════════════ -->
+        <div id="sniper" class="module-section">
+            <div class="module-header">
+                <span class="module-tag">03</span>
+                <span class="module-title">Sniper Validator</span>
             </div>
-            <div class="principles">
-                <div class="principle">
-                    <span class="principle-dot">▶</span>
-                    <span>Signal-first approach — evaluate signals, not predictions</span>
+
+            <!-- STEP 2 -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="step-num">STEP 02</span>
+                    <span class="section-title">Sniper Engine — Signal Day Detection</span>
                 </div>
-                <div class="principle">
-                    <span class="principle-dot">▶</span>
-                    <span>Edge + Reliability framework — profitability must be consistent</span>
+                <p class="section-body">
+                    For each candidate, the engine scans 3 years of historical data to detect
+                    every day the screener conditions were triggered above the threshold.
+                    These are called <span style="color:#cccccc;">Signal Days</span> — moments where the system would have
+                    generated a trade opportunity.
+                </p>
+                <div class="tags">
+                    <span class="tag">Output: Signal Day Dataset per Ticker</span>
                 </div>
-                <div class="principle">
-                    <span class="principle-dot">▶</span>
-                    <span>Event-based backtesting — grounded in observable historical events</span>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="step-num">STEP 03</span>
+                    <span class="section-title">Backtest Layer — Edge Measurement</span>
                 </div>
-                <div class="principle">
-                    <span class="principle-dot">▶</span>
-                    <span>Statistical filtering before ranking — no raw momentum shortcuts</span>
+                <p class="section-body">
+                    Each signal day is evaluated by measuring forward returns over three horizons.
+                    From these results, edge metrics are calculated per ticker.
+                </p>
+                <div class="tags">
+                    <span class="tag orange">5-Day Return</span>
+                    <span class="tag orange">10-Day Return</span>
+                    <span class="tag orange">20-Day Return</span>
+                    <span class="tag">Win Rate</span>
+                    <span class="tag">Avg Return</span>
+                    <span class="tag">Swing Score</span>
                 </div>
-                <div class="principle">
-                    <span class="principle-dot">▶</span>
-                    <span>Momentum-driven swing opportunities — short to mid-term horizon</span>
+                <div class="tags">
+                    <span class="tag">Output: Runner Performance Protocol</span>
                 </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="step-num">STEP 04</span>
+                    <span class="section-title">Signal Quality Engine — Reliability Filtering</span>
+                </div>
+                <p class="section-body">
+                    Not all profitable signals are reliable. This layer evaluates the statistical
+                    quality of the signal dataset using three independent drivers.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Sample Reliability</div>
+                        <p>Measures whether the signal appears often enough to be statistically meaningful.
+                        Avoids signals based on too few observations and reduces random performance spikes.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Return Stability</div>
+                        <p>Evaluates how consistent signal returns are across time. Detects whether
+                        profitability is stable or driven by rare outliers.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Cluster Distribution</div>
+                        <p>Checks whether signals are spread across time or only appear during specific
+                        short market regimes. Prevents regime-dependent signals.</p>
+                    </div>
+                </div>
+                <div class="tags" style="margin-top:16px;">
+                    <span class="tag">Output: Signal Quality Score</span>
+                </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="step-num">STEP 05</span>
+                    <span class="section-title">Final Ranking — Edge × Quality</span>
+                </div>
+                <p class="section-body">
+                    The final ranking combines profitability and reliability into a single score,
+                    ensuring candidates are ranked on both expected return and signal robustness —
+                    not raw momentum alone.
+                </p>
+                <div class="formula">
+                    Final Score = <span>Edge</span> × <span>Quality</span>
+                </div>
+                <div class="tags">
+                    <span class="tag">Output: Ranked Candidate List</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="module-divider"></div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- PLANNER -->
+        <!-- ══════════════════════════════════════════ -->
+        <div id="planner" class="module-section">
+            <div class="module-header">
+                <span class="module-tag">04</span>
+                <span class="module-title">Portfolio Planner</span>
+            </div>
+
+            <div class="module-placeholder">
+                <p class="placeholder-label">Documentation Pending</p>
+                <p class="placeholder-text">Content for this module will be added shortly.</p>
+            </div>
+        </div>
+
+        <div class="module-divider"></div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- TRACKER -->
+        <!-- ══════════════════════════════════════════ -->
+        <div id="tracker" class="module-section">
+            <div class="module-header">
+                <span class="module-tag">05</span>
+                <span class="module-title">Tracker Matrix</span>
+            </div>
+
+            <div class="module-placeholder">
+                <p class="placeholder-label">Documentation Pending</p>
+                <p class="placeholder-text">Content for this module will be added shortly.</p>
+            </div>
+        </div>
+
+        <div class="module-divider"></div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- EXECUTOR -->
+        <!-- ══════════════════════════════════════════ -->
+        <div id="executor" class="module-section">
+            <div class="module-header">
+                <span class="module-tag">06</span>
+                <span class="module-title">Alpha Executor</span>
+            </div>
+
+            <div class="module-placeholder">
+                <p class="placeholder-label">Documentation Pending</p>
+                <p class="placeholder-text">Content for this module will be added shortly.</p>
             </div>
         </div>
 
@@ -447,6 +688,30 @@
         <footer>© 2026 Quant Radar System — Built for Research &amp; Exploration</footer>
 
     </div>
+
+    <script>
+        // Highlight active TOC button on scroll
+        const sections = document.querySelectorAll('.module-section[id]');
+        const tocBtns = document.querySelectorAll('.toc-btn');
+
+        const setActive = (id) => {
+            tocBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('href') === '#' + id);
+            });
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActive(entry.target.id);
+                }
+            });
+        }, {
+            rootMargin: '-20% 0px -70% 0px'
+        });
+
+        sections.forEach(s => observer.observe(s));
+    </script>
 
 </body>
 </html>
