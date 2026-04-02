@@ -382,6 +382,146 @@
             text-align: center;
         }
 
+        /* ── SUB-SECTION NUMBERING (1.1, 1.2 ...) ── */
+        .subsection {
+            margin-bottom: 36px;
+        }
+
+        .subsection-header {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #111111;
+        }
+
+        .subsection-num {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #ff8c00;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #cccccc;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ── IO MARKERS ── */
+        .io-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 14px 0;
+        }
+
+        .io-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            font-weight: 600;
+            flex-shrink: 0;
+            align-self: center;
+        }
+
+        .io-label.in  { color: #ffffff; border: 1px solid #333333; }
+        .io-label.out { color: #ffffff; border: 1px solid #333333; }
+
+        .io-tag {
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            text-transform: uppercase;
+        }
+
+        .io-tag.in  { border: 1px solid #4a1a1a; color: #ff5555; }
+        .io-tag.out { border: 1px solid #1a4030; color: #4dcc88; }
+
+        /* ── FORMULA BLOCK V2 (rendered math) ── */
+        .formula-block {
+            background: #070707;
+            border: 1px solid #1e1e1e;
+            border-left: 3px solid #ff8c00;
+            padding: 28px 24px;
+            margin: 20px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .formula-main {
+            font-size: 15px;
+            color: #ffffff;
+            letter-spacing: 1px;
+            line-height: 2.2;
+            white-space: nowrap;
+        }
+
+        .formula-main .f-var   { color: #ff8c00; }
+        .formula-main .f-op    { color: #555555; margin: 0 6px; }
+        .formula-main .f-frac  { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 8px; }
+        .formula-main .f-num   { border-bottom: 1px solid #444444; padding-bottom: 3px; font-size: 13px; color: #cccccc; }
+        .formula-main .f-den   { padding-top: 3px; font-size: 13px; color: #888888; }
+        .formula-main .f-eq    { color: #666666; margin: 0 10px; }
+
+        /* ── VARIABLE APPENDIX ── */
+        .var-appendix {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border: 1px solid #141414;
+        }
+
+        .var-row {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            border-bottom: 1px solid #111111;
+        }
+
+        .var-row:last-child { border-bottom: none; }
+
+        .var-name {
+            padding: 14px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #ff8c00;
+            letter-spacing: 1.5px;
+            border-right: 1px solid #141414;
+            background: #070707;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .var-name.out-var { color: #4dcc88; }
+
+        .var-def {
+            padding: 14px 18px;
+            font-size: 12px;
+            color: #555555;
+            line-height: 1.9;
+        }
+
+        .var-def .vd-label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #333333;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .var-row { grid-template-columns: 1fr; }
+            .var-name { border-right: none; border-bottom: 1px solid #141414; background: #0a0a0a; }
+            .formula-main { font-size: 12px; }
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
             .doc-title { font-size: 20px; letter-spacing: 2px; }
@@ -493,31 +633,312 @@
                 <span class="module-title">Radar Scanner</span>
             </div>
 
-            <!-- STEP 1 -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="step-num">STEP 01</span>
-                    <span class="section-title">Market Screener — Momentum Candidates</span>
+            <div class="intro" style="margin-bottom:36px;">
+                <p>
+                    Radar Scanner scans the entire stock universe daily and computes a composite momentum score
+                    for each ticker. Scores are benchmarked against each ticker's own historical distribution
+                    to produce a normalized, comparable ranking — eliminating cross-ticker scale distortion.
+                </p>
+                <p>
+                    Only tickers whose radar score exceeds their personal rolling threshold advance to the Sniper engine.
+                </p>
+            </div>
+
+            <!-- 2.1 INPUT VARIABLES -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">2.1</span>
+                    <span class="subsection-title">Input Variables</span>
                 </div>
                 <p class="section-body">
-                    Scans the entire stock universe and scores each ticker based on three
-                    compounding momentum conditions. Only structurally active, high-momentum
-                    assets pass through.
+                    Four raw market data points are pulled daily for every ticker in the universe.
+                    These serve as the direct inputs to the radar score calculation.
                 </p>
-                <div class="tags">
-                    <span class="tag orange">14-Day Price Momentum</span>
-                    <span class="tag orange">Volume Expansion</span>
-                    <span class="tag orange">325-Day Range Position</span>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">LAST_PRICE</span>
+                    <span class="io-tag in">MOMENTUM_14D</span>
+                    <span class="io-tag in">VOL_SURGE</span>
+                    <span class="io-tag in">RANGE_POS_325</span>
                 </div>
-                <p class="section-body">
-                    Stocks are ranked by <span style="color:#cccccc;">Distance %</span> — how far the current signal score sits
-                    above its historical 95th percentile threshold. Only tickers with Distance &gt; 0
-                    advance to the Sniper Engine.
-                </p>
-                <div class="tags">
-                    <span class="tag">Output: Signal Surge Amplifier Grid</span>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name">LAST_PRICE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Current closing price</span>
+                            The most recent closing price of the ticker. Used as the reference price P
+                            in the range position calculation. Not used directly in scoring, but required
+                            to compute range-relative position.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">MOMENTUM_14D</div>
+                        <div class="var-def">
+                            <span class="vd-label">14-day price change — ΔP₁₄</span>
+                            Absolute price change over the past 14 trading days: P₀ − P₋₁₄.
+                            Positive values indicate upward momentum; negative values indicate price decay.
+                            Serves as the primary momentum multiplier in the score formula.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">VOL_SURGE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Volume surge ratio — V / SMA(V, 20)</span>
+                            Today's trading volume divided by the 20-day simple moving average of volume.
+                            A value above 1.0 means above-average participation; below 1.0 means subdued volume.
+                            Amplifies the score when volume confirms price movement.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">RANGE_POS_325</div>
+                        <div class="var-def">
+                            <span class="vd-label">325-day range position — (P − L₃₂₅) / (H₃₂₅ − L₃₂₅)</span>
+                            Current price expressed as a 0–1 ratio within the 325-day high-low channel.
+                            A value near 1.0 means the price is near its 325-day high (structural strength);
+                            near 0.0 means near its yearly low. Acts as a structural regime filter.
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <!-- 2.2 RADAR SCORE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">2.2</span>
+                    <span class="subsection-title">Radar Score</span>
+                </div>
+                <p class="section-body">
+                    The three momentum dimensions are multiplied together into a single composite score.
+                    The multiplicative structure means all three conditions must be simultaneously active
+                    for the score to be meaningfully elevated — a single strong signal is not enough.
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">RADAR_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-var">ΔP₁₄</span>
+                        <span class="f-op">×</span>
+                        <span class="f-frac">
+                            <span class="f-num">V</span>
+                            <span class="f-den">SMA(V, 20)</span>
+                        </span>
+                        <span class="f-op">×</span>
+                        <span class="f-frac">
+                            <span class="f-num">P − L₃₂₅</span>
+                            <span class="f-den">H₃₂₅ − L₃₂₅</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">RADAR_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">RADAR_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Composite momentum score</span>
+                            Raw multiplicative product of the three momentum components. Not directly comparable
+                            across tickers — a high-price ticker will naturally produce larger absolute scores than a
+                            low-price ticker. Cross-ticker ranking requires threshold normalization (see 2.3).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.3 ROLLING THRESHOLD -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">2.3</span>
+                    <span class="subsection-title">Rolling Threshold</span>
+                </div>
+                <p class="section-body">
+                    Because RADAR_SCORE is not normalized across tickers, each ticker is benchmarked
+                    against its own historical score distribution. The system runs a mini-backtest
+                    covering the past 3 years of daily scores per ticker, then extracts the 95th percentile
+                    value as the threshold — meaning only the top 5% of historical signal days qualify
+                    as genuinely exceptional.
+                </p>
+                <p class="section-body">
+                    The threshold rolls forward daily: every time the screener runs, one new day is added
+                    to the 3-year window and the percentile is recalculated. This keeps the bar
+                    adaptive to each ticker's evolving volatility and momentum regime.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">THRESHOLD</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">THRESHOLD</div>
+                        <div class="var-def">
+                            <span class="vd-label">95th percentile of 3-year daily radar scores</span>
+                            The minimum RADAR_SCORE a ticker must exceed today to be considered an active signal.
+                            Computed individually per ticker from a rolling 3-year lookback window. Updates daily.
+                            A ticker's threshold reflects its own historical signal behavior — not a universal cutoff.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.4 DISTANCE % -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">2.4</span>
+                    <span class="subsection-title">Distance %</span>
+                </div>
+                <p class="section-body">
+                    Once both RADAR_SCORE and THRESHOLD are computed, distance measures how far today's
+                    score sits relative to the threshold — expressed as a percentage. This converts
+                    ticker-specific raw scores into a universal ranking dimension.
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">DISTANCE_%</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">RADAR_SCORE − THRESHOLD</span>
+                            <span class="f-den">THRESHOLD</span>
+                        </span>
+                        <span class="f-op">×</span>
+                        100
+                    </div>
+                </div>
+                <p class="section-body">
+                    Only tickers with DISTANCE_% above zero pass through as candidates. The table is ranked
+                    by DISTANCE_% in descending order — the higher the distance, the stronger the current
+                    signal relative to that ticker's own historical bar.
+                </p>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">RADAR_SCORE</span>
+                    <span class="io-tag in">THRESHOLD</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">DISTANCE_%</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">DISTANCE_%</div>
+                        <div class="var-def">
+                            <span class="vd-label">Threshold-relative signal strength, in percent</span>
+                            Expresses how much today's radar score exceeds (positive) or falls short of
+                            (negative) the ticker's rolling 95th percentile threshold. Positive values
+                            indicate the ticker is in active signal territory. This is the primary sort key
+                            for the output table and the pass/fail gate for Sniper candidacy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.5 Z-SCORE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">2.5</span>
+                    <span class="subsection-title">Z-Score</span>
+                </div>
+                <p class="section-body">
+                    Z-Score is a supplementary context indicator. Unlike the threshold (which is derived
+                    from only the top 5% of days), Z-Score is computed against the full 3-year distribution —
+                    all trading days, not just signal days. It answers the question: how unusual is today's
+                    radar score relative to the ticker's average behavior?
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">Z_SCORE</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">RADAR_SCORE − μ</span>
+                            <span class="f-den">σ</span>
+                        </span>
+                    </div>
+                </div>
+                <p class="section-body">
+                    Z-Score does not affect ranking or Sniper candidacy. It is displayed as a manual
+                    sanity check: a very high DISTANCE_% with a low Z-Score may indicate the threshold
+                    itself has shifted (e.g. due to a volatile historical window), not necessarily that
+                    the signal is fundamentally stronger.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">Z_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">Z_SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Standard deviations above 3-year mean (all days)</span>
+                            Measures how many standard deviations today's radar score sits above or below
+                            the ticker's 3-year mean score across all trading days. A Z-Score of 2.0 means
+                            today's reading is two standard deviations above average. For reference only —
+                            does not influence ranking or filtering logic.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">μ (mu)</div>
+                        <div class="var-def">
+                            <span class="vd-label">Mean of 3-year daily radar scores (all days)</span>
+                            Arithmetic mean of all radar scores recorded over the rolling 3-year lookback.
+                            Serves as the baseline for Z-Score normalization.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">σ (sigma)</div>
+                        <div class="var-def">
+                            <span class="vd-label">Standard deviation of 3-year daily radar scores</span>
+                            Measures the historical spread of daily radar scores. A wider spread (high σ)
+                            means the ticker's momentum is more volatile day-to-day; a narrow spread means
+                            its score is more stable. Used as the denominator in Z-Score normalization.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.6 OUTPUT -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">2.6</span>
+                    <span class="subsection-title">Output — Signal Surge Amplifier Grid</span>
+                </div>
+                <p class="section-body">
+                    The final output is a full table of all tickers in the universe, sorted by DISTANCE_% from highest to lowest.
+                    Each row shows the complete radar reading for that ticker on the current day — including those with negative
+                    distance, which are still displayed for reference. Only tickers with DISTANCE_% above zero are forwarded
+                    as candidates to the Sniper Validator for deeper analysis.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">RANK</span>
+                    <span class="io-tag out">TICKER</span>
+                    <span class="io-tag out">LAST_PRICE</span>
+                    <span class="io-tag out">MOMENTUM_14D</span>
+                    <span class="io-tag out">VOL_SURGE</span>
+                    <span class="io-tag out">RANGE_POS_325</span>
+                    <span class="io-tag out">RADAR_SCORE</span>
+                    <span class="io-tag out">THRESHOLD</span>
+                    <span class="io-tag out">DISTANCE_%</span>
+                    <span class="io-tag out">Z_SCORE</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">RANK</div>
+                        <div class="var-def">
+                            <span class="vd-label">Ordinal rank by DISTANCE_%</span>
+                            Rank 1 = highest distance above threshold. Re-computed daily.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">TICKER</div>
+                        <div class="var-def">
+                            <span class="vd-label">Stock symbol</span>
+                            Exchange ticker symbol. All tickers in the universe appear in this table regardless of distance.
+                            Only those with DISTANCE_% &gt; 0 are exported as Sniper candidates.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="module-divider"></div>
