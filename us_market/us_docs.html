@@ -1919,6 +1919,10 @@
             </div>
 
         </div>
+        <div class="module-divider"></div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- TRACKER -->
         <!-- ══════════════════════════════════════════ -->
         <div id="tracker" class="module-section">
             <div class="module-header">
@@ -1926,10 +1930,202 @@
                 <span class="module-title">Tracker Matrix</span>
             </div>
 
-            <div class="module-placeholder">
-                <p class="placeholder-label">Documentation Pending</p>
-                <p class="placeholder-text">Content for this module will be added shortly.</p>
+            <div class="intro" style="margin-bottom:36px;">
+                <p>
+                    Tracker Matrix is a post-mortem surveillance layer — not a decision tool. While Radar,
+                    Sniper, and Planner recalculate fresh each day, Tracker appends daily and accumulates
+                    a running record of every ticker that has been active in the signal pipeline.
+                </p>
+                <p>
+                    Its purpose is to provide a historical view of how radar distance, price, and
+                    sniper conviction have evolved day by day for each candidate — enabling retrospective
+                    analysis of signal behavior over time.
+                </p>
             </div>
+
+            <!-- 5.1 DATA STRUCTURE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">5.1</span>
+                    <span class="subsection-title">Data Structure — Monthly Append</span>
+                </div>
+                <p class="section-body">
+                    Data is organized by calendar month, starting from January 2026. Each month has its
+                    own view accessible from the landing page. Rows are trading days only — weekends and
+                    market holidays are excluded. Columns are tickers, each split into three sub-columns.
+                    One new row is appended every trading day automatically.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Row — Trading Date</div>
+                        <p>Each row represents one trading day. Dates run in descending order
+                        (most recent at top). Only market-open days are included — no gaps for
+                        weekends or holidays.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Column — Ticker (3 sub-columns each)</div>
+                        <p>Each ticker occupies three sub-columns: RADAR, PRICE, and SNIPER.
+                        The set of tracked tickers expands as new candidates appear, and contracts
+                        as tickers exit their 20-day tracking window.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5.2 TICKER INCLUSION — 20-DAY WINDOW -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">5.2</span>
+                    <span class="subsection-title">Ticker Inclusion — 20-Day Window Logic</span>
+                </div>
+                <p class="section-body">
+                    A ticker enters the Tracker the first day its DISTANCE_% exceeds zero — meaning it
+                    passed the Radar gate and became a Sniper candidate. From that point, a 20-trading-day
+                    window is opened. The ticker remains tracked for the full 20 days regardless of
+                    whether it continues to clear the Radar threshold on subsequent days.
+                </p>
+                <p class="section-body">
+                    If the ticker re-triggers (DISTANCE_% &gt; 0 again) before the window closes, the
+                    window resets from that new date. A ticker exits the Tracker only when 20 trading days
+                    have elapsed since its last positive distance reading. This ensures the full forward
+                    return period referenced by the Sniper backtest is always observable.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Why keep tickers when DISTANCE_% drops below zero?</div>
+                        <p>Discarding a ticker the moment it exits radar range would eliminate the ability
+                        to track its price behavior post-signal — which is precisely the period the
+                        backtest is measuring. The 20-day window preserves the full forward horizon
+                        for every signal day, making post-mortem analysis meaningful.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5.3 SUB-COLUMNS PER TICKER -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">5.3</span>
+                    <span class="subsection-title">Sub-Columns per Ticker</span>
+                </div>
+                <p class="section-body">
+                    Each tracked ticker exposes three daily data points in the matrix. Together they
+                    provide a complete picture of signal strength, price movement, and conviction status
+                    for every day the ticker is in the tracking window.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">COLUMNS</span>
+                    <span class="io-tag out">RADAR</span>
+                    <span class="io-tag out">PRICE</span>
+                    <span class="io-tag out">SNIPER</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">RADAR</div>
+                        <div class="var-def">
+                            <span class="vd-label">Daily DISTANCE_% — radar score vs rolling threshold</span>
+                            The distance percentage for that ticker on that trading day. Positive values
+                            are colored green (brighter and more saturated as distance grows); negative
+                            values are red. Shows how far above or below the signal threshold the ticker
+                            sits each day throughout the tracking window.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">PRICE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Closing price — colored by daily price change</span>
+                            The official closing price for that ticker on that trading day, sourced at
+                            16:00 EDT. Color reflects the direction of the day's price change: green for
+                            up, red for down, neutral for flat. Enables visual tracking of price trajectory
+                            relative to signal days.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">SNIPER</div>
+                        <div class="var-def">
+                            <span class="vd-label">Sniper Score — only shown when DISTANCE_% &gt; 0</span>
+                            Displays the Sniper Score (0–100) for that ticker on days where its radar
+                            distance is positive. Shows a dash when DISTANCE_% ≤ 0, since no new Sniper
+                            calculation is triggered on those days. Color follows conviction tier:
+                            bright green for S-Tier, green for A-Tier, orange for B-Tier, red for C-Tier.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5.4 FEATURES -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">5.4</span>
+                    <span class="subsection-title">Navigation &amp; Utility Features</span>
+                </div>
+                <p class="section-body">
+                    Several tools are provided to make the matrix easier to navigate and analyze
+                    without leaving the page.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Monthly Navigation</div>
+                        <p>The landing page lists all available months as selectable buttons, most recent
+                        first. Each month opens its own full matrix view. Data accumulates from January
+                        2026 onward, with a new month added automatically at the start of each calendar month.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Ticker Search</div>
+                        <p>A search field filters the matrix columns in real-time by ticker symbol.
+                        Useful when the tracked universe grows wide and horizontal scrolling becomes
+                        tedious. Partial matches are supported.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Price Change Helper</div>
+                        <p>A small calculator at the bottom of the matrix page. Enter any two prices
+                        (e.g. closing price on signal day → closing price on a later date) and it
+                        instantly computes the percentage change. Useful for quickly measuring actual
+                        trade outcomes against signal day entry without manual calculation.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Ticker → Yahoo Finance</div>
+                        <p>Clicking any ticker column header opens that ticker's Yahoo Finance page
+                        in a new tab. Provides direct access to chart, fundamentals, and news
+                        without needing to navigate away from the system manually.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5.5 LEGEND -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">5.5</span>
+                    <span class="subsection-title">Column Legend</span>
+                </div>
+                <p class="section-body">
+                    A legend is displayed below the matrix for quick reference.
+                </p>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name">RADAR</div>
+                        <div class="var-def">
+                            <span class="vd-label">Definition shown in legend</span>
+                            Distance % above threshold — how far above (or below) the ticker's rolling
+                            95th percentile threshold its current Radar Score sits.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">PRICE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Definition shown in legend</span>
+                            Close price at 16:00 EDT. Color reflects day-over-day change direction.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">SNIPER</div>
+                        <div class="var-def">
+                            <span class="vd-label">Definition shown in legend</span>
+                            Edge × Quality composite score (0–100). Only displayed on days when
+                            DISTANCE_% is positive. Dash otherwise.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="module-divider"></div>
@@ -1943,10 +2139,428 @@
                 <span class="module-title">Alpha Executor</span>
             </div>
 
-            <div class="module-placeholder">
-                <p class="placeholder-label">Documentation Pending</p>
-                <p class="placeholder-text">Content for this module will be added shortly.</p>
+            <div class="intro" style="margin-bottom:36px;">
+                <p>
+                    Alpha Executor is a rules-based simulation engine — not a live trading bot and not
+                    connected to real capital. It answers a single question: <span style="color:#ff8c00;">what would have happened
+                    if a trader followed the system's recommendations strictly, every cycle, without deviation?</span>
+                </p>
+                <p>
+                    All positions, returns, and equity figures are purely hypothetical projections based
+                    on historical closing prices. This module exists to evaluate the system's aggregate
+                    signal quality over time — not to issue trade instructions.
+                </p>
             </div>
+
+            <!-- 6.1 SIMULATION RULES -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.1</span>
+                    <span class="subsection-title">Simulation Rules</span>
+                </div>
+                <p class="section-body">
+                    The simulation operates under a fixed, unchanging ruleset. No overrides, no manual
+                    selections, no characteristic or sharia filtering — the system picks mechanically
+                    based on rank alone.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Starting Equity</div>
+                        <p>The simulation begins with a normalized equity base of 100 on January 2, 2026.
+                        This is a unit value — not a currency amount — chosen to make percentage returns
+                        directly readable as equity levels (e.g. equity 117.74 = +17.74% total return).</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Entry Selection — Top 5 by Sniper Score</div>
+                        <p>At the start of each batch, the system selects the 5 tickers with the highest
+                        Sniper Score on that day — regardless of characteristic, sharia status, sector,
+                        or any other filter. Pure score-rank selection only.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Allocation — Score-Weighted</div>
+                        <p>Each of the 5 selected tickers receives a weight proportional to its Sniper
+                        Score relative to the total of the 5 scores — identical to the Planner's
+                        allocation formula. Higher conviction tickers receive a larger slice of equity.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Hold Period — 20 Trading Days Fixed</div>
+                        <p>All 5 positions are held for exactly 20 trading days. There is no early exit,
+                        stop-loss, or take-profit mechanism. The system holds through the full window
+                        regardless of intraperiod price behavior.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Rebalance — Chained Equity</div>
+                        <p>On trading day 21 (the first day after exit), the simulation rebalances into
+                        a new top-5 selection. The new equity base is whatever the portfolio is worth
+                        at exit — not reset to 100. Returns compound across batches, creating a chained
+                        equity curve that reflects cumulative performance.</p>
+                    </div>
+                </div>
+                <div class="io-row" style="margin-top:20px;">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">SNIPER_SCORE (daily top 5)</span>
+                    <span class="io-tag in">CLOSING PRICES (20d forward)</span>
+                    <span class="io-tag in">SPY daily prices (benchmark)</span>
+                </div>
+            </div>
+
+            <!-- 6.2 BATCH MECHANICS -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.2</span>
+                    <span class="subsection-title">Batch Mechanics</span>
+                </div>
+                <p class="section-body">
+                    Each 20-day hold cycle is called a <span style="color:#cccccc;">batch</span>.
+                    Batches are numbered sequentially from Batch 1. The system runs one batch at a time —
+                    there is no overlap between batches and no idle cash between cycles. The equity is
+                    always fully deployed.
+                </p>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name">Batch N</div>
+                        <div class="var-def">
+                            <span class="vd-label">One complete 20-trading-day hold cycle</span>
+                            Starts on the rebalance day with a new top-5 selection. Ends exactly 20
+                            trading days later. The dashboard shows the current batch number and which
+                            day within the batch the simulation is on (e.g. Day 6 / 20).
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">Rebalance Day</div>
+                        <div class="var-def">
+                            <span class="vd-label">Day 21 — exit previous batch, enter new batch</span>
+                            All previous positions are closed at the day's closing price. New top-5 tickers
+                            are selected from that day's Sniper output. New allocation is computed and the
+                            cycle restarts. Marked as vertical dashed lines on the equity curve chart.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">STATUS</div>
+                        <div class="var-def">
+                            <span class="vd-label">Position status in the current batch holdings table</span>
+                            Always displays as CLOSED in the current batch holdings — because the simulation
+                            runs once per day after market close, all positions are evaluated at closing
+                            prices. There is no intraday open state tracked.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.3 BENCHMARK — SPY -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.3</span>
+                    <span class="subsection-title">Benchmark — SPY Rebased</span>
+                </div>
+                <p class="section-body">
+                    Performance is benchmarked against SPY — the SPDR S&P 500 ETF, which tracks the
+                    S&P 500 index and is the most widely traded US equity benchmark. SPY is chosen
+                    because it is directly tradable (unlike the index itself), making the comparison
+                    an apples-to-apples evaluation against a real passive alternative.
+                </p>
+                <p class="section-body">
+                    SPY is rebased to 100 at the same start date (January 2, 2026) and rebalanced
+                    on the same cycle dates as the Alpha Executor — though SPY rebalances have no
+                    practical effect since the holding is always SPY. This ensures both equity curves
+                    share an identical starting point and time scale.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">VS BENCHMARK (pts)</span>
+                    <span class="io-tag out">VS SPY (%)</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">VS BENCHMARK (pts)</div>
+                        <div class="var-def">
+                            <span class="vd-label">Absolute equity gap between portfolio and SPY</span>
+                            Current portfolio equity minus current SPY rebased equity. A positive value
+                            means the portfolio is ahead of the passive benchmark in absolute unit terms.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">VS SPY (%)</div>
+                        <div class="var-def">
+                            <span class="vd-label">Return differential vs SPY since inception</span>
+                            Portfolio total return minus SPY total return since January 2, 2026.
+                            The primary measure of whether the system is adding value over passive indexing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.4 DASHBOARD — HERO METRICS -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.4</span>
+                    <span class="subsection-title">Dashboard — Hero Metrics</span>
+                </div>
+                <p class="section-body">
+                    The top section of the dashboard displays five headline figures updated daily
+                    after market close.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">CURRENT EQUITY</span>
+                    <span class="io-tag out">TOTAL RETURN %</span>
+                    <span class="io-tag out">MAX DRAWDOWN</span>
+                    <span class="io-tag out">ACTIVE BATCH</span>
+                    <span class="io-tag out">VS BENCHMARK</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">CURRENT EQUITY</div>
+                        <div class="var-def">
+                            <span class="vd-label">Portfolio unit value today — started at 100</span>
+                            The current value of the simulated portfolio expressed in equity units.
+                            Directly readable as a return: equity of 117.74 = +17.74% since inception.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">TOTAL RETURN %</div>
+                        <div class="var-def">
+                            <span class="vd-label">Cumulative return since January 2, 2026</span>
+                            (Current Equity − 100) / 100 × 100. The headline performance figure
+                            of the simulation since its start date.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">MAX DRAWDOWN</div>
+                        <div class="var-def">
+                            <span class="vd-label">Largest peak-to-trough equity decline — risk measure</span>
+                            The maximum percentage decline from any equity peak to the subsequent trough,
+                            measured across the full simulation history. Expressed as a negative percentage.
+                            Indicates the worst historical loss scenario an investor following the system
+                            would have experienced.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">ACTIVE BATCH</div>
+                        <div class="var-def">
+                            <span class="vd-label">Current batch number and day progress</span>
+                            Displays the batch number (e.g. #4) and which trading day within the
+                            20-day window is current (e.g. Day 6 / 20). Resets to Day 1 / 20 on
+                            each rebalance.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.5 EQUITY CURVE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.5</span>
+                    <span class="subsection-title">Equity Curve</span>
+                </div>
+                <p class="section-body">
+                    The equity curve plots the full daily history of both the portfolio and SPY from
+                    inception to today. It is the primary visual for assessing strategy behavior
+                    over time.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Portfolio Equity (orange solid line)</div>
+                        <p>Daily closing equity of the Alpha Executor simulation. Each point represents
+                        the portfolio's unit value at that day's close, accounting for all holdings
+                        weighted by allocation.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">SPY Rebased (blue dashed line)</div>
+                        <p>SPY's daily price rebased to 100 at inception. Plotted on the same axis
+                        as the portfolio equity for direct visual comparison. Divergence upward means
+                        the system is outperforming the passive benchmark.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Rebalance Markers (vertical lines)</div>
+                        <p>Vertical dashed lines mark each rebalance day — the start of a new batch.
+                        Labeled "R" on the chart. Allow visual assessment of which market periods
+                        each batch covered and how each cycle contributed to overall equity.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Hover / Tap Detail</div>
+                        <p>Hovering or tapping any point on the curve shows the date, portfolio equity,
+                        SPY equity, and the portfolio's daily percentage change for that day.
+                        Enables inspection of specific days without navigating away.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.6 PERFORMANCE STATS -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.6</span>
+                    <span class="subsection-title">Performance Stats</span>
+                </div>
+                <p class="section-body">
+                    A set of risk and return statistics computed across the full daily return history
+                    of the simulation. Updated daily after close.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">AVG DAILY RETURN</span>
+                    <span class="io-tag out">DAILY VOLATILITY</span>
+                    <span class="io-tag out">BEST DAY</span>
+                    <span class="io-tag out">WORST DAY</span>
+                    <span class="io-tag out">BEST CYCLE</span>
+                    <span class="io-tag out">WORST CYCLE</span>
+                    <span class="io-tag out">WIN RATE (DAILY)</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">AVG DAILY RETURN</div>
+                        <div class="var-def">
+                            <span class="vd-label">Mean of all daily portfolio returns since inception</span>
+                            Simple arithmetic mean of day-over-day equity percentage changes.
+                            Positive values indicate the portfolio has been growing on average each day.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">DAILY VOLATILITY</div>
+                        <div class="var-def">
+                            <span class="vd-label">Standard deviation of daily returns</span>
+                            Measures day-to-day variability of portfolio equity changes.
+                            Higher volatility means larger swings in either direction.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">BEST / WORST DAY</div>
+                        <div class="var-def">
+                            <span class="vd-label">Single best and worst daily equity change %</span>
+                            The maximum and minimum one-day portfolio return recorded since inception.
+                            Useful for understanding the tail behavior of the strategy.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">BEST / WORST CYCLE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Best and worst completed batch return %</span>
+                            The highest and lowest total return recorded across all completed 20-day
+                            batches. Gives a sense of cycle-level performance range.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">WIN RATE (DAILY)</div>
+                        <div class="var-def">
+                            <span class="vd-label">% of trading days where portfolio closed higher than previous day</span>
+                            A simple daily win/loss ratio across all simulation days. Displayed with
+                            a progress bar for visual reference. Does not measure trade-level outcomes —
+                            only daily equity direction.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.7 CURRENT BATCH HOLDINGS -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.7</span>
+                    <span class="subsection-title">Current Batch Holdings</span>
+                </div>
+                <p class="section-body">
+                    Displays the five tickers currently held in the active batch, with their key
+                    position details. The table is static within a batch — holdings do not change
+                    until the next rebalance day.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">COLUMNS</span>
+                    <span class="io-tag out">TICKER</span>
+                    <span class="io-tag out">SNIPER SCORE</span>
+                    <span class="io-tag out">WEIGHT</span>
+                    <span class="io-tag out">ENTRY</span>
+                    <span class="io-tag out">RETURN</span>
+                    <span class="io-tag out">STATUS</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">SNIPER SCORE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Conviction score at batch entry date</span>
+                            The Sniper Score recorded on the rebalance day when this ticker was selected.
+                            Determines both selection eligibility and weight. Does not update during the hold period.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">WEIGHT</div>
+                        <div class="var-def">
+                            <span class="vd-label">Score-weighted allocation % at entry</span>
+                            Each ticker's Sniper Score divided by the sum of all 5 scores, multiplied by 100.
+                            Reflects how much of the total equity was deployed into this position.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">ENTRY</div>
+                        <div class="var-def">
+                            <span class="vd-label">Closing price on rebalance day</span>
+                            The price at which the simulation entered this position — the closing price
+                            of the rebalance day. Used as the reference for return calculation.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">RETURN</div>
+                        <div class="var-def">
+                            <span class="vd-label">Current return from entry to today's close</span>
+                            (Today's close − Entry) / Entry × 100. Updated daily. Green for positive,
+                            red for negative.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">STATUS</div>
+                        <div class="var-def">
+                            <span class="vd-label">Always CLOSED — end-of-day evaluation only</span>
+                            The simulation evaluates positions at closing prices after market close.
+                            There is no intraday open state — all positions are considered closed
+                            at the daily settlement price.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.8 LAST 3 COMPLETED CYCLES -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">6.8</span>
+                    <span class="subsection-title">Last 3 Completed Cycles</span>
+                </div>
+                <p class="section-body">
+                    A summary of the three most recently completed batches, displayed for quick
+                    historical context without needing to inspect the full equity curve.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">COLUMNS</span>
+                    <span class="io-tag out">CYCLE</span>
+                    <span class="io-tag out">PERIOD</span>
+                    <span class="io-tag out">RETURN</span>
+                    <span class="io-tag out">EQUITY END</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">PERIOD</div>
+                        <div class="var-def">
+                            <span class="vd-label">Start date → end date of the batch</span>
+                            The entry date (rebalance day) and exit date (day 20) for that completed cycle.
+                            Both are trading days — weekends and holidays excluded.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">RETURN</div>
+                        <div class="var-def">
+                            <span class="vd-label">Portfolio return for that 20-day cycle</span>
+                            Weighted average of the 5 position returns across the full hold period,
+                            proportional to each ticker's allocation weight at entry.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">EQUITY END</div>
+                        <div class="var-def">
+                            <span class="vd-label">Portfolio equity unit value at batch exit</span>
+                            The equity value on the last day of that batch — which becomes the starting
+                            equity for the next batch. Shows the compounding progression across cycles.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- STATUS -->
