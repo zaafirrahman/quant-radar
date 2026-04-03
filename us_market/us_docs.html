@@ -167,6 +167,36 @@
             margin-bottom: 24px;
             padding-bottom: 14px;
             border-bottom: 1px solid #1e1e1e;
+            justify-content: space-between;
+        }
+
+        .module-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .page-link {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ff8c00;
+            border: 1px solid #ff8c00;
+            padding: 6px 12px;
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .page-link:hover {
+            background: #ff8c00;
+            color: #000000;
+        }
+
+        @media (max-width: 600px) {
+            .page-link { font-size: 9px; padding: 5px 10px; letter-spacing: 1.5px; }
         }
 
         .module-tag {
@@ -540,7 +570,7 @@
     <div class="doc-wrap">
 
         <p class="doc-badge">US Market / System Documentation</p>
-        <h1 class="doc-title">How It Works</h1>
+        <h1 class="doc-title">System Architecture</h1>
         <p class="doc-subtitle">Quantitative Momentum Screening &amp; Signal Evaluation Pipeline</p>
 
         <!-- TOC NAV -->
@@ -559,47 +589,128 @@
         <!-- ══════════════════════════════════════════ -->
         <div id="overview" class="module-section">
             <div class="module-header">
-                <span class="module-tag">00</span>
-                <span class="module-title">System Overview</span>
+                <div class="module-header-left">
+                    <span class="module-tag">00</span>
+                    <span class="module-title">System Overview</span>
+                </div>
             </div>
 
             <div class="intro">
                 <p>
-                    Quant Radar implements a signal-first, statistics-driven pipeline to identify
+                    Quant Radar is a signal-first, statistics-driven pipeline for identifying
                     high-probability swing trading opportunities in the US stock market.
+                    The system does not predict market direction — it evaluates
+                    <span style="color:#ff8c00;">historical signal behavior</span> to rank
+                    opportunities by edge and reliability, eliminating subjective bias from
+                    the decision process entirely.
                 </p>
                 <p>
-                    Instead of predicting markets, the system evaluates <span style="color:#ff8c00;">historical signal behavior</span>
-                    to rank opportunities based on edge and signal quality — eliminating subjective bias.
+                    Built for a 20-trading-day swing horizon, the system runs automatically
+                    every market day after close — from universe scan to execution simulation —
+                    without requiring manual chart analysis, fundamental research, or macro judgment.
                 </p>
             </div>
 
-            <!-- CORE PRINCIPLES -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="step-num">CORE</span>
-                    <span class="section-title">Design Principles</span>
+            <!-- SYSTEM FLOW -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">0.1</span>
+                    <span class="subsection-title">System Flow — End to End</span>
+                </div>
+                <p class="section-body">
+                    The system operates as a sequential six-stage pipeline. Each stage produces
+                    a clean output that feeds directly into the next. No stage is skipped,
+                    no manual override exists between stages.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">01 — Stocks Universe</div>
+                        <p>Defines the tradable pool: 738 US-listed stocks and ETFs available on Pluang,
+                        chosen as the broadest universe accessible to Indonesian retail investors.
+                        Every downstream stage operates exclusively within this universe.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">02 — Radar Scanner</div>
+                        <p>Scans all 738 tickers daily. Computes a composite momentum score
+                        (14-day price momentum × volume surge × 325-day range position) for each ticker,
+                        then benchmarks it against that ticker's own rolling 3-year 95th percentile threshold.
+                        Tickers with a positive distance above threshold — meaning today's signal ranks
+                        in the historical top 5% — are forwarded as candidates. The full table of all
+                        738 tickers sorted by distance is output as the Signal Surge Amplifier Grid.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">03 — Sniper Validator</div>
+                        <p>Receives all radar-positive candidates and subjects each to a full event-based
+                        backtest over 3 years of signal days. Two independent scores are computed:
+                        Edge (profitability — average return weighted by win rate, tanh-normalized)
+                        and Quality (reliability — sample size, temporal distribution, return stability).
+                        These combine into a Sniper Score (0–100) with an asymmetric penalty for
+                        negative-edge tickers. Each ticker receives a characteristic label
+                        (COMPOUNDER / BURST / STEADY / ERRATIC) and a conviction verdict (S / A / B / C tier).
+                        A per-ticker detail page exposes the full backtest history for manual review.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">04 — Portfolio Planner</div>
+                        <p>Presents all radar-positive candidates as interactive cards for position
+                        construction. Users select tickers via checkbox; allocation is automatically
+                        computed proportional to Sniper Score. A per-card time-frame selector (5D / 10D / 20D)
+                        drives the displayed Expected Value. Three layers of sanity check are available:
+                        the card itself, a stress test popup, and the full Sniper detail page.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">05 — Tracker Matrix</div>
+                        <p>A post-mortem surveillance layer that appends daily and accumulates a running
+                        record of all tickers that have appeared in the radar pipeline. Each ticker is
+                        tracked for 20 trading days from its last positive signal day, displaying
+                        daily radar distance, closing price, and Sniper Score (only on active signal days)
+                        in a scrollable matrix organized by calendar month.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">06 — Alpha Executor</div>
+                        <p>A rules-based simulation — not a live bot, not real capital — that answers:
+                        what would happen if a trader followed the system strictly every cycle?
+                        Starting from equity 100 on January 2, 2026, it mechanically selects the daily
+                        top-5 Sniper Score tickers, allocates by score weight, holds 20 trading days,
+                        then rebalances into a new top-5 with chained equity. Performance is tracked
+                        against a SPY benchmark rebased to the same starting point.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESIGN PRINCIPLES -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">0.2</span>
+                    <span class="subsection-title">Design Principles</span>
                 </div>
                 <div class="principles">
                     <div class="principle">
                         <span class="principle-dot">▶</span>
-                        <span>Signal-first approach — evaluate signals, not predictions</span>
+                        <span>Signal-first — evaluate historical signal behavior, not market predictions</span>
                     </div>
                     <div class="principle">
                         <span class="principle-dot">▶</span>
-                        <span>Edge + Reliability framework — profitability must be consistent</span>
+                        <span>Edge + Reliability — profitability is necessary but not sufficient; consistency is required</span>
                     </div>
                     <div class="principle">
                         <span class="principle-dot">▶</span>
-                        <span>Event-based backtesting — grounded in observable historical events</span>
+                        <span>Event-based backtesting — grounded in observable historical signal days, not synthetic simulations</span>
                     </div>
                     <div class="principle">
                         <span class="principle-dot">▶</span>
-                        <span>Statistical filtering before ranking — no raw momentum shortcuts</span>
+                        <span>Per-ticker normalization — each ticker is benchmarked against its own history, not a universal cutoff</span>
                     </div>
                     <div class="principle">
                         <span class="principle-dot">▶</span>
-                        <span>Momentum-driven swing opportunities — short to mid-term horizon</span>
+                        <span>Asymmetric penalty — negative-edge signals cannot be rescued by quality alone</span>
+                    </div>
+                    <div class="principle">
+                        <span class="principle-dot">▶</span>
+                        <span>20-day swing horizon — far enough from daily noise, close enough for momentum to remain relevant</span>
+                    </div>
+                    <div class="principle">
+                        <span class="principle-dot">▶</span>
+                        <span>No subjective input — no chart reading, no fundamental judgment, no macro calls</span>
                     </div>
                 </div>
             </div>
@@ -612,14 +723,152 @@
         <!-- ══════════════════════════════════════════ -->
         <div id="universe" class="module-section">
             <div class="module-header">
-                <span class="module-tag">01</span>
-                <span class="module-title">Stocks Universe</span>
+                <div class="module-header-left">
+                    <span class="module-tag">01</span>
+                    <span class="module-title">Stocks Universe</span>
+                </div>
+                <a class="page-link" href="./output/universe/index.html" target="_blank">Universe Page ▶</a>
             </div>
 
-            <div class="module-placeholder">
-                <p class="placeholder-label">Documentation Pending</p>
-                <p class="placeholder-text">Content for this module will be added shortly.</p>
+            <div class="intro" style="margin-bottom:36px;">
+                <p>
+                    The stocks universe defines the total pool of tickers the system monitors.
+                    Every module downstream — Radar, Sniper, Planner, Tracker, and Executor —
+                    operates exclusively within this universe. What is not in the universe
+                    is invisible to the system.
+                </p>
             </div>
+
+            <!-- 1.1 UNIVERSE SCOPE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">1.1</span>
+                    <span class="subsection-title">Universe Scope — 738 Tickers via Pluang</span>
+                </div>
+                <p class="section-body">
+                    The universe consists of 738 US-listed stocks and ETFs available on
+                    <span style="color:#cccccc;">Pluang</span> — an Indonesian retail investment platform.
+                    Pluang was selected as the universe source because it offers the broadest
+                    selection of US equities accessible to Indonesian retail investors among all
+                    available local brokers. Using Pluang's listed universe ensures that every
+                    ticker flagged by the system is actually tradable, not just theoretically
+                    screened from a raw market database.
+                </p>
+                <p class="section-body">
+                    The universe spans multiple sectors and asset types including stocks, ETFs,
+                    and funds — covering Technology, Financial Services, Healthcare, Energy,
+                    Communication Services, Consumer sectors, and more.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">UNIVERSE</span>
+                    <span class="io-tag out">738 TICKERS</span>
+                    <span class="io-tag out">US MARKET</span>
+                    <span class="io-tag out">PLUANG LISTED</span>
+                </div>
+            </div>
+
+            <!-- 1.2 TICKER CARD -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">1.2</span>
+                    <span class="subsection-title">Ticker Card — Displayed Information</span>
+                </div>
+                <p class="section-body">
+                    Each ticker in the universe is displayed as a card showing the key identity
+                    and price data needed to recognize and contextualize a stock at a glance.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">FIELDS</span>
+                    <span class="io-tag out">TICKER</span>
+                    <span class="io-tag out">COMPANY NAME</span>
+                    <span class="io-tag out">SECTOR</span>
+                    <span class="io-tag out">INDUSTRY</span>
+                    <span class="io-tag out">PRICE</span>
+                    <span class="io-tag out">DAILY CHANGE %</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">TICKER</div>
+                        <div class="var-def">
+                            <span class="vd-label">Exchange ticker symbol — clickable to Yahoo Finance</span>
+                            The official stock symbol. Clicking any ticker card opens that ticker's
+                            Yahoo Finance page in a new tab for charts, fundamentals, and news.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">COMPANY NAME</div>
+                        <div class="var-def">
+                            <span class="vd-label">Full registered company or fund name</span>
+                            The complete legal name of the issuer — useful for confirming identity
+                            when ticker symbols are ambiguous or unfamiliar.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">SECTOR</div>
+                        <div class="var-def">
+                            <span class="vd-label">Broad market sector classification</span>
+                            The top-level sector the company belongs to (e.g. Technology, Financial
+                            Services, Healthcare). Searchable via the search field.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">INDUSTRY</div>
+                        <div class="var-def">
+                            <span class="vd-label">Sub-sector industry classification</span>
+                            More granular classification within the sector (e.g. Semiconductor Equipment,
+                            Capital Markets, Communication Equipment). Also searchable.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">PRICE</div>
+                        <div class="var-def">
+                            <span class="vd-label">Latest closing price in USD</span>
+                            The most recent closing price for that ticker. Updated daily after market close.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">DAILY CHANGE %</div>
+                        <div class="var-def">
+                            <span class="vd-label">Day-over-day price change in percent</span>
+                            Percentage change from the previous close to today's close. Green for positive,
+                            red for negative. Used as one of the sort options.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.3 NAVIGATION FEATURES -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">1.3</span>
+                    <span class="subsection-title">Navigation &amp; Search</span>
+                </div>
+                <p class="section-body">
+                    Three tools are provided to navigate the full 738-ticker universe without
+                    manually scrolling through every card.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Search</div>
+                        <p>A real-time search field filters the displayed cards instantly as the user
+                        types. Matches against ticker symbol, company name, sector, and industry
+                        simultaneously. Non-matching cards are eliminated from view automatically.
+                        Clearing the field restores the full list.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Sort A–Z</div>
+                        <p>Sorts all ticker cards alphabetically by ticker symbol. Useful for locating
+                        a specific ticker quickly when the symbol is known.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Sort by % Change</div>
+                        <p>Sorts all ticker cards by daily price change percentage, descending.
+                        Surfaces the biggest movers of the day at the top — useful for a quick
+                        market pulse check across the entire tradable universe.</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="module-divider"></div>
@@ -629,8 +878,11 @@
         <!-- ══════════════════════════════════════════ -->
         <div id="radar" class="module-section">
             <div class="module-header">
-                <span class="module-tag">02</span>
-                <span class="module-title">Radar Scanner</span>
+                <div class="module-header-left">
+                    <span class="module-tag">02</span>
+                    <span class="module-title">Radar Scanner</span>
+                </div>
+                <a class="page-link" href="./output/radar/us_radar.html" target="_blank">Radar Page ▶</a>
             </div>
 
             <div class="intro" style="margin-bottom:36px;">
@@ -948,8 +1200,11 @@
         <!-- ══════════════════════════════════════════ -->
         <div id="sniper" class="module-section">
             <div class="module-header">
-                <span class="module-tag">03</span>
-                <span class="module-title">Sniper Validator</span>
+                <div class="module-header-left">
+                    <span class="module-tag">03</span>
+                    <span class="module-title">Sniper Validator</span>
+                </div>
+                <a class="page-link" href="./output/sniper/index.html" target="_blank">Sniper Page ▶</a>
             </div>
 
             <div class="intro" style="margin-bottom:36px;">
@@ -1611,8 +1866,11 @@
         <!-- ══════════════════════════════════════════ -->
         <div id="planner" class="module-section">
             <div class="module-header">
-                <span class="module-tag">04</span>
-                <span class="module-title">Portfolio Planner</span>
+                <div class="module-header-left">
+                    <span class="module-tag">04</span>
+                    <span class="module-title">Portfolio Planner</span>
+                </div>
+                <a class="page-link" href="./output/portfolio/porto_builder.html" target="_blank">Planner Page ▶</a>
             </div>
 
             <div class="intro" style="margin-bottom:36px;">
@@ -1926,8 +2184,11 @@
         <!-- ══════════════════════════════════════════ -->
         <div id="tracker" class="module-section">
             <div class="module-header">
-                <span class="module-tag">05</span>
-                <span class="module-title">Tracker Matrix</span>
+                <div class="module-header-left">
+                    <span class="module-tag">05</span>
+                    <span class="module-title">Tracker Matrix</span>
+                </div>
+                <a class="page-link" href="./output/tracking/html/index.html" target="_blank">Tracker Page ▶</a>
             </div>
 
             <div class="intro" style="margin-bottom:36px;">
@@ -2135,8 +2396,11 @@
         <!-- ══════════════════════════════════════════ -->
         <div id="executor" class="module-section">
             <div class="module-header">
-                <span class="module-tag">06</span>
-                <span class="module-title">Alpha Executor</span>
+                <div class="module-header-left">
+                    <span class="module-tag">06</span>
+                    <span class="module-title">Alpha Executor</span>
+                </div>
+                <a class="page-link" href="./output/execution/index.html" target="_blank">Executor Page ▶</a>
             </div>
 
             <div class="intro" style="margin-bottom:36px;">
