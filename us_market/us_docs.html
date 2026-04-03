@@ -1548,6 +1548,60 @@
                 </div>
             </div>
 
+            <!-- 3.13 OUTPUT TABLE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">3.13</span>
+                    <span class="subsection-title">Output — Backtest Performance Protocol</span>
+                </div>
+                <p class="section-body">
+                    The final output is a ranked table of all candidates that passed the Radar distance gate,
+                    sorted by SNIPER_SCORE from highest to lowest. Each row represents a ticker that has been
+                    fully processed through the edge and quality pipeline. Clicking any ticker opens its
+                    dedicated detail page with the complete per-ticker breakdown.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">RANK</span>
+                    <span class="io-tag out">TICKER</span>
+                    <span class="io-tag out">WR_5</span>
+                    <span class="io-tag out">WR_10</span>
+                    <span class="io-tag out">WR_20</span>
+                    <span class="io-tag out">AVG_5</span>
+                    <span class="io-tag out">AVG_10</span>
+                    <span class="io-tag out">AVG_20</span>
+                    <span class="io-tag out">SAMPLE</span>
+                    <span class="io-tag out">EDGE_SCORE</span>
+                    <span class="io-tag out">CHARACTERISTIC</span>
+                    <span class="io-tag out">SAMPLE_SCORE</span>
+                    <span class="io-tag out">CLUSTER_SCORE</span>
+                    <span class="io-tag out">STABILITY_SCORE</span>
+                    <span class="io-tag out">QUALITY_SCORE</span>
+                    <span class="io-tag out">SNIPER_SCORE</span>
+                    <span class="io-tag out">SHARIA</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">RANK</div>
+                        <div class="var-def">
+                            <span class="vd-label">Ordinal rank by SNIPER_SCORE</span>
+                            Rank 1 = highest Sniper Score among all candidates that day. Re-computed on every run.
+                            Unlike the Radar table which ranks all 738 tickers, this table only contains
+                            tickers with DISTANCE_% &gt; 0 that completed the full backtest pipeline.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">TICKER</div>
+                        <div class="var-def">
+                            <span class="vd-label">Stock symbol — clickable to detail page</span>
+                            Clicking the ticker opens the per-ticker detail page (see 3.12) with the full
+                            breakdown of radar status, quality metrics, stress-test edge, and historical
+                            signal tables. All tickers in this table have passed the Radar distance gate.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="module-divider"></div>
@@ -1561,16 +1615,310 @@
                 <span class="module-title">Portfolio Planner</span>
             </div>
 
-            <div class="module-placeholder">
-                <p class="placeholder-label">Documentation Pending</p>
-                <p class="placeholder-text">Content for this module will be added shortly.</p>
+            <div class="intro" style="margin-bottom:36px;">
+                <p>
+                    Portfolio Planner is the execution layer. It takes the same candidate pool as Sniper
+                    (all tickers with DISTANCE_% &gt; 0) and presents them as interactive cards designed
+                    for position-building decisions — not discovery or analysis, but the final step of
+                    constructing an actual basket.
+                </p>
+                <p>
+                    The page is structured around three layers of sanity check before committing to a position:
+                    the card itself (Layer 1), the stress test popup (Layer 2), and the full Sniper detail
+                    page accessible via the ticker (Layer 3).
+                </p>
             </div>
+
+            <!-- 4.1 INPUT -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">4.1</span>
+                    <span class="subsection-title">Input</span>
+                </div>
+                <p class="section-body">
+                    Planner reads from the same pipeline output as Sniper. All tickers that passed
+                    the Radar distance gate and completed the full backtest pipeline are displayed here,
+                    sorted by Sniper Score descending — identical ranking order to the Sniper table.
+                </p>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">TICKER (DISTANCE_% &gt; 0)</span>
+                    <span class="io-tag in">SNIPER_SCORE</span>
+                    <span class="io-tag in">CHARACTERISTIC</span>
+                    <span class="io-tag in">SHARIA</span>
+                    <span class="io-tag in">AVG_5 / AVG_10 / AVG_20</span>
+                    <span class="io-tag in">WR_5 / WR_10 / WR_20</span>
+                    <span class="io-tag in">SAMPLE</span>
+                </div>
+            </div>
+
+            <!-- 4.2 TICKER CARD — LAYER 1 -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">4.2</span>
+                    <span class="subsection-title">Ticker Card — Layer 1 Overview</span>
+                </div>
+                <p class="section-body">
+                    Each candidate is presented as a card with a checkbox on the left. The card surface
+                    shows everything needed for a quick first-pass judgment without opening any popup.
+                    The checkbox color reflects selection state: orange when unselected, green when selected.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Ticker &amp; Identity</div>
+                        <p>Ticker symbol displayed prominently. Below it, the signal characteristic
+                        (COMPOUNDER / BURST / STEADY / ERRATIC) and sharia status. Clicking the
+                        ticker name opens the full Sniper detail page for that ticker (Layer 3).</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">TF Dropdown &amp; Sniper Score</div>
+                        <p>A per-card time-frame selector (5D / 10D / 20D). Switching TF immediately
+                        updates the EV value shown on the card and in the footer basket. The Sniper
+                        Score is displayed below the TF selector as the conviction anchor — it does
+                        not change with TF.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">EV &amp; Allocation Box</div>
+                        <p>The right block shows Expected Value for the selected TF and the score-weighted
+                        allocation percentage (only populated when the checkbox is selected). Clicking
+                        this box opens the Stress Test popup (Layer 2).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.3 EXPECTED VALUE -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">4.3</span>
+                    <span class="subsection-title">Expected Value (EV)</span>
+                </div>
+                <p class="section-body">
+                    EV represents the probability-weighted average outcome of a single trade at the
+                    selected time horizon. It accounts for both the frequency of wins and the magnitude
+                    of each outcome — a more complete picture than win rate or average return alone.
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">EV</span>
+                        <span class="f-eq">=</span>
+                        <span style="color:#cccccc;">(WR%</span>
+                        <span class="f-op">×</span>
+                        <span style="color:#ff8c00;">AvgWin</span>
+                        <span style="color:#cccccc;">)</span>
+                        <span class="f-op">+</span>
+                        <span style="color:#cccccc;">((1 − WR%)</span>
+                        <span class="f-op">×</span>
+                        <span style="color:#ff8c00;">AvgLoss</span>
+                        <span style="color:#cccccc;">)</span>
+                    </div>
+                </div>
+                <p class="section-body">
+                    In practice, EV computed this way is mathematically equivalent to AVG_ret — the simple
+                    average return across all signal days at that horizon. AVG_ret is displayed on the card
+                    as a directly interpretable number: the average percentage return historically generated
+                    by this signal at this hold period. The full EV formula is shown in the Stress Test
+                    popup for transparency.
+                </p>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">WR% (per TF)</span>
+                    <span class="io-tag in">AvgWin (per TF)</span>
+                    <span class="io-tag in">AvgLoss (per TF)</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">EV</span>
+                    <span style="font-size:11px;color:#333;align-self:center;padding-left:4px;">updates live when TF changes</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">EV</div>
+                        <div class="var-def">
+                            <span class="vd-label">Expected value of a single trade at the selected horizon</span>
+                            Positive EV means the signal is historically profitable at that hold period.
+                            Negative EV means the opposite — the signal loses money on average at that TF
+                            even if win rate is above 50% (due to asymmetric loss magnitude). Displayed as
+                            a percentage. Updates immediately when the TF dropdown is changed.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">AvgWin</div>
+                        <div class="var-def">
+                            <span class="vd-label">Average return on winning trades at this TF</span>
+                            Mean percentage return across only the signal days that closed positive at the
+                            selected horizon. Visible in the Stress Test popup.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name">AvgLoss</div>
+                        <div class="var-def">
+                            <span class="vd-label">Average return on losing trades at this TF — typically negative</span>
+                            Mean percentage return across only the signal days that closed negative at the
+                            selected horizon. Displayed as a negative number in the Stress Test popup.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.4 ALLOCATION -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">4.4</span>
+                    <span class="subsection-title">Score-Weighted Allocation</span>
+                </div>
+                <p class="section-body">
+                    When one or more tickers are selected via checkbox, each selected ticker receives
+                    a portfolio allocation proportional to its Sniper Score relative to the total score
+                    of the selected basket. Higher conviction tickers automatically receive a larger slice.
+                    Allocation recalculates in real-time as tickers are added or removed.
+                </p>
+                <div class="formula-block">
+                    <div class="formula-main">
+                        <span class="f-var">Alloc_i</span>
+                        <span class="f-eq">=</span>
+                        <span class="f-frac">
+                            <span class="f-num">SNIPER_SCORE_i</span>
+                            <span class="f-den">Σ SNIPER_SCORE (selected)</span>
+                        </span>
+                        <span class="f-op">×</span>
+                        <span style="color:#cccccc;">100</span>
+                    </div>
+                </div>
+                <p class="section-body">
+                    Unselected tickers show a dash in the allocation field. The sticky footer displays
+                    the full basket summary: all selected tickers with their allocation chips, a count
+                    of selected positions, and the portfolio-level average EV.
+                </p>
+                <div class="io-row">
+                    <span class="io-label in">INPUT</span>
+                    <span class="io-tag in">SNIPER_SCORE (selected tickers)</span>
+                </div>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">ALLOC_%</span>
+                    <span class="io-tag out">AVG_EV (basket)</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">ALLOC_%</div>
+                        <div class="var-def">
+                            <span class="vd-label">Score-weighted portfolio allocation per selected ticker</span>
+                            Percentage of the total portfolio suggested for this ticker based on its Sniper
+                            Score weight within the selected basket. Updates live as the basket changes.
+                            Displayed on the card and as a chip in the footer.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">AVG_EV</div>
+                        <div class="var-def">
+                            <span class="vd-label">Simple average EV across all selected tickers</span>
+                            Arithmetic mean of EV values for all tickers currently checked, at their
+                            individually selected TFs. Displayed in the footer as the portfolio-level
+                            expected return estimate. Updates live.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.5 STRESS TEST POPUP — LAYER 2 -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">4.5</span>
+                    <span class="subsection-title">Stress Test Popup — Layer 2 Sanity Check</span>
+                </div>
+                <p class="section-body">
+                    Clicking the EV/Alloc box on any card opens a per-ticker stress test popup. This is
+                    the second layer of review — it breaks the EV figure down into its underlying components
+                    across all three time horizons, so the user can see not just what the expected return
+                    is, but how it is constructed and whether it holds across different hold periods.
+                </p>
+                <div class="sub-blocks">
+                    <div class="sub-block">
+                        <div class="sub-block-title">Per-Horizon Breakdown (5D / 10D / 20D tabs)</div>
+                        <p>For the selected horizon tab: Win Rate, Loss Rate (= 1 − WR%), Avg Win,
+                        Avg Loss, EV, and Sample (N). Allows direct comparison of signal behavior
+                        at short, medium, and long hold periods before committing to a TF choice.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Formula Reference</div>
+                        <p>The popup displays the EV formula inline:
+                        EV = (WR% × AvgWin) + (LR% × AvgLoss), where LR% = 1 − WR%.
+                        Serves as a reminder that EV is not just average return but a
+                        probability-weighted outcome accounting for loss magnitude.</p>
+                    </div>
+                    <div class="sub-block">
+                        <div class="sub-block-title">Allocation Reminder</div>
+                        <p>The popup also displays the allocation formula: Alloc = Score / Total Score.
+                        Reinforces that allocation is driven purely by Sniper Score weight,
+                        not by EV magnitude or manual input.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.6 SNIPER DETAIL — LAYER 3 -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">4.6</span>
+                    <span class="subsection-title">Sniper Detail — Layer 3 Deep Dive</span>
+                </div>
+                <p class="section-body">
+                    Clicking the ticker name on any card navigates to the full Sniper detail page for
+                    that ticker (documented in 3.12). This is the deepest level of review available —
+                    the complete backtest history, regime check, quality breakdown, and conviction verdict.
+                    Intended for cases where the card and stress test alone are not sufficient to make
+                    a confident entry decision.
+                </p>
+            </div>
+
+            <!-- 4.7 OUTPUT -->
+            <div class="subsection">
+                <div class="subsection-header">
+                    <span class="subsection-num">4.7</span>
+                    <span class="subsection-title">Output — Expected Value Forge Engine</span>
+                </div>
+                <p class="section-body">
+                    The Planner's decision output is not a single table but a live basket built interactively
+                    by the user. The three main outputs — EV per ticker, allocation per ticker, and portfolio
+                    average EV — together form the execution blueprint for the selected positions.
+                </p>
+                <div class="io-row">
+                    <span class="io-label out">OUTPUT</span>
+                    <span class="io-tag out">EV (per ticker, per TF)</span>
+                    <span class="io-tag out">ALLOC_% (per ticker)</span>
+                    <span class="io-tag out">AVG_EV (basket)</span>
+                </div>
+                <div class="var-appendix">
+                    <div class="var-row">
+                        <div class="var-name out-var">EV (per ticker)</div>
+                        <div class="var-def">
+                            <span class="vd-label">Expected value at the user-selected time horizon</span>
+                            Shown on each card. Updates when the TF dropdown is changed. Positive EV
+                            indicates the signal is historically profitable at that hold period;
+                            negative EV means it is not. Primary decision input per position.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">ALLOC_%</div>
+                        <div class="var-def">
+                            <span class="vd-label">Score-weighted allocation for each selected ticker</span>
+                            Only populated for checked tickers. Recalculates live as the basket changes.
+                            Shown on the card and as a labeled chip in the sticky footer.
+                            Sums to 100% across all selected positions.
+                        </div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-name out-var">AVG_EV</div>
+                        <div class="var-def">
+                            <span class="vd-label">Portfolio-level average expected value</span>
+                            Simple average of EV across all currently selected tickers, each at their
+                            individually chosen TF. Displayed in the sticky footer. The headline number
+                            representing the expected return of the full basket as constructed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-        <div class="module-divider"></div>
-
-        <!-- ══════════════════════════════════════════ -->
-        <!-- TRACKER -->
         <!-- ══════════════════════════════════════════ -->
         <div id="tracker" class="module-section">
             <div class="module-header">
