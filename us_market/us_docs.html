@@ -2212,16 +2212,17 @@
                 </div>
                 <p class="section-body">
                     Data is organized by calendar month, starting from January 2026. Each month has its
-                    own view accessible from the landing page. Rows are trading days only — weekends and
-                    market holidays are excluded. Columns are tickers, each split into three sub-columns.
+                    own view accessible from the landing page. Rows are trading days only — weekends are
+                    excluded, while market holidays on weekdays are still appended with no data change
+                    from the previous trading day. Columns are tickers, each split into three sub-columns.
                     One new row is appended every trading day automatically.
                 </p>
                 <div class="sub-blocks">
                     <div class="sub-block">
                         <div class="sub-block-title">Row — Trading Date</div>
                         <p>Each row represents one trading day. Dates run in descending order
-                        (most recent at top). Only market-open days are included — no gaps for
-                        weekends or holidays.</p>
+                        (most recent at top). Weekends are excluded; market holidays on weekdays
+                        are included with data carried forward from the previous trading day.</p>
                     </div>
                     <div class="sub-block">
                         <div class="sub-block-title">Column — Ticker (3 sub-columns each)</div>
