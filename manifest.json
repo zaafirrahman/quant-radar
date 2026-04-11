@@ -1,0 +1,28 @@
+{
+  "name": "Quant Radar - US Stocks Momentum Screener",
+  "short_name": "Quant Radar",
+  "description": "Quantitative momentum-based screening and signal evaluation pipeline for US stocks",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "lang": "en-US",
+  "dir": "ltr"
+}
