@@ -4,7 +4,7 @@ const STATIC_ASSETS = [
   './index.html',
   './manifest.json',
   './offline.html',
-  './assets/logo.png',
+  './assets/pwa.png',
   './assets/ws.png',
   './assets/idx.png',
   './us_market/us_hub.html',
