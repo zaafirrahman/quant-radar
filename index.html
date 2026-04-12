@@ -218,6 +218,14 @@
 
         .footer-divider { color: #222222; }
 
+        /* Mobile footer - stacked layout */
+        @media (max-width: 600px) {
+            footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
             h1 { font-size: 26px; letter-spacing: 4px; }
@@ -286,11 +294,10 @@
     </div>
 
     <footer>
-        <span>© 2026 Quant Radar System</span>
-        <span class="footer-divider">|</span>
-        <a href="https://github.com/zaafirrahman/quant-radar" target="_blank">GitHub ↗</a>
-        <span class="footer-divider">|</span>
-        <span>Built for Research &amp; Exploration</span>
+        <span>© 2026 Quant Radar System |</span>
+        <span>
+            <a href="https://github.com/zaafirrahman/quant-radar">GitHub ↗</a>
+        </span>
     </footer>
 
     <!-- PWA Install Prompt Script -->
