@@ -16,11 +16,12 @@ from datetime import datetime, timedelta
 import time
 
 # ── Config ────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = Path("ml_data")
+# Path resolution: selalu relatif terhadap lokasi script ini
+OUTPUT_DIR = Path(__file__).parent
 OUTPUT_FILE = OUTPUT_DIR / "us_features.parquet"
 
 START_DATE = "2022-01-01"
-END_DATE   = "2024-12-31"   # seed sampai akhir 2024; 2025+ via append harian
+END_DATE   = "2026-04-16"   # Extended: data sampai yesterday (2026-04-16)
 
 # Tickers yang di-fetch
 TICKERS = {
@@ -125,7 +126,7 @@ def build_features(closes: pd.DataFrame) -> pd.DataFrame:
 def main():
     print(f"{'='*60}")
     print(f"  Quant Radar — US Features Historical Collector")
-    print(f"  Period : {START_DATE} → {END_DATE}")
+    print(f"  Period : {START_DATE} -> {END_DATE}")
     print(f"  Tickers: {len(TICKERS)}")
     print(f"{'='*60}\n")
 
@@ -147,7 +148,7 @@ def main():
 
     all_closes = {}
     for symbol in symbols:
-        print(f"  → {symbol} ({TICKERS[symbol]})")
+        print(f"  -> {symbol} ({TICKERS[symbol]})")
         s = fetch_ticker_data(symbol, START_DATE, END_DATE)
         if s is not None:
             all_closes[symbol] = s
@@ -161,7 +162,7 @@ def main():
         closes_df.columns = closes_df.columns.get_level_values(0)
 
     print(f"\n  Fetched {len(closes_df.columns)}/{len(symbols)} tickers")
-    print(f"  Date range: {closes_df.index.min().date()} → {closes_df.index.max().date()}")
+    print(f"  Date range: {closes_df.index.min().date()} -> {closes_df.index.max().date()}")
     print(f"  Total rows: {len(closes_df)}")
 
     # Build features
@@ -181,7 +182,7 @@ def main():
     # Save
     print(f"\n[3/3] Saving to {OUTPUT_FILE}...")
     features.to_parquet(OUTPUT_FILE, engine="pyarrow", compression="snappy")
-    print(f"  ✓ Saved: {OUTPUT_FILE}")
+    print(f"  [OK] Saved: {OUTPUT_FILE}")
     print(f"  File size: {OUTPUT_FILE.stat().st_size / 1024:.1f} KB")
     print(f"\n[DONE] {len(features)} trading days stored.")
     print(f"[NEXT] Jalankan collect_idx_historical.py untuk IDX OHLCV data.")
