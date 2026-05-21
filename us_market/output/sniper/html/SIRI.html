@@ -1,0 +1,260 @@
+<html><head><link rel="icon" type="image/png" href="../../../../assets/logo.png"><title>Sniper - SIRI</title><style>@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "IBM Plex Mono", "Cascadia Code", monospace;
+    background: #000000;
+    color: #cccccc;
+    padding: 36px;
+}
+
+h2 {
+    font-size: 28px;
+    letter-spacing: 5px;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.subtitle {
+    text-align: left;
+    color: #555555;
+    font-size: 13px;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0a0a0a;
+    border: 1px solid #222222;
+}
+
+th {
+    background: #111111;
+    color: #ffffff;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 14px;
+    border-bottom: 1px solid #333333;
+    border-right: 1px solid #1a1a1a;
+    font-weight: 400;
+}
+
+th:last-child { border-right: none; }
+
+td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #1a1a1a;
+    border-right: 1px solid #141414;
+    font-size: 15px;
+}
+
+td:last-child  { border-right: none; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #111111; }
+
+tr.top5 td { background: #0d0d0d; }
+tr.top5:hover td { background: #161616; }
+
+.nav-btn {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #000000;
+    background: #ff8c00;
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 999;
+    transition: background 0.15s ease;
+}
+.nav-btn:hover { background: #ffaa33; }
+
+/* ── STICKY TABLE WRAPPER ── */
+.table-wrap {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 220px);
+    position: relative;
+}
+
+/* Freeze col 1 (Rank) */
+.sticky-table th:nth-child(1),
+.sticky-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #111111;
+    min-width: 50px;
+}
+.sticky-table td:nth-child(1) { background: #0a0a0a; }
+tr.top5 .sticky-table td:nth-child(1),
+.sticky-table tr.top5 td:nth-child(1) { background: #0d0d0d; }
+
+/* Freeze col 2 (Ticker) */
+.sticky-table th:nth-child(2),
+.sticky-table td:nth-child(2) {
+    position: sticky;
+    left: 50px;
+    z-index: 2;
+    background: #111111;
+    min-width: 80px;
+    border-right: 1px solid #333333;
+}
+.sticky-table td:nth-child(2) { background: #0a0a0a; }
+.sticky-table tr.top5 td:nth-child(2) { background: #0d0d0d; }
+
+/* Freeze header row */
+.sticky-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+.sticky-table thead th:nth-child(1) { z-index: 4; }
+.sticky-table thead th:nth-child(2) { z-index: 4; }
+
+.status-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 36px;
+}
+.status-box {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #222;
+    border-top: 3px solid #ff8c00;
+    padding: 24px;
+    line-height: 2;
+    font-size: 15px;
+}
+.verdict-box {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #ff8c00;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+}
+.score-value {
+    font-size: 52px;
+    font-weight: 600;
+    color: #ff8c00;
+    line-height: 1;
+}
+.verdict-text { font-size: 15px; color: #ffffff; letter-spacing: 1px; }
+.score-label { font-size: 11px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+.char-tag { font-size: 12px; letter-spacing: 1.5px; color: #888888; margin-top: 4px; }
+.section-title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ff8c00;
+    border-left: 3px solid #ff8c00;
+    padding-left: 12px;
+    margin: 36px 0 14px;
+}
+.blinking { color: #ff8c00; font-size: 18px; font-weight: bold; animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.footer { color: #555555; font-size: 13px; text-align: center; margin-top: 60px; letter-spacing: 1px; }
+.two-panel { display: flex; gap: 16px; align-items: stretch; margin-bottom: 0; }
+.two-panel-table { flex: 2; min-width: 0; }
+.two-panel-table table { width: 100%; table-layout: fixed; }
+.two-panel-table.reliability th:nth-child(1),
+.two-panel-table.reliability td:nth-child(1) { width: 50%; }
+.two-panel-table.reliability th:nth-child(2),
+.two-panel-table.reliability td:nth-child(2) { width: 50%; }
+.two-panel-table.profitability th:nth-child(1),
+.two-panel-table.profitability td:nth-child(1) { width: 20%; }
+.two-panel-table.profitability th:nth-child(2),
+.two-panel-table.profitability td:nth-child(2) { width: 20%; }
+.two-panel-table.profitability th:nth-child(3),
+.two-panel-table.profitability td:nth-child(3) { width: 20%; }
+.two-panel-table.profitability th:nth-child(4),
+.two-panel-table.profitability td:nth-child(4) { width: 20%; }
+.two-panel-table.profitability th:nth-child(5),
+.two-panel-table.profitability td:nth-child(5) { width: 20%; }
+.two-panel-table th,
+.two-panel-table td { padding: 12px 14px !important; font-size: 14px !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-box { flex: 1; background: #0d0d0d; border: 1px solid #ff8c00; padding: 20px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
+.side-box-label { font-size: 10px; letter-spacing: 2.5px; color: #555555; text-transform: uppercase; }
+.side-box-value { font-size: 38px; font-weight: 600; line-height: 1.1; }
+.side-box-status { font-size: 11px; letter-spacing: 1px; margin-top: 4px; }
+.header-container { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; }
+.company-logo { width: 70px; height: 70px; background-color: transparent; border: none; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.company-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.info-text { display: flex; flex-direction: column; }
+</style></head><body>
+        <a href="../index.html" class="nav-btn">◀ Sniper</a>
+        <div class="header-container">
+            <div class="company-logo"><img src="../../../config/logos/SIRI.svg" alt="SIRI" onerror="this.src='https://via.placeholder.com/80?text=SIRI';"></div>
+            <div class="info-text">
+                <h2 style="text-align:left;letter-spacing:2px;font-size:24px;margin:0;line-height:1.2;">
+                    <strong>Sirius XM Holdings Inc. <a href="https://finance.yahoo.com/quote/SIRI/" target="_blank" style="color:#ff8c00;text-decoration:none;">(SIRI)</a></strong>
+                </h2>
+                <p class="subtitle" style="text-align:left;margin:4px 0;font-size:15px;">
+                    📡 <span style="color:#ff8c00;">Entertainment</span>
+                </p>
+                <p class="subtitle" style="text-align:left;margin:0;font-size:15px;">
+                    Sharia: <span style="color:#ff4d4d;font-weight:bold;">Not Halal</span>
+                </p>
+            </div>
+        </div>
+        <div class="status-container">
+            <div class="status-box">
+                <p>💵 Last Price: <b style="color:#ffffff;">28.99</b></p>
+                <p>🎯 Radar Score: <b style="font-size:22px;color:#ff8c00;">3.21</b></p>
+                <p>🛡️ Threshold (95%): <span style="color:#aaaaaa;">0.85</span></p>
+                <p>⚡ Status: <span class="blinking">✅ RADAR CONFIRMED</span></p>
+            </div>
+            <div class="verdict-box">
+                <span class="score-label">Sniper Score</span>
+                <div class="score-value" style="color:#ffa500;">52.34</div>
+                <div class="verdict-text">🥈 B-TIER: MODERATE SIGNAL</div>
+                <div class="char-tag">Type: <span style="color:#ffa500;">STEADY</span></div>
+            </div>
+        </div>
+        <div class="section-title">🔬 Robustness and Consistency (Reliability)</div>
+        <div class="two-panel">
+            <div class="two-panel-table reliability"><table style="background:#0a0a0a;border:1px solid #222;">
+        <thead><tr>
+            <th style="background:#111;color:#fff;font-size:12px;letter-spacing:1.5px;padding:14px;border-bottom:1px solid #333;border-right:1px solid #1a1a1a;font-weight:400;">METRIC</th>
+            <th style="background:#111;color:#fff;font-size:12px;letter-spacing:1.5px;padding:14px;border-bottom:1px solid #333;font-weight:400;">VALUE</th>
+        </tr></thead>
+        <tbody><tr><td style="color:#555555;padding:12px 14px;">Sample Signals</td><td style="color:#ffffff;padding:12px 14px;font-size:15px;">12</td></tr><tr><td style="color:#555555;padding:12px 14px;">Sample Quality</td><td style="color:#ffa500;padding:12px 14px;font-size:15px;">0.4899</td></tr><tr><td style="color:#555555;padding:12px 14px;">Cluster Spread</td><td style="color:#7CFC00;padding:12px 14px;font-size:15px;">0.5833</td></tr><tr><td style="color:#555555;padding:12px 14px;">Stability</td><td style="color:#ffa500;padding:12px 14px;font-size:15px;">0.3865</td></tr></tbody>
+    </table></div>
+            <div class="side-box" style="border-color:#ffa500;">
+                <span class="side-box-label">Quality Score</span>
+                <div class="side-box-value" style="color:#ffa500;">0.4866</div>
+                <div class="side-box-status" style="color:#ffa500;">🟠 MED QUALITY</div>
+            </div>
+        </div>
+        <div class="section-title">📊 Average Strategy Performance (Profitability)</div>
+        <div class="two-panel">
+            <div class="two-panel-table profitability"><table><thead><tr><th></th><th>Avg Return (%)</th><th>Win Rate (%)</th><th>Avg Win (%)</th><th>Avg Loss (%)</th></tr></thead><tbody><tr><td style="color:#555555;">5-Day</td><td style="color:#00ff88;font-weight:bold;">0.02</td><td style="color:#ffa500;">41.67</td><td style="color:#00ff88;font-weight:bold;">4.45</td><td style="color:#ff4d4d;font-weight:bold;">-3.14</td></tr><tr><td style="color:#555555;">10-Day</td><td style="color:#00ff88;font-weight:bold;">1.45</td><td style="color:#ffa500;">41.67</td><td style="color:#00ff88;font-weight:bold;">8.65</td><td style="color:#ff4d4d;font-weight:bold;">-3.69</td></tr><tr><td style="color:#555555;">20-Day</td><td style="color:#00ff88;font-weight:bold;">0.95</td><td style="color:#7CFC00;">50.00</td><td style="color:#00ff88;font-weight:bold;">7.11</td><td style="color:#ff4d4d;font-weight:bold;">-5.21</td></tr></tbody></table></div>
+            <div class="side-box" style="border-color:#ffa500;">
+                <span class="side-box-label">Edge Score</span>
+                <div class="side-box-value" style="color:#ffa500;">0.3625</div>
+                <div class="side-box-status" style="color:#ffa500;">🟠 MED EDGE</div>
+            </div>
+        </div>
+        <div class="section-title">📅 10 Recent Signals — Regime Check</div>
+        <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2025-10-30</td><td style="color:#ff8c00;font-weight:bold;">1.44</td><td style="color:#ffffff;">22.39</td><td style="color:#ff4d4d;font-weight:bold;">-5.56</td><td style="color:#ff4d4d;font-weight:bold;">-5.69</td><td style="color:#ff4d4d;font-weight:bold;">-7.17</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-02-05</td><td style="color:#ff8c00;font-weight:bold;">3.33</td><td style="color:#ffffff;">22.09</td><td style="color:#ff4d4d;font-weight:bold;">-2.75</td><td style="color:#ff4d4d;font-weight:bold;">-5.62</td><td style="color:#ff4d4d;font-weight:bold;">-0.29</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-04-02</td><td style="color:#ff8c00;font-weight:bold;">2.58</td><td style="color:#ffffff;">23.55</td><td style="color:#ff4d4d;font-weight:bold;">-0.38</td><td style="color:#00ff88;font-weight:bold;">7.1</td><td style="color:#00ff88;font-weight:bold;">14.42</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-08</td><td style="color:#ff8c00;font-weight:bold;">0.85</td><td style="color:#ffffff;">23.24</td><td style="color:#00ff88;font-weight:bold;">3.15</td><td style="color:#00ff88;font-weight:bold;">19.56</td><td style="color:#00ff88;font-weight:bold;">13.68</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-16</td><td style="color:#ff8c00;font-weight:bold;">1.91</td><td style="color:#ffffff;">24.48</td><td style="color:#00ff88;font-weight:bold;">13.22</td><td style="color:#00ff88;font-weight:bold;">8.94</td><td style="color:#00ff88;font-weight:bold;">7.09</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-17</td><td style="color:#ff8c00;font-weight:bold;">4.78</td><td style="color:#ffffff;">25.23</td><td style="color:#00ff88;font-weight:bold;">4.43</td><td style="color:#00ff88;font-weight:bold;">6.83</td><td style="color:#00ff88;font-weight:bold;">2.39</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-20</td><td style="color:#ff8c00;font-weight:bold;">14.37</td><td style="color:#ffffff;">26.95</td><td style="color:#ff4d4d;font-weight:bold;">-2.46</td><td style="color:#ff4d4d;font-weight:bold;">-1.65</td><td style="color:#ff4d4d;font-weight:bold;">-3.19</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-04-21</td><td style="color:#ff8c00;font-weight:bold;">4.97</td><td style="color:#ffffff;">25.92</td><td style="color:#00ff88;font-weight:bold;">0.31</td><td style="color:#00ff88;font-weight:bold;">0.84</td><td style="color:#00ff88;font-weight:bold;">0.5</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-22</td><td style="color:#ff8c00;font-weight:bold;">11.06</td><td style="color:#ffffff;">27.78</td><td style="color:#ff4d4d;font-weight:bold;">-4.63</td><td style="color:#ff4d4d;font-weight:bold;">-4.92</td><td style="color:#ff4d4d;font-weight:bold;">-2.63</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-04-23</td><td style="color:#ff8c00;font-weight:bold;">6.03</td><td style="color:#ffffff;">27.72</td><td style="color:#ff4d4d;font-weight:bold;">-3.79</td><td style="color:#ff4d4d;font-weight:bold;">-4.46</td><td style="color:#00ff88;font-weight:bold;">4.58</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
+        <div class="section-title">🏆 The Complete Power Ranking</div>
+        <table><thead><tr><th>Date</th><th>Signal_Score</th><th>Entry</th><th>Return_5d (%)</th><th>Return_10d (%)</th><th>Return_20d (%)</th><th>W/L</th></tr></thead><tbody><tr><td style="color:#888888;">2026-04-20</td><td style="color:#ff8c00;font-weight:bold;">14.37</td><td style="color:#ffffff;">26.95</td><td style="color:#ff4d4d;font-weight:bold;">-2.46</td><td style="color:#ff4d4d;font-weight:bold;">-1.65</td><td style="color:#ff4d4d;font-weight:bold;">-3.19</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-04-22</td><td style="color:#ff8c00;font-weight:bold;">11.06</td><td style="color:#ffffff;">27.78</td><td style="color:#ff4d4d;font-weight:bold;">-4.63</td><td style="color:#ff4d4d;font-weight:bold;">-4.92</td><td style="color:#ff4d4d;font-weight:bold;">-2.63</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-04-23</td><td style="color:#ff8c00;font-weight:bold;">6.03</td><td style="color:#ffffff;">27.72</td><td style="color:#ff4d4d;font-weight:bold;">-3.79</td><td style="color:#ff4d4d;font-weight:bold;">-4.46</td><td style="color:#00ff88;font-weight:bold;">4.58</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-21</td><td style="color:#ff8c00;font-weight:bold;">4.97</td><td style="color:#ffffff;">25.92</td><td style="color:#00ff88;font-weight:bold;">0.31</td><td style="color:#00ff88;font-weight:bold;">0.84</td><td style="color:#00ff88;font-weight:bold;">0.5</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-17</td><td style="color:#ff8c00;font-weight:bold;">4.78</td><td style="color:#ffffff;">25.23</td><td style="color:#00ff88;font-weight:bold;">4.43</td><td style="color:#00ff88;font-weight:bold;">6.83</td><td style="color:#00ff88;font-weight:bold;">2.39</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-02-05</td><td style="color:#ff8c00;font-weight:bold;">3.33</td><td style="color:#ffffff;">22.09</td><td style="color:#ff4d4d;font-weight:bold;">-2.75</td><td style="color:#ff4d4d;font-weight:bold;">-5.62</td><td style="color:#ff4d4d;font-weight:bold;">-0.29</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-04-02</td><td style="color:#ff8c00;font-weight:bold;">2.58</td><td style="color:#ffffff;">23.55</td><td style="color:#ff4d4d;font-weight:bold;">-0.38</td><td style="color:#00ff88;font-weight:bold;">7.1</td><td style="color:#00ff88;font-weight:bold;">14.42</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2026-04-16</td><td style="color:#ff8c00;font-weight:bold;">1.91</td><td style="color:#ffffff;">24.48</td><td style="color:#00ff88;font-weight:bold;">13.22</td><td style="color:#00ff88;font-weight:bold;">8.94</td><td style="color:#00ff88;font-weight:bold;">7.09</td><td style="color:#00ff88;">✅ WIN</td></tr><tr><td style="color:#888888;">2025-10-30</td><td style="color:#ff8c00;font-weight:bold;">1.44</td><td style="color:#ffffff;">22.39</td><td style="color:#ff4d4d;font-weight:bold;">-5.56</td><td style="color:#ff4d4d;font-weight:bold;">-5.69</td><td style="color:#ff4d4d;font-weight:bold;">-7.17</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-07-08</td><td style="color:#ff8c00;font-weight:bold;">0.97</td><td style="color:#ffffff;">23.3</td><td style="color:#ff4d4d;font-weight:bold;">-2.41</td><td style="color:#ff4d4d;font-weight:bold;">-2.17</td><td style="color:#ff4d4d;font-weight:bold;">-11.05</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2025-02-05</td><td style="color:#ff8c00;font-weight:bold;">0.85</td><td style="color:#ffffff;">24.02</td><td style="color:#00ff88;font-weight:bold;">1.13</td><td style="color:#ff4d4d;font-weight:bold;">-1.3</td><td style="color:#ff4d4d;font-weight:bold;">-6.94</td><td style="color:#ff4d4d;">❌ LOS</td></tr><tr><td style="color:#888888;">2026-04-08</td><td style="color:#ff8c00;font-weight:bold;">0.85</td><td style="color:#ffffff;">23.24</td><td style="color:#00ff88;font-weight:bold;">3.15</td><td style="color:#00ff88;font-weight:bold;">19.56</td><td style="color:#00ff88;font-weight:bold;">13.68</td><td style="color:#00ff88;">✅ WIN</td></tr></tbody></table>
+        <p class="footer">Generated 2026-05-21 19:52:58 EDT</p>
+    </body></html>
