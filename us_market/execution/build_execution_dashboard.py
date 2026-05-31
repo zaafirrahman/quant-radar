@@ -13,6 +13,12 @@ import json
 from pathlib import Path
 from datetime import datetime
 
+try:
+    import yfinance as yf
+    _YF_AVAILABLE = True
+except ImportError:
+    _YF_AVAILABLE = False
+
 
 BASE_DIR    = Path(__file__).resolve().parent
 DATA_DIR    = BASE_DIR / "data"
@@ -39,6 +45,31 @@ def _drawdown(equity_series):
     roll_max = equity_series.cummax()
     dd = (equity_series / roll_max - 1)
     return dd.min() * 100
+
+def _fetch_current_prices(tickers: list[str]) -> dict[str, float]:
+    """
+    Fetch latest close price for each ticker via yfinance.
+    Returns dict {ticker: price}. Falls back to empty dict on any error.
+    Uses period='5d' so it always gets the most recent trading day close
+    even if today is weekend/holiday.
+    """
+    if not _YF_AVAILABLE or not tickers:
+        return {}
+    try:
+        raw = yf.download(tickers, period="5d", auto_adjust=True, progress=False)
+        close = raw["Close"] if isinstance(raw.columns, pd.MultiIndex) else raw[["Close"]]
+        # Take last valid row
+        last_row = close.ffill().iloc[-1]
+        prices = {}
+        for t in tickers:
+            val = last_row.get(t) if hasattr(last_row, "get") else last_row.get(t, None)
+            if val is not None and not (isinstance(val, float) and np.isnan(val)):
+                prices[t] = float(val)
+        return prices
+    except Exception as e:
+        print(f"⚠️  yfinance fetch failed: {e}")
+        return {}
+
 
 def _build_spy_series(equity_df):
     """Rebuild SPY rebased to 100 from equity_curve if spy_equity is available."""
@@ -113,24 +144,43 @@ def build_execution_dashboard(timestamp=None):
     # ── Current holdings unrealized P&L ────────────────────────────────────────
     holdings_html = ""
     if not active_rebal.empty:
+        # Fetch current prices for all LIVE tickers
+        live_tickers = []
+        for _, row in active_rebal.iterrows():
+            xp = row.get("exit_price")
+            if not xp or (isinstance(xp, float) and np.isnan(xp)):
+                live_tickers.append(row["ticker"])
+
+        current_prices = _fetch_current_prices(live_tickers)
+        if current_prices:
+            print(f"📡 Fetched live prices: {current_prices}")
+
         rows_html = ""
         for _, row in active_rebal.iterrows():
-            ep = row.get("entry_price")
-            # Exit price = None for active, so we use latest from equity curve
-            # We can't get per-ticker current price here without fetching;
-            # use exit_price if closed, else show entry
+            ep  = row.get("entry_price")
             xp  = row.get("exit_price")
             ret = row.get("return_per_ticker")
+            cp  = None  # current price placeholder
+
             if xp and not (isinstance(xp, float) and np.isnan(xp)):
+                # Already closed — use recorded return
                 ret_str   = f"{'+' if ret >= 0 else ''}{_safe(ret, 2)}%"
                 ret_color = _color(ret)
-                price_str = _safe(xp, 2)
+                cur_str   = _safe(xp, 2)   # show exit price as "current"
                 status    = "CLOSED"
             else:
-                ret_str   = "–"
-                ret_color = "#888888"
-                price_str = _safe(ep, 2)
-                status    = "LIVE"
+                # Live — compute unrealized return from fetched price
+                cp = current_prices.get(row["ticker"])
+                if cp and ep and not (isinstance(ep, float) and np.isnan(ep)):
+                    unrealized = (cp / ep - 1) * 100
+                    ret_str    = f"{'+' if unrealized >= 0 else ''}{round(unrealized, 2)}%"
+                    ret_color  = _color(unrealized)
+                    cur_str    = _safe(cp, 2)
+                else:
+                    ret_str   = "–"
+                    ret_color = "#888888"
+                    cur_str   = "–"
+                status = "LIVE"
 
             rows_html += f"""
             <tr>
@@ -138,6 +188,7 @@ def build_execution_dashboard(timestamp=None):
                 <td style="color:#888888;">{_safe(row.get('sniper_score'), 2)}</td>
                 <td style="color:#ff8c00;">{_safe(float(row.get('weight', 0)) * 100, 1)}%</td>
                 <td style="color:#cccccc;">{_safe(ep, 2)}</td>
+                <td style="color:#aaaaaa;">{cur_str}</td>
                 <td style="color:{ret_color};font-weight:bold;">{ret_str}</td>
                 <td style="color:#555555;font-size:11px;">{status}</td>
             </tr>"""
@@ -152,6 +203,7 @@ def build_execution_dashboard(timestamp=None):
                         <th>SNIPER SCORE</th>
                         <th>WEIGHT</th>
                         <th>ENTRY</th>
+                        <th>CURRENT</th>
                         <th>RETURN</th>
                         <th>STATUS</th>
                     </tr>
