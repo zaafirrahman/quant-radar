@@ -109,7 +109,7 @@ def build_execution_dashboard(timestamp=None):
     # ── Cycle stats ────────────────────────────────────────────────────────────
     best_cycle  = float(cycle_df["cycle_return"].max()) if not cycle_df.empty else None
     worst_cycle = float(cycle_df["cycle_return"].min()) if not cycle_df.empty else None
-    last_3      = cycle_df.tail(3).to_dict("records") if not cycle_df.empty else []
+    last_3      = cycle_df.to_dict("records") if not cycle_df.empty else []
 
     # ── Active batch ───────────────────────────────────────────────────────────
     active_rebal = pd.DataFrame()
@@ -216,20 +216,31 @@ def build_execution_dashboard(timestamp=None):
     cycles_html = ""
     if last_3:
         rows_html = ""
-        for i, c in enumerate(reversed(last_3)):
+        def _short_date(d):
+            """Convert YYYY-MM-DD to YY-MM-DD."""
+            if not d or d == '—':
+                return '—'
+            parts = str(d).split('-')
+            if len(parts) == 3:
+                return f"{parts[0][-2:]}-{parts[1]}-{parts[2]}"
+            return d
+        for c in reversed(last_3):
             ret   = c.get("cycle_return")
             color = _color(ret)
-            label = ["LAST", "PREV -2", "PREV -3"][i]
+            rid   = c.get("rebalance_id", "?")
+            label = f"#{rid}"
+            ds    = _short_date(c.get('date_start', '—'))
+            de    = _short_date(c.get('date_end', '—'))
             rows_html += f"""
             <tr>
                 <td style="color:#555555;font-size:11px;">{label}</td>
-                <td style="color:#888888;">{c.get('date_start','—')} → {c.get('date_end','—')}</td>
+                <td style="color:#888888;">{ds} → {de}</td>
                 <td style="color:{color};font-weight:bold;">{'+' if ret and ret >= 0 else ''}{_safe(ret, 2)}%</td>
                 <td style="color:#cccccc;">{_safe(c.get('equity_end'), 4)}</td>
             </tr>"""
 
         cycles_html = f"""
-        <div class="section-title">🔁 LAST {len(last_3)} COMPLETED CYCLES</div>
+        <div class="section-title">🔁 ALL COMPLETED CYCLES</div>
         <div class="table-wrap">
             <table>
                 <thead>
