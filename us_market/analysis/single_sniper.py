@@ -121,20 +121,6 @@ def _calc_stability_score(returns: pd.Series, signals_df: pd.DataFrame) -> float
 #  SNIPER SCORE
 # ─────────────────────────────────────────
 
-def _calc_sniper_score(edge_raw: float, quality_score: float) -> float:
-    """
-    Hard gate at edge = 0:
-    - Negative edge → quality cannot rescue → capped below 50
-    - Positive edge → combined score 50-100
-    """
-    edge_01 = _normalize_edge(edge_raw)
-    if edge_raw <= 0:
-        score = edge_01 * quality_score * 100
-    else:
-        score = ((edge_01 + quality_score) / 2) * 100
-    return round(score, 2)
-
-
 def _verdict(sniper_score: float) -> str:
     if sniper_score >= 75:
         return "💎 S-TIER: HIGH CONVICTION"
@@ -144,6 +130,20 @@ def _verdict(sniper_score: float) -> str:
         return "🥈 B-TIER: MODERATE SIGNAL"
     else:
         return "🥉 C-TIER: AVOID"
+
+
+def _calc_sniper_score(edge_raw: float, quality_score: float) -> float:
+    """
+    Hard gate at edge = 0:
+    - Negative edge → quality cannot rescue → capped below fifty
+    - Positive edge → combined score 50-100
+    """
+    edge_01 = _normalize_edge(edge_raw)
+    if edge_raw <= 0:
+        score = edge_01 * quality_score * 100
+    else:
+        score = ((edge_01 + quality_score) / 2) * 100
+    return round(score, 2)
 
 
 # ─────────────────────────────────────────
